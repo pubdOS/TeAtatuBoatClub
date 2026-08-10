@@ -25,6 +25,8 @@ export default {
   "phone": "+64 9 834 4006",
   "email": "office@teatatuboatclub.co.nz",
   "address": "32 Bridge Ave, Te Atatū South, Auckland",
+  "url": "https://teatatuboatclub.co.nz",
+  "schema_type": "SportsClub",
   "logo": "/images/logo.png",
   "socials": [
     {

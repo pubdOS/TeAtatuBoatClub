@@ -3,7 +3,14 @@
   publish = "dist"
   functions = "netlify/functions"
 
+# SPA fallback for any path without a prerendered file. Non-forced, so real
+# prerendered pages are served first.
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Netlify Image CDN allowlist — lets /.netlify/images (src/lib/img.js) transform
+# client-uploaded images stored on the Pubd Supabase bucket.
+[images]
+  remote_images = ["https://ckzojvudzugbdmdwlukw.supabase.co/storage/.*"]
