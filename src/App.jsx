@@ -1,7 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
-import Navbar from './components/Navbar.jsx'
-import Footer from './components/Footer.jsx'
-import ScrollToTop from './components/ScrollToTop.jsx'
+import Layout from './Layout.jsx'
 import Home from './pages/Home.jsx'
 import About from './pages/About.jsx'
 import Facilities from './pages/Facilities.jsx'
@@ -17,30 +14,29 @@ import Booking from './pages/Booking.jsx'
 import Admin from './pages/Admin.jsx'
 import NotFound from './pages/NotFound.jsx'
 
-export default function App() {
-  return (
-    <div className="flex min-h-screen flex-col">
-      <ScrollToTop />
-      <Navbar />
-      <main className="flex-1">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/facilities" element={<Facilities />} />
-          <Route path="/pricing" element={<Pricing />} />
-          <Route path="/membership" element={<Membership />} />
-          <Route path="/restaurant" element={<Restaurant />} />
-          <Route path="/venue-hire" element={<Venue />} />
-          <Route path="/events" element={<Events />} />
-          <Route path="/club-rules" element={<Rules />} />
-          <Route path="/gallery" element={<Gallery />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/booking" element={<Booking />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </main>
-      <Footer />
-    </div>
-  )
-}
+// Route table (react-router v6 data-route shape, consumed by vite-react-ssg).
+// Nav paths match content.js `nav_links`; /admin is intentionally out of the nav
+// and sitemap. Booking + admin fetch their data client-side (useEffect), so they
+// prerender their static shell and hydrate live — no SSR hazard.
+export const routes = [
+  {
+    path: '/',
+    element: <Layout />,
+    children: [
+      { index: true, element: <Home /> },
+      { path: 'about', element: <About /> },
+      { path: 'facilities', element: <Facilities /> },
+      { path: 'pricing', element: <Pricing /> },
+      { path: 'membership', element: <Membership /> },
+      { path: 'restaurant', element: <Restaurant /> },
+      { path: 'venue-hire', element: <Venue /> },
+      { path: 'events', element: <Events /> },
+      { path: 'club-rules', element: <Rules /> },
+      { path: 'gallery', element: <Gallery /> },
+      { path: 'contact', element: <Contact /> },
+      { path: 'booking', element: <Booking /> },
+      { path: 'admin', element: <Admin /> },
+      { path: '*', element: <NotFound /> },
+    ],
+  },
+]
