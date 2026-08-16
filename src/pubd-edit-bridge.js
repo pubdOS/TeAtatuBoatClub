@@ -242,19 +242,37 @@ function itemMove(repeaterKey, from, to) {
   container.insertBefore(node, from < to ? items[to].nextSibling : items[to])
 }
 
+function beginSuppress(target) {
+  suppress = true
+  suppressTarget = target
+  clearTimeout(safetyT)
+  safetyT = setTimeout(finishSuppress, 1800) // never stay muted forever
+  clearTimeout(settleT)
+  settleT = setTimeout(finishSuppress, 300) // already-in-view = no scroll events
+}
+
 function goTo(prefix) {
+  const page = prefix.split(' - ')[0]
+  // Page chrome doesn't live in the normal scroll flow: the Nav is sticky (so
+  // scrollIntoView on it is a no-op and clicking "Nav" appeared to do nothing),
+  // and the Footer is the page's tail. Handle them by scrolling the page itself.
+  if (page === 'Nav') {
+    beginSuppress(prefix)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+    return
+  }
+  if (page === 'Footer') {
+    beginSuppress(prefix)
+    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' })
+    return
+  }
   for (const [key, els] of fieldMap) {
     if (!key.startsWith(prefix + ' - ')) continue
     const el = els.find((e) => e.getClientRects().length) || els[0]
     if (el) {
-      suppress = true
-      suppressTarget = prefix
-      clearTimeout(safetyT)
-      safetyT = setTimeout(finishSuppress, 1800) // never stay muted forever
+      beginSuppress(prefix)
       el.style.scrollMarginTop = '96px' // clear the sticky navbar
       el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      clearTimeout(settleT)
-      settleT = setTimeout(finishSuppress, 300) // already-in-view = no scroll events
       return
     }
   }
@@ -262,14 +280,9 @@ function goTo(prefix) {
   // data-cms field carrying the prefix — scroll to the repeater container itself.
   const rep = repeaterMap.get(prefix)
   if (rep) {
-    suppress = true
-    suppressTarget = prefix
-    clearTimeout(safetyT)
-    safetyT = setTimeout(finishSuppress, 1800)
+    beginSuppress(prefix)
     rep.style.scrollMarginTop = '96px'
     rep.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    clearTimeout(settleT)
-    settleT = setTimeout(finishSuppress, 300)
   }
 }
 
