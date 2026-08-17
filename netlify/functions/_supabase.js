@@ -2,9 +2,9 @@
 // Uses the Supabase SERVICE ROLE key — server-side only, never sent to the browser.
 import { createClient } from '@supabase/supabase-js'
 
-// How far AHEAD a member can book (committee rule, via Barry 2026-08: 5 days).
-// Separate from MAX_DAYS in create-booking.js (how many days per single booking).
-export const BOOKING_WINDOW_DAYS = 5
+// How far AHEAD availability is shown / a slot can be booked. Barry's "5 day
+// limit" refers to MAX_DAYS (days per booking, in create-booking.js), NOT this.
+export const BOOKING_WINDOW_DAYS = 14
 
 let _client
 export function supabase() {

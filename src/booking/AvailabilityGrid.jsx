@@ -12,7 +12,7 @@ function formatDay(iso) {
   }
 }
 
-// Step 2 — visual availability: rows = work bays, columns = the next 5 days.
+// Step 2 — visual availability: rows = work bays, columns = next 14 days.
 // Tap any number of free cells to select them, then continue to confirm.
 export default function AvailabilityGrid({ member, onSelect }) {
   const [state, setState] = useState({ status: 'loading' })
