@@ -49,14 +49,24 @@ create index if not exists idx_bookings_window
   where status = 'confirmed';
 
 -- ─── Seed the four work bays ─────────────────────────────────────────────
--- TODO: confirm real bay names/descriptions with Dan, then update here + on the
--- Facilities page in content.js. The IDs 1..4 must stay stable.
+-- Interim names (via Barry 2026-08): no official names yet; bays 1 & 2 are on
+-- the bridge side, 3 & 4 on the ramp side. Kept numbered so the order + the
+-- large-vessel peg (bays 1 & 2) stay clear. The IDs 1..4 must stay stable.
+-- NOTE: this seed only applies on a FRESH DB; the live DB already has rows, so
+-- update it with the UPDATE statements below (run once), then re-confirm the
+-- real names with Dan when the committee settles them.
 insert into berths (id, name, description) values
-  (1, 'Work Bay 1', 'General work bay.'),
-  (2, 'Work Bay 2', 'General work bay.'),
-  (3, 'Work Bay 3', 'General work bay.'),
-  (4, 'Work Bay 4', 'General work bay.')
+  (1, 'Bay 1 (Bridgeside)', 'Bridge side of the yard.'),
+  (2, 'Bay 2 (Bridgeside)', 'Bridge side of the yard.'),
+  (3, 'Bay 3 (Rampside)', 'Ramp side of the yard.'),
+  (4, 'Bay 4 (Rampside)', 'Ramp side of the yard.')
 on conflict (id) do nothing;
+
+-- Run ONCE against the live booking DB (the seed above is no-op there):
+--   update berths set name = 'Bay 1 (Bridgeside)', description = 'Bridge side of the yard.' where id = 1;
+--   update berths set name = 'Bay 2 (Bridgeside)', description = 'Bridge side of the yard.' where id = 2;
+--   update berths set name = 'Bay 3 (Rampside)',   description = 'Ramp side of the yard.'   where id = 3;
+--   update berths set name = 'Bay 4 (Rampside)',   description = 'Ramp side of the yard.'   where id = 4;
 
 -- ─── Loading the membership list ─────────────────────────────────────────
 -- Option A: Supabase Dashboard → Table editor → members → Import data from CSV.

@@ -6,7 +6,7 @@
 // Server-side guarantees (never trust the client):
 //   • member is re-validated against the DB
 //   • the acknowledgement checkbox must be true
-//   • every slot_date must be within [today, today+14d] NZ time (no past slots)
+//   • every slot_date must be within [today, today+5d] NZ time (no past slots)
 //   • a single multi-row INSERT is atomic — if ANY slot is already taken the
 //     whole batch rolls back (unique index → 23505), so you never get a
 //     half-booked range.
@@ -14,8 +14,8 @@ import { Resend } from 'resend'
 import { json, parseBody, supabase, findActiveMember, isWithinWindow } from './_supabase.js'
 
 const VALID_BERTHS = new Set([1, 2, 3, 4])
-// The 14-day window controls how far AHEAD you can book; MAX_DAYS caps how many
-// distinct days a member can hold in a single booking. A large vessel (≥10m)
+// BOOKING_WINDOW_DAYS (5) controls how far AHEAD you can book; MAX_DAYS caps how
+// many distinct days a member can hold in a single booking. A large vessel (≥10m)
 // books 2 bays per day, so 5 days = up to 10 bay-slots; a regular member could
 // pick up to 4 bays × 5 days = 20. MAX_SLOTS is just a defensive upper bound.
 const MAX_DAYS = 5
@@ -56,7 +56,7 @@ export const handler = async (event) => {
         return json(400, { ok: false, error: 'That work bay does not exist.' })
       }
       if (!/^\d{4}-\d{2}-\d{2}$/.test(slotDate) || !isWithinWindow(slotDate)) {
-        return json(400, { ok: false, error: 'Please choose days within the next two weeks.' })
+        return json(400, { ok: false, error: 'Please choose days within the next 5 days.' })
       }
       const key = `${berthId}|${slotDate}|${slotPeriod}`
       if (seen.has(key)) continue
@@ -126,16 +126,18 @@ async function sendEmails({ items, member, references }) {
   const office = process.env.EMAIL_OFFICE
   const manager = process.env.EMAIL_MANAGER
 
+  // Count distinct DAYS, not bay-slots — a large vessel books 2 bays on one day.
+  const dayCount = new Set(items.map((i) => i.date)).size
   const list = items.map((i) => `<li><strong>${i.bay}</strong> — ${i.date}</li>`).join('')
   const summary = `
     <table style="border-collapse:collapse;font-size:14px">
       <tr><td style="padding:4px 12px 4px 0;color:#667">Member</td><td>${member.full_name} (#${member.membership_number})</td></tr>
-      <tr><td style="padding:4px 12px 4px 0;color:#667">Days booked</td><td>${items.length}</td></tr>
+      <tr><td style="padding:4px 12px 4px 0;color:#667">Days booked</td><td>${dayCount}</td></tr>
     </table>
     <ul style="font-size:14px;margin-top:8px;padding-left:18px">${list}</ul>
     <p style="color:#667;font-size:12px">Reference(s): ${references.join(', ')}</p>`
 
-  const subjectDays = items.length === 1 ? `${items[0].bay}, ${items[0].date}` : `${items.length} days`
+  const subjectDays = dayCount === 1 ? `${items[0].bay}, ${items[0].date}` : `${dayCount} days`
 
   const officeRecipients = [office, manager].filter(Boolean)
   if (officeRecipients.length) {

@@ -37,9 +37,9 @@ export default function ConfirmScreen({ member, selections, fallback, onBack, on
   }, {})
   const days = Object.keys(byDay).sort()
   const dayCount = days.length
-  // Pricing is per DAY at the member rate. Large-vessel cost treatment (one rate
-  // vs two bays) is still being decided by the committee, so we estimate on days
-  // and flag that the office confirms the final hire. TODO: revisit once decided.
+  // Pricing is per DAY at the member rate. Committee decision (Barry 2026-08): a
+  // large vessel's two bays are charged as ONE single day rate, not two — so the
+  // per-day estimate below is correct for everyone (the office still invoices).
   const rateNum = parseFloat(String(rate).replace(/[^0-9.]/g, ''))
   const currency = (String(rate).match(/^[^\d]*/) || [''])[0] || ''
   const total = Number.isFinite(rateNum) ? `${currency}${(rateNum * dayCount).toFixed(0)}` : null
@@ -109,7 +109,7 @@ export default function ConfirmScreen({ member, selections, fallback, onBack, on
         )}
         <p className="pt-1 text-xs text-navy/45">
           {largeVessel
-            ? 'Estimate shown per day. Large-vessel hire (2 bays) is confirmed and invoiced by the club office.'
+            ? 'Your two bays are charged as one member day rate per day. Invoiced by the club office, no payment is taken online.'
             : 'Invoiced by the club office — no payment is taken online.'}
         </p>
       </dl>
