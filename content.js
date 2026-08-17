@@ -120,33 +120,48 @@ export default {
   "about_committee_heading": "Club Executive Committee",
   "committee": [
     {
-      "name": "Committee Member",
+      "name": "Dave Mackie",
       "role": "Commodore",
       "email": "office@teatatuboatclub.co.nz"
     },
     {
-      "name": "Committee Member",
+      "name": "Barry Hart",
       "role": "Vice Commodore",
       "email": "office@teatatuboatclub.co.nz"
     },
     {
-      "name": "Committee Member",
-      "role": "Secretary",
+      "name": "Lyn Salvidge",
+      "role": "Acting Club Captain",
       "email": "office@teatatuboatclub.co.nz"
     },
     {
-      "name": "Committee Member",
-      "role": "Treasurer",
+      "name": "Jared Wrennall",
+      "role": "Vice Club Captain",
       "email": "office@teatatuboatclub.co.nz"
     },
     {
-      "name": "Committee Member",
-      "role": "Yard Manager",
+      "name": "Ray Steel",
+      "role": "Property Officer",
       "email": "office@teatatuboatclub.co.nz"
     },
     {
-      "name": "Committee Member",
-      "role": "Bar Manager",
+      "name": "Maxine Costin",
+      "role": "Committee Member",
+      "email": "office@teatatuboatclub.co.nz"
+    },
+    {
+      "name": "Matt Dalton",
+      "role": "Committee Member",
+      "email": "office@teatatuboatclub.co.nz"
+    },
+    {
+      "name": "Dave Forrest",
+      "role": "Committee Member",
+      "email": "office@teatatuboatclub.co.nz"
+    },
+    {
+      "name": "James Mobberley",
+      "role": "Committee Member",
       "email": "office@teatatuboatclub.co.nz"
     }
   ],
@@ -157,7 +172,7 @@ export default {
   "facilities_hero_sub": "Everything you need to store, launch and maintain your boat.",
   "facilities_bays_label": "For Members",
   "facilities_bays_heading": "The Work Bays",
-  "facilities_bays_body": "We have four work bays available for members to book. Booking secures the bay for your day and the discounted $25 member rate (unbooked use is charged at $50 per day). All accounts must be paid in full before your vessel is put back in the water, and public liability insurance is required before hauling out.",
+  "facilities_bays_body": "We have four work bays available for members to book. Booking secures the bay for your day and the discounted $25 member rate (a $150 fee applies for using a work berth unbooked). All accounts must be paid in full before your vessel is put back in the water, and public liability insurance is required before hauling out.",
   "work_bays": [
     {
       "name": "Work Bay 1",
@@ -185,7 +200,7 @@ export default {
     },
     {
       "title": "Dinghy Pontoons",
-      "desc": "Pontoon berthing for up to 3 hours (except booked work bays). Dinghy racks $50/year."
+      "desc": "Pontoon berthing for up to 3 hours (except booked work bays). Dinghy racks $150/year."
     },
     {
       "title": "Hardstand",
@@ -838,7 +853,7 @@ export default {
   "pricing_hero_sub": "Current fees for club facilities. All rates incl. GST.",
   "pricing_workbay_heading": "Work Bay Hire",
   "pricing_workbay_member_booked_rate": "$25",
-  "pricing_workbay_member_unbooked_rate": "$50",
+  "pricing_workbay_member_unbooked_rate": "$150",
   "pricing_workbay_nonmember_rate": "$60",
   "pricing_workbay_unit": "per day",
   "pricing_workbay_note": "Rates apply for part or full day. Booking secures the discounted member rate.",
@@ -847,19 +862,19 @@ export default {
   "pricing_other": [
     {
       "item": "Hardstand (50ft+, member)",
-      "rate": "$26 / day (first 6 months)"
+      "rate": "$27 / day (first 6 months)"
     },
     {
       "item": "Hardstand (under 40ft, member)",
-      "rate": "$19 / day (first 6 months)"
+      "rate": "$20 / day (first 6 months)"
     },
     {
       "item": "Hardstand (40–49ft, member)",
-      "rate": "$21 / day (first 6 months)"
+      "rate": "$22 / day (first 6 months)"
     },
     {
       "item": "Haulout (member)",
-      "rate": "$170 each way"
+      "rate": "$175 each way"
     },
     {
       "item": "Waterblaster (member)",
@@ -871,11 +886,11 @@ export default {
     },
     {
       "item": "Boat/Trailer Compound",
-      "rate": "From $140 / month (waiting list)"
+      "rate": "From $150 / month (waiting list)"
     },
     {
       "item": "Dinghy Racks",
-      "rate": "$50 / year"
+      "rate": "$150 / year"
     }
   ],
   "pricing_notice": "Work-bay bookings are invoiced by the club office after your booking is confirmed. No payment is taken online.",
@@ -883,7 +898,7 @@ export default {
   "membership_hero_sub": "Join nearly 750 families who call Te Atatū Boating Club home.",
   "membership_intro_heading": "Why join?",
   "membership_intro_body": "Membership gives you access to all of our facilities — the Members Bar, High Tide Kitchen, the Commodore’s Lounge, dinghy and trailer boat storage, discounted yard and haulout rates, and online work-bay booking.",
-  "membership_family_fee": "$220",
+  "membership_family_fee": "$230",
   "membership_family_unit": "per year",
   "membership_family_note": "Family membership — includes children under 18.",
   "membership_nomination_fee": "$320",
