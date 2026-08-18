@@ -39,16 +39,32 @@ export default function Booking() {
           <p data-cms="Booking - Notice - Cancellation">{c.booking_notice_cancellation}</p>
         </div>
 
-        {/* Dynamic booking application — NO data-cms inside. */}
-        <BookingWidget
-          fallback={{
-            chargeNotice: c.booking_notice_charge,
-            cancelNotice: c.booking_notice_cancellation,
-            officeEmail: c.contact_office_email,
-            rate: c.pricing_workbay_member_booked_rate,
-            unit: c.pricing_workbay_unit,
-          }}
-        />
+        {/* Dynamic booking application — NO data-cms inside. Gated by content.js
+            `booking_live`: flip to true once the members list is loaded into
+            Supabase (before that, members would hit a "can't confirm membership"
+            dead-end). Until then, a friendly "opening soon" pointing to the office. */}
+        {c.booking_live ? (
+          <BookingWidget
+            fallback={{
+              chargeNotice: c.booking_notice_charge,
+              cancelNotice: c.booking_notice_cancellation,
+              officeEmail: c.contact_office_email,
+              rate: c.pricing_workbay_member_booked_rate,
+              unit: c.pricing_workbay_unit,
+            }}
+          />
+        ) : (
+          <div className="mx-auto max-w-xl rounded-2xl border border-navy/10 bg-white p-8 text-center shadow-sm">
+            <h2 className="font-display text-2xl font-semibold text-navy">Online booking is opening soon</h2>
+            <p className="mt-3 leading-relaxed text-navy/70">
+              We're putting the finishing touches on the new online work-bay booking system. In the meantime, please contact the office to book a bay and we'll get you sorted.
+            </p>
+            <div className="mt-6 flex flex-col items-center gap-1.5 text-sm">
+              <a href={`mailto:${c.contact_office_email}`} className="font-semibold text-accent hover:underline">{c.contact_office_email}</a>
+              <a href={`tel:${c.contact_office_phone.replace(/[^0-9+]/g, '')}`} className="text-navy/70 hover:text-accent">{c.contact_office_phone}</a>
+            </div>
+          </div>
+        )}
       </section>
     </>
   )

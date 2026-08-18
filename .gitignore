@@ -8,3 +8,4 @@ dist
 
 # Playwright MCP scratch output
 .playwright-mcp
+.claude/worktrees/
