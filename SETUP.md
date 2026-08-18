@@ -28,9 +28,9 @@ members-only `/booking` flow (Supabase + Resend + Netlify Functions).
       These live on the `send.` subdomain only — they do **not** touch the club's Microsoft 365 email on the root domain.
 - [ ] Wait for **Verified** (minutes–few hours).
 - [ ] **API Keys → Create** → copy it → `RESEND_API_KEY`.
-- [ ] From address → `EMAIL_FROM` = `Te Atatū Boating Club <bookings@send.teatatuboatclub.co.nz>`
+- [ ] From address → `EMAIL_FROM` = `Te Atatu Boating Club <bookings@send.teatatuboatclub.co.nz>`
 
-  > No DNS access yet? Start in **test mode**: set `EMAIL_FROM="Te Atatū Boating Club <onboarding@resend.dev>"` to test the flow to your own inbox, then switch to the subdomain before go-live.
+  > No DNS access yet? Start in **test mode**: set `EMAIL_FROM="Te Atatu Boating Club <onboarding@resend.dev>"` to test the flow to your own inbox, then switch to the subdomain before go-live.
 
 ## 3. Netlify (environment variables)
 
@@ -41,7 +41,7 @@ members-only `/booking` flow (Supabase + Resend + Netlify Functions).
 | `SUPABASE_URL` | from Supabase step 1 |
 | `SUPABASE_SERVICE_ROLE_KEY` | from Supabase step 1 (secret) |
 | `RESEND_API_KEY` | from Resend step 2 |
-| `EMAIL_FROM` | `Te Atatū Boating Club <bookings@send.teatatuboatclub.co.nz>` |
+| `EMAIL_FROM` | `Te Atatu Boating Club <bookings@send.teatatuboatclub.co.nz>` |
 | `EMAIL_OFFICE` | **your inbox** for now → `office@teatatuboatclub.co.nz` at go-live |
 | `EMAIL_MANAGER` | **your inbox** for now → real `manager@` at go-live |
 | `ADMIN_PASSWORD` | pick a strong password (for the `/admin` page) |

@@ -20,7 +20,7 @@ One page. Each item is a decision the committee can make in the room. ✦ = my r
 ## Site & go-live
 
 10. **Competitions section** — confirm the format: card → details + downloadable rules PDF, office-editable.
-11. **SEO** — what searches should find the club? ("boat club Te Atatū", "work bay hire Auckland", "function venue West Auckland"…) And who has access to the **Google Business Profile** (the biggest local-search lever)?
+11. **SEO** — what searches should find the club? ("boat club Te Atatu", "work bay hire Auckland", "function venue West Auckland"…) And who has access to the **Google Business Profile** (the biggest local-search lever)?
 12. **Go-live logistics** — domain access; final content sign-off; **who gets CMS logins** (office? committee?); Skedda cutover — are there future bookings in Skedda that need carrying over?
 
 ## Already done (mention, don't discuss)
