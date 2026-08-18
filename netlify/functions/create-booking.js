@@ -159,7 +159,8 @@ async function sendEmails({ items, member, references }) {
         <p>Thanks ${member.full_name}, your work-bay booking is confirmed:</p>
         ${summary}
         <p style="margin-top:16px">${process.env.BOOKING_NOTICE_CHARGE || 'The club will invoice you for work-bay hire at the member day rate. No payment is taken online.'}</p>
-        <p>${process.env.BOOKING_NOTICE_CANCELLATION || 'Changes and cancellations must be made by emailing the office.'}</p>`,
+        <p>${process.env.BOOKING_NOTICE_CANCELLATION || 'Changes and cancellations must be made by emailing the office.'}</p>
+        <p style="color:#b91c1c;font-weight:600">No-shows will be charged the full amount.</p>`,
     })
   }
 }

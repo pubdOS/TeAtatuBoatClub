@@ -37,9 +37,9 @@ export default function ConfirmScreen({ member, selections, fallback, onBack, on
   }, {})
   const days = Object.keys(byDay).sort()
   const dayCount = days.length
-  // Pricing is per DAY at the member rate. Committee decision (Barry 2026-08): a
-  // large vessel's two bays are charged as ONE single day rate, not two — so the
-  // per-day estimate below is correct for everyone (the office still invoices).
+  // Pricing is per DAY at the member rate. Large-vessel cost treatment (one rate
+  // vs two bays) is being confirmed with the office (Barry said single, Dan said
+  // 2x), so we estimate on days and flag the office confirms. TODO: finalise it.
   const rateNum = parseFloat(String(rate).replace(/[^0-9.]/g, ''))
   const currency = (String(rate).match(/^[^\d]*/) || [''])[0] || ''
   const total = Number.isFinite(rateNum) ? `${currency}${(rateNum * dayCount).toFixed(0)}` : null
@@ -109,13 +109,14 @@ export default function ConfirmScreen({ member, selections, fallback, onBack, on
         )}
         <p className="pt-1 text-xs text-navy/45">
           {largeVessel
-            ? 'Your two bays are charged as one member day rate per day. Invoiced by the club office, no payment is taken online.'
+            ? 'Estimate shown per day. Large-vessel hire (2 bays) is confirmed and invoiced by the club office.'
             : 'Invoiced by the club office — no payment is taken online.'}
         </p>
       </dl>
 
       <div className="mt-5 space-y-3 text-sm text-navy/70">
         <p className="rounded-lg bg-amber-50 px-4 py-3 text-amber-900">{chargeNotice}</p>
+        <p className="rounded-lg bg-red-50 px-4 py-3 font-medium text-red-800">No-shows will be charged the full amount.</p>
         <p className="rounded-lg bg-navy/5 px-4 py-3">
           {cancelNotice}{' '}
           <a href={`mailto:${officeEmail}`} className="font-semibold text-accent hover:underline">{officeEmail}</a>

@@ -49,24 +49,23 @@ create index if not exists idx_bookings_window
   where status = 'confirmed';
 
 -- ─── Seed the four work bays ─────────────────────────────────────────────
--- Interim names (via Barry 2026-08): no official names yet; bays 1 & 2 are on
--- the bridge side, 3 & 4 on the ramp side. Kept numbered so the order + the
--- large-vessel peg (bays 1 & 2) stay clear. The IDs 1..4 must stay stable.
+-- Bay names (via Dan, club manager, 2026-08): bays numbered from the ramp end
+-- (Bay 1, south) to the bridge end (Bay 4, north). Large vessels peg to bays 1
+-- & 2 (the ramp end). The IDs 1..4 must stay stable.
 -- NOTE: this seed only applies on a FRESH DB; the live DB already has rows, so
--- update it with the UPDATE statements below (run once), then re-confirm the
--- real names with Dan when the committee settles them.
+-- update it with the UPDATE statements below (run once).
 insert into berths (id, name, description) values
-  (1, 'Bay 1 (Bridgeside)', 'Bridge side of the yard.'),
-  (2, 'Bay 2 (Bridgeside)', 'Bridge side of the yard.'),
-  (3, 'Bay 3 (Rampside)', 'Ramp side of the yard.'),
-  (4, 'Bay 4 (Rampside)', 'Ramp side of the yard.')
+  (1, 'Bay 1 (Ramp end)', 'Closest to the boat ramp, south end.'),
+  (2, 'Bay 2', 'Work bay.'),
+  (3, 'Bay 3', 'Work bay.'),
+  (4, 'Bay 4 (Bridge end)', 'Closest to the bridge, north end.')
 on conflict (id) do nothing;
 
 -- Run ONCE against the live booking DB (the seed above is no-op there):
---   update berths set name = 'Bay 1 (Bridgeside)', description = 'Bridge side of the yard.' where id = 1;
---   update berths set name = 'Bay 2 (Bridgeside)', description = 'Bridge side of the yard.' where id = 2;
---   update berths set name = 'Bay 3 (Rampside)',   description = 'Ramp side of the yard.'   where id = 3;
---   update berths set name = 'Bay 4 (Rampside)',   description = 'Ramp side of the yard.'   where id = 4;
+--   update berths set name = 'Bay 1 (Ramp end)',   description = 'Closest to the boat ramp, south end.' where id = 1;
+--   update berths set name = 'Bay 2',              description = 'Work bay.'                             where id = 2;
+--   update berths set name = 'Bay 3',              description = 'Work bay.'                             where id = 3;
+--   update berths set name = 'Bay 4 (Bridge end)', description = 'Closest to the bridge, north end.'     where id = 4;
 
 -- ─── Loading the membership list ─────────────────────────────────────────
 -- Option A: Supabase Dashboard → Table editor → members → Import data from CSV.

@@ -172,7 +172,7 @@ export default {
   "facilities_hero_sub": "Everything you need to store, launch and maintain your boat.",
   "facilities_bays_label": "For Members",
   "facilities_bays_heading": "The Work Bays",
-  "facilities_bays_body": "We have four work bays available for members to book. Booking secures the bay for your day and the discounted $25 member rate (a $150 fee applies for using a work berth unbooked). All accounts must be paid in full before your vessel is put back in the water, and public liability insurance is required before hauling out.",
+  "facilities_bays_body": "We have four work bays available for members to book. Booking secures the bay for your day and the discounted $25 member rate (unbooked use is charged at $50 per day). All accounts must be paid in full before your vessel is put back in the water, and public liability insurance is required before hauling out.",
   "work_bays": [
     {
       "name": "Work Bay 1",
@@ -853,7 +853,7 @@ export default {
   "pricing_hero_sub": "Current fees for club facilities. All rates incl. GST.",
   "pricing_workbay_heading": "Work Bay Hire",
   "pricing_workbay_member_booked_rate": "$25",
-  "pricing_workbay_member_unbooked_rate": "$150",
+  "pricing_workbay_member_unbooked_rate": "$50",
   "pricing_workbay_nonmember_rate": "$60",
   "pricing_workbay_unit": "per day",
   "pricing_workbay_note": "Rates apply for part or full day. Booking secures the discounted member rate.",
