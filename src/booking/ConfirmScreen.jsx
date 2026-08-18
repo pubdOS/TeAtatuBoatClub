@@ -37,12 +37,13 @@ export default function ConfirmScreen({ member, selections, fallback, onBack, on
   }, {})
   const days = Object.keys(byDay).sort()
   const dayCount = days.length
-  // Pricing is per DAY at the member rate. Large-vessel cost treatment (one rate
-  // vs two bays) is being confirmed with the office (Barry said single, Dan said
-  // 2x), so we estimate on days and flag the office confirms. TODO: finalise it.
+  // Pricing is per DAY at the member rate. A large vessel takes a DOUBLE berth
+  // (two bays) charged at 2x the single-berth rate (Dan, 2026-08: $25 single,
+  // $50 double), so its per-day rate is doubled here.
   const rateNum = parseFloat(String(rate).replace(/[^0-9.]/g, ''))
   const currency = (String(rate).match(/^[^\d]*/) || [''])[0] || ''
-  const total = Number.isFinite(rateNum) ? `${currency}${(rateNum * dayCount).toFixed(0)}` : null
+  const perDayRate = largeVessel ? rateNum * 2 : rateNum
+  const total = Number.isFinite(perDayRate) ? `${currency}${(perDayRate * dayCount).toFixed(0)}` : null
 
   const [ack, setAck] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -99,7 +100,7 @@ export default function ConfirmScreen({ member, selections, fallback, onBack, on
 
       {/* Price */}
       <dl className="mt-4 space-y-1.5 rounded-xl border border-navy/10 p-4 text-sm">
-        <div className="flex justify-between"><dt className="text-navy/60">Member rate</dt><dd className="font-semibold">{rate} {unit}</dd></div>
+        <div className="flex justify-between"><dt className="text-navy/60">{largeVessel ? 'Double berth rate' : 'Member rate'}</dt><dd className="font-semibold">{Number.isFinite(perDayRate) ? `${currency}${perDayRate.toFixed(0)}` : rate} {unit}</dd></div>
         <div className="flex justify-between"><dt className="text-navy/60">Days</dt><dd className="font-semibold">× {dayCount}</dd></div>
         {total && (
           <div className="flex justify-between border-t border-navy/10 pt-1.5 text-base">
@@ -109,7 +110,7 @@ export default function ConfirmScreen({ member, selections, fallback, onBack, on
         )}
         <p className="pt-1 text-xs text-navy/45">
           {largeVessel
-            ? 'Estimate shown per day. Large-vessel hire (2 bays) is confirmed and invoiced by the club office.'
+            ? 'Large vessels take a double berth (two bays) at twice the day rate. Invoiced by the club office, no payment is taken online.'
             : 'Invoiced by the club office — no payment is taken online.'}
         </p>
       </dl>
