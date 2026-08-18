@@ -37,12 +37,13 @@ export default function ConfirmScreen({ member, selections, fallback, onBack, on
   }, {})
   const days = Object.keys(byDay).sort()
   const dayCount = days.length
-  // Pricing is per DAY at the member rate. Large-vessel cost treatment (one rate
-  // vs two bays) is still being decided by the committee, so we estimate on days
-  // and flag that the office confirms the final hire. TODO: revisit once decided.
+  // Pricing is per DAY at the member rate. A large vessel takes a DOUBLE berth
+  // (two bays) charged at 2x the single-berth rate (Dan, 2026-08: $25 single,
+  // $50 double), so its per-day rate is doubled here.
   const rateNum = parseFloat(String(rate).replace(/[^0-9.]/g, ''))
   const currency = (String(rate).match(/^[^\d]*/) || [''])[0] || ''
-  const total = Number.isFinite(rateNum) ? `${currency}${(rateNum * dayCount).toFixed(0)}` : null
+  const perDayRate = largeVessel ? rateNum * 2 : rateNum
+  const total = Number.isFinite(perDayRate) ? `${currency}${(perDayRate * dayCount).toFixed(0)}` : null
 
   const [ack, setAck] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -99,7 +100,7 @@ export default function ConfirmScreen({ member, selections, fallback, onBack, on
 
       {/* Price */}
       <dl className="mt-4 space-y-1.5 rounded-xl border border-navy/10 p-4 text-sm">
-        <div className="flex justify-between"><dt className="text-navy/60">Member rate</dt><dd className="font-semibold">{rate} {unit}</dd></div>
+        <div className="flex justify-between"><dt className="text-navy/60">{largeVessel ? 'Double berth rate' : 'Member rate'}</dt><dd className="font-semibold">{Number.isFinite(perDayRate) ? `${currency}${perDayRate.toFixed(0)}` : rate} {unit}</dd></div>
         <div className="flex justify-between"><dt className="text-navy/60">Days</dt><dd className="font-semibold">× {dayCount}</dd></div>
         {total && (
           <div className="flex justify-between border-t border-navy/10 pt-1.5 text-base">
@@ -109,13 +110,14 @@ export default function ConfirmScreen({ member, selections, fallback, onBack, on
         )}
         <p className="pt-1 text-xs text-navy/45">
           {largeVessel
-            ? 'Estimate shown per day. Large-vessel hire (2 bays) is confirmed and invoiced by the club office.'
+            ? 'Large vessels take a double berth (two bays) at twice the day rate. Invoiced by the club office, no payment is taken online.'
             : 'Invoiced by the club office — no payment is taken online.'}
         </p>
       </dl>
 
       <div className="mt-5 space-y-3 text-sm text-navy/70">
         <p className="rounded-lg bg-amber-50 px-4 py-3 text-amber-900">{chargeNotice}</p>
+        <p className="rounded-lg bg-red-50 px-4 py-3 font-medium text-red-800">No-shows will be charged the full amount.</p>
         <p className="rounded-lg bg-navy/5 px-4 py-3">
           {cancelNotice}{' '}
           <a href={`mailto:${officeEmail}`} className="font-semibold text-accent hover:underline">{officeEmail}</a>

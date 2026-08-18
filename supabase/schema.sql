@@ -49,14 +49,23 @@ create index if not exists idx_bookings_window
   where status = 'confirmed';
 
 -- ─── Seed the four work bays ─────────────────────────────────────────────
--- TODO: confirm real bay names/descriptions with Dan, then update here + on the
--- Facilities page in content.js. The IDs 1..4 must stay stable.
+-- Bay names (via Dan, club manager, 2026-08): bays numbered from the ramp end
+-- (Bay 1, south) to the bridge end (Bay 4, north). Large vessels peg to bays 1
+-- & 2 (the ramp end). The IDs 1..4 must stay stable.
+-- NOTE: this seed only applies on a FRESH DB; the live DB already has rows, so
+-- update it with the UPDATE statements below (run once).
 insert into berths (id, name, description) values
-  (1, 'Work Bay 1', 'General work bay.'),
-  (2, 'Work Bay 2', 'General work bay.'),
-  (3, 'Work Bay 3', 'General work bay.'),
-  (4, 'Work Bay 4', 'General work bay.')
+  (1, 'Bay 1 (Ramp end)', 'Closest to the boat ramp, south end.'),
+  (2, 'Bay 2', 'Work bay.'),
+  (3, 'Bay 3', 'Work bay.'),
+  (4, 'Bay 4 (Bridge end)', 'Closest to the bridge, north end.')
 on conflict (id) do nothing;
+
+-- Run ONCE against the live booking DB (the seed above is no-op there):
+--   update berths set name = 'Bay 1 (Ramp end)',   description = 'Closest to the boat ramp, south end.' where id = 1;
+--   update berths set name = 'Bay 2',              description = 'Work bay.'                             where id = 2;
+--   update berths set name = 'Bay 3',              description = 'Work bay.'                             where id = 3;
+--   update berths set name = 'Bay 4 (Bridge end)', description = 'Closest to the bridge, north end.'     where id = 4;
 
 -- ─── Loading the membership list ─────────────────────────────────────────
 -- Option A: Supabase Dashboard → Table editor → members → Import data from CSV.

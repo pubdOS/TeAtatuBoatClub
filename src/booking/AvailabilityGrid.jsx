@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { getAvailability } from './api.js'
 
 const PERIOD = 'day' // current slot granularity (see schema.sql / Part C #1)
-const MAX_DAYS = 5   // a member can hold up to 5 distinct days in one booking
+const MAX_DAYS = 10  // per-selection cap; server also enforces 10 total days + max 5 in a row
 
 function formatDay(iso) {
   const d = new Date(`${iso}T00:00:00`)
@@ -17,7 +17,8 @@ function formatDay(iso) {
 export default function AvailabilityGrid({ member, onSelect }) {
   const [state, setState] = useState({ status: 'loading' })
   const [selected, setSelected] = useState({}) // key `${berthId}|${iso}` -> selection object
-  const [limitHit, setLimitHit] = useState(false) // true when a 6th day was blocked
+  const [limitHit, setLimitHit] = useState(false) // true when the day limit was hit
+  const [visibleDays, setVisibleDays] = useState(21) // paginate the (up to 90-day) window
 
   useEffect(() => {
     let active = true
@@ -48,6 +49,8 @@ export default function AvailabilityGrid({ member, onSelect }) {
   }
 
   const { days, berths, taken } = state
+  const shownDays = days.slice(0, visibleDays)
+  const hasMoreDays = visibleDays < days.length
 
   // Large vessels (≥10m) need an adjacent PAIR of bays for the day — either
   // 1 & 2 or 3 & 4. A day is available if at least one full pair is free; we
@@ -112,7 +115,7 @@ export default function AvailabilityGrid({ member, onSelect }) {
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm text-navy/70">
             Signed in as <strong>{member.fullName}</strong>. Your vessel (10m+) uses{' '}
-            <strong>a pair of bays</strong> (1 &amp; 2, or 3 &amp; 4) together — tap the days you need (up to {MAX_DAYS}).
+            <strong>a pair of bays</strong> (1 &amp; 2, or 3 &amp; 4) together — tap the days you need (up to {MAX_DAYS} total, max 5 in a row).
           </p>
           <div className="flex items-center gap-4 text-xs text-navy/60">
             <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded bg-accent/20 ring-1 ring-accent/40" /> Available</span>
@@ -122,7 +125,7 @@ export default function AvailabilityGrid({ member, onSelect }) {
         </div>
 
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 md:grid-cols-7">
-          {days.map((iso) => {
+          {shownDays.map((iso) => {
             const f = formatDay(iso)
             const isTaken = dayTaken(iso)
             const isSelected = !!selected[iso]
@@ -149,6 +152,12 @@ export default function AvailabilityGrid({ member, onSelect }) {
             )
           })}
         </div>
+
+        {hasMoreDays && (
+          <button onClick={() => setVisibleDays((v) => Math.min(v + 21, days.length))} className="mt-3 w-full rounded-xl border border-navy/15 py-2.5 text-sm font-medium text-accent hover:bg-accent/5">
+            Show more days
+          </button>
+        )}
 
         <div className="sticky bottom-4 z-20 mt-5">
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-navy/10 bg-white/95 px-5 py-4 shadow-lg backdrop-blur">
@@ -182,7 +191,7 @@ export default function AvailabilityGrid({ member, onSelect }) {
     <div>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-navy/70">
-          Signed in as <strong>{member.fullName}</strong>. Tap any free days to select — up to {MAX_DAYS} days per booking.
+          Signed in as <strong>{member.fullName}</strong>. Tap any free days to select — up to {MAX_DAYS} days total, max 5 in a row.
         </p>
         <div className="flex items-center gap-4 text-xs text-navy/60">
           <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded bg-accent/20 ring-1 ring-accent/40" /> Available</span>
@@ -196,7 +205,7 @@ export default function AvailabilityGrid({ member, onSelect }) {
           <thead>
             <tr>
               <th className="sticky left-0 z-10 bg-sand px-3 py-3 text-left font-semibold text-navy">Bay</th>
-              {days.map((iso) => {
+              {shownDays.map((iso) => {
                 const f = formatDay(iso)
                 return (
                   <th key={iso} className="bg-sand px-2 py-2 text-center font-medium text-navy/70">
@@ -213,7 +222,7 @@ export default function AvailabilityGrid({ member, onSelect }) {
                 <th className="sticky left-0 z-10 bg-white px-3 py-3 text-left font-semibold text-navy">
                   {berth.name}
                 </th>
-                {days.map((iso) => {
+                {shownDays.map((iso) => {
                   const isTaken = taken[`${berth.id}|${iso}|${PERIOD}`]
                   const isSelected = !!selected[`${berth.id}|${iso}`]
                   return (
@@ -241,6 +250,12 @@ export default function AvailabilityGrid({ member, onSelect }) {
           </tbody>
         </table>
       </div>
+
+      {hasMoreDays && (
+        <button onClick={() => setVisibleDays((v) => Math.min(v + 21, days.length))} className="mt-3 w-full rounded-xl border border-navy/15 py-2.5 text-sm font-medium text-accent hover:bg-accent/5">
+          Show more days
+        </button>
+      )}
 
       {/* Selection bar */}
       <div className="sticky bottom-4 z-20 mt-5">

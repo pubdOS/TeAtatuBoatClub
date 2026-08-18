@@ -11,15 +11,17 @@
 //     whole batch rolls back (unique index → 23505), so you never get a
 //     half-booked range.
 import { Resend } from 'resend'
-import { json, parseBody, supabase, findActiveMember, isWithinWindow } from './_supabase.js'
+import { json, parseBody, supabase, findActiveMember, isWithinWindow, nzToday, addDays, BOOKING_WINDOW_DAYS } from './_supabase.js'
 
 const VALID_BERTHS = new Set([1, 2, 3, 4])
-// The 14-day window controls how far AHEAD you can book; MAX_DAYS caps how many
-// distinct days a member can hold in a single booking. A large vessel (≥10m)
-// books 2 bays per day, so 5 days = up to 10 bay-slots; a regular member could
-// pick up to 4 bays × 5 days = 20. MAX_SLOTS is just a defensive upper bound.
-const MAX_DAYS = 5
-const MAX_SLOTS = 20
+// Booking limits (Dan 2026-08): a member can hold up to MAX_TOTAL_DAYS booked
+// days at once (across ALL their active bookings), with no run longer than
+// MAX_CONSECUTIVE days. Counts distinct DATES (a large vessel's 2 bays on one
+// day = one day). BOOKING_WINDOW_DAYS (in _supabase.js) controls how far ahead.
+// MAX_SLOTS is a defensive per-request bound (10 days × up to 4 bays).
+const MAX_TOTAL_DAYS = 10
+const MAX_CONSECUTIVE = 5
+const MAX_SLOTS = 40
 
 export const handler = async (event) => {
   if (event.httpMethod !== 'POST') return json(405, { ok: false, error: 'Method not allowed' })
@@ -42,7 +44,7 @@ export const handler = async (event) => {
       return json(400, { ok: false, error: 'Please choose at least one day.' })
     }
     if (slots.length > MAX_SLOTS) {
-      return json(400, { ok: false, error: `You can book up to ${MAX_DAYS} days at once.` })
+      return json(400, { ok: false, error: 'That is more than you can book in one go. Please book fewer days.' })
     }
 
     // Validate + normalise each slot, de-duplicating identical ones.
@@ -56,18 +58,12 @@ export const handler = async (event) => {
         return json(400, { ok: false, error: 'That work bay does not exist.' })
       }
       if (!/^\d{4}-\d{2}-\d{2}$/.test(slotDate) || !isWithinWindow(slotDate)) {
-        return json(400, { ok: false, error: 'Please choose days within the next two weeks.' })
+        return json(400, { ok: false, error: `Please choose days within the next ${BOOKING_WINDOW_DAYS} days.` })
       }
       const key = `${berthId}|${slotDate}|${slotPeriod}`
       if (seen.has(key)) continue
       seen.add(key)
       norm.push({ berthId, slotDate, slotPeriod })
-    }
-
-    // ── Cap distinct days per booking (the window controls how far ahead) ──
-    const distinctDays = new Set(norm.map((s) => s.slotDate)).size
-    if (distinctDays > MAX_DAYS) {
-      return json(400, { ok: false, error: `You can book up to ${MAX_DAYS} days at once.` })
     }
 
     // ── Re-validate the member server-side ──
@@ -76,8 +72,31 @@ export const handler = async (event) => {
       return json(403, { ok: false, error: "We couldn't confirm your membership. Please contact the office." })
     }
 
-    // ── Atomic multi-row insert (unique index rejects any double-booking) ──
+    // ── Member booking limits (Dan 2026-08): up to MAX_TOTAL_DAYS booked days at
+    // once, no run longer than MAX_CONSECUTIVE days. Counts DISTINCT DATES across
+    // the member's existing active bookings + this one. ──
     const sb = supabase()
+    const { data: existingRows } = await sb
+      .from('bookings')
+      .select('slot_date')
+      .eq('member_id', member.id)
+      .eq('status', 'confirmed')
+      .gte('slot_date', nzToday())
+    const allDates = new Set([...(existingRows || []).map((r) => r.slot_date), ...norm.map((s) => s.slotDate)])
+    if (allDates.size > MAX_TOTAL_DAYS) {
+      return json(400, { ok: false, error: `Members can hold up to ${MAX_TOTAL_DAYS} booked days at a time, and this would put you over.` })
+    }
+    const sortedDates = [...allDates].sort()
+    let run = sortedDates.length ? 1 : 0
+    let maxRun = run
+    for (let i = 1; i < sortedDates.length; i++) {
+      if (addDays(sortedDates[i - 1], 1) === sortedDates[i]) { run += 1; maxRun = Math.max(maxRun, run) } else run = 1
+    }
+    if (maxRun > MAX_CONSECUTIVE) {
+      return json(400, { ok: false, error: `Bookings can run for at most ${MAX_CONSECUTIVE} days in a row.` })
+    }
+
+    // ── Atomic multi-row insert (unique index rejects any double-booking) ──
     const rows = norm.map((s) => ({
       berth_id: s.berthId,
       slot_date: s.slotDate,
@@ -126,16 +145,18 @@ async function sendEmails({ items, member, references }) {
   const office = process.env.EMAIL_OFFICE
   const manager = process.env.EMAIL_MANAGER
 
+  // Count distinct DAYS, not bay-slots — a large vessel books 2 bays on one day.
+  const dayCount = new Set(items.map((i) => i.date)).size
   const list = items.map((i) => `<li><strong>${i.bay}</strong> — ${i.date}</li>`).join('')
   const summary = `
     <table style="border-collapse:collapse;font-size:14px">
       <tr><td style="padding:4px 12px 4px 0;color:#667">Member</td><td>${member.full_name} (#${member.membership_number})</td></tr>
-      <tr><td style="padding:4px 12px 4px 0;color:#667">Days booked</td><td>${items.length}</td></tr>
+      <tr><td style="padding:4px 12px 4px 0;color:#667">Days booked</td><td>${dayCount}</td></tr>
     </table>
     <ul style="font-size:14px;margin-top:8px;padding-left:18px">${list}</ul>
     <p style="color:#667;font-size:12px">Reference(s): ${references.join(', ')}</p>`
 
-  const subjectDays = items.length === 1 ? `${items[0].bay}, ${items[0].date}` : `${items.length} days`
+  const subjectDays = dayCount === 1 ? `${items[0].bay}, ${items[0].date}` : `${dayCount} days`
 
   const officeRecipients = [office, manager].filter(Boolean)
   if (officeRecipients.length) {
@@ -157,7 +178,8 @@ async function sendEmails({ items, member, references }) {
         <p>Thanks ${member.full_name}, your work-bay booking is confirmed:</p>
         ${summary}
         <p style="margin-top:16px">${process.env.BOOKING_NOTICE_CHARGE || 'The club will invoice you for work-bay hire at the member day rate. No payment is taken online.'}</p>
-        <p>${process.env.BOOKING_NOTICE_CANCELLATION || 'Changes and cancellations must be made by emailing the office.'}</p>`,
+        <p>${process.env.BOOKING_NOTICE_CANCELLATION || 'Changes and cancellations must be made by emailing the office.'}</p>
+        <p style="color:#b91c1c;font-weight:600">No-shows will be charged the full amount.</p>`,
     })
   }
 }

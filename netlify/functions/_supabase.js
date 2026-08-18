@@ -2,7 +2,8 @@
 // Uses the Supabase SERVICE ROLE key — server-side only, never sent to the browser.
 import { createClient } from '@supabase/supabase-js'
 
-export const BOOKING_WINDOW_DAYS = 14
+// How far AHEAD availability is shown / a slot can be booked (Dan 2026-08: 90).
+export const BOOKING_WINDOW_DAYS = 90
 
 let _client
 export function supabase() {
