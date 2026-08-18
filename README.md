@@ -1,4 +1,4 @@
-# Te Atatū Boating Club — Website + Work-Bay Booking System
+# Te Atatu Boating Club — Website + Work-Bay Booking System
 
 One repo, **two cleanly separated systems**:
 

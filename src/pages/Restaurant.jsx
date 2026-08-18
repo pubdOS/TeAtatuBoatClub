@@ -34,8 +34,8 @@ export default function Restaurant() {
       {/* Hours */}
       <section className="bg-sand">
         <div className="section grid gap-8 md:grid-cols-2">
-          <AnimatedSection>
-            <div className="card p-7">
+          <AnimatedSection className="h-full">
+            <div className="card h-full p-7">
               <h2 className="text-xl font-semibold" data-cms="Restaurant - Club Rooms - Heading">
                 {c.restaurant_clubrooms_heading}
               </h2>
@@ -50,8 +50,8 @@ export default function Restaurant() {
             </div>
           </AnimatedSection>
 
-          <AnimatedSection delay={120}>
-            <div className="card p-7">
+          <AnimatedSection delay={120} className="h-full">
+            <div className="card h-full p-7">
               <h2 className="text-xl font-semibold" data-cms="Restaurant - Kitchen - Heading">
                 {c.restaurant_kitchen_heading}
               </h2>

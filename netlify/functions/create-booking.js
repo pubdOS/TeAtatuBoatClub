@@ -141,7 +141,7 @@ async function sendEmails({ items, member, references }) {
     return
   }
   const resend = new Resend(process.env.RESEND_API_KEY)
-  const from = process.env.EMAIL_FROM || 'Te Atatū Boating Club <onboarding@resend.dev>'
+  const from = process.env.EMAIL_FROM || 'Te Atatu Boating Club <onboarding@resend.dev>'
   const office = process.env.EMAIL_OFFICE
   const manager = process.env.EMAIL_MANAGER
 

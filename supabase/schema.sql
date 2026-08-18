@@ -1,5 +1,5 @@
 -- ╔══════════════════════════════════════════════════════════════════════╗
--- ║  Te Atatū Boating Club — work-bay booking database (Supabase/Postgres) ║
+-- ║  Te Atatu Boating Club — work-bay booking database (Supabase/Postgres) ║
 -- ║  Run this once in the Supabase SQL editor for a new project.           ║
 -- ╚══════════════════════════════════════════════════════════════════════╝
 
