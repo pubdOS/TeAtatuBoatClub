@@ -55,7 +55,7 @@ export default function Facilities() {
               <div className="relative mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-navy text-gold">
                 <WheelIcon />
               </div>
-              <p className="relative text-xs font-semibold uppercase tracking-widest text-accent">Bay {i + 1}</p>
+              <p className="relative text-xs font-semibold uppercase tracking-widest text-accent" data-cms-static="index numbering inside a repeater — the bay name beside it is the editable field">Bay {i + 1}</p>
               <h3 className="relative mt-1 font-display text-xl font-semibold" data-cms-field="name">{bay.name}</h3>
               <p className="relative mt-1.5 text-sm text-navy/60" data-cms-field="desc">{bay.desc}</p>
             </div>
@@ -64,7 +64,8 @@ export default function Facilities() {
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-4 rounded-2xl bg-navy px-6 py-6 text-center text-white sm:justify-between sm:text-left">
           <p className="text-lg">
-            Book ahead to lock in the <span className="font-semibold text-gold">$25 member day rate</span>.
+            <span data-cms="Facilities - Book - Note">{c.facilities_book_note}</span>{' '}
+            <span className="font-semibold text-gold" data-cms="Facilities - Book - Note Rate">{c.facilities_book_note_rate}</span>
           </p>
           <SmartLink to={c.facilities_book_button_link} className="btn-primary shrink-0" data-cms="Facilities - Book - Button">{c.facilities_book_button}</SmartLink>
           <span hidden data-cms="Facilities - Book - Button Link">{c.facilities_book_button_link}</span>

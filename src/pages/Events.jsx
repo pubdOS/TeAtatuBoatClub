@@ -53,10 +53,10 @@ export default function Events() {
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M4 6h16M4 6a2 2 0 012-2h12a2 2 0 012 2M4 6v12a2 2 0 002 2h12a2 2 0 002-2V6" />
                 </svg>
-                Download newsletter (PDF)
+                <span data-cms="Events - Newsletter - Download Label">{c.events_newsletter_download_label}</span>
               </a>
             ) : (
-              <p className="mt-6 text-sm italic text-navy/45">The latest newsletter will be available here soon.</p>
+              <p className="mt-6 text-sm italic text-navy/45" data-cms="Events - Newsletter - Empty">{c.events_newsletter_empty}</p>
             )}
           </div>
         </AnimatedSection>
@@ -107,7 +107,7 @@ export default function Events() {
                   </div>
                   <div className="flex flex-1 flex-col p-5">
                     <h3 className="font-display text-lg font-semibold text-navy" data-cms-field="title">{comp.title}</h3>
-                    <span className="mt-auto pt-3 text-sm font-semibold text-accent">View rules &amp; details →</span>
+                    <span className="mt-auto pt-3 text-sm font-semibold text-accent" data-cms-static="per-card affordance inside a repeater — a data-cms here would duplicate its key on every card">View rules &amp; details →</span>
                     {/* Hidden fields so the CMS maps them — shown in the modal, not the card. */}
                     <span className="hidden" data-cms-field="details">{comp.details}</span>
                     <span className="hidden" data-cms-field="rules_document">{comp.rules_document}</span>
@@ -117,8 +117,8 @@ export default function Events() {
             </div>
           ) : (
             <div className="mx-auto max-w-md rounded-2xl border border-navy/10 bg-white/60 px-6 py-10 text-center">
-              <p className="font-display text-lg font-semibold text-navy">No competitions running right now</p>
-              <p className="mt-1.5 text-sm text-navy/60">Check back soon — new competitions are posted here through the season.</p>
+              <p className="font-display text-lg font-semibold text-navy" data-cms="Events - Competitions - Empty Heading">{c.events_competitions_empty_heading}</p>
+              <p className="mt-1.5 text-sm text-navy/60" data-cms="Events - Competitions - Empty Body">{c.events_competitions_empty_body}</p>
             </div>
           )}
         </div>
@@ -133,7 +133,7 @@ export default function Events() {
           <AnimatedSection>
             <p className="text-lg font-semibold text-navy" data-cms="Events - Facebook - Note">{c.events_facebook_note}</p>
             <a href={c.socials[0]?.url} target="_blank" rel="noopener noreferrer" className="btn-outline mt-5">
-              Follow on Facebook
+              <span data-cms="Events - Social - CTA">{c.events_social_cta}</span>
             </a>
           </AnimatedSection>
         </div>
@@ -176,10 +176,10 @@ export default function Events() {
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M4 6h16M4 6a2 2 0 012-2h12a2 2 0 012 2M4 6v12a2 2 0 002 2h12a2 2 0 002-2V6" />
                   </svg>
-                  Download rules (PDF)
+                  <span data-cms="Events - Rules - Download Label">{c.events_rules_download_label}</span>
                 </a>
               ) : (
-                <p className="mt-6 text-sm italic text-navy/45">Full rules will be available here soon.</p>
+                <p className="mt-6 text-sm italic text-navy/45" data-cms="Events - Rules - Empty">{c.events_rules_empty}</p>
               )}
             </div>
           </div>

@@ -1,0 +1,4 @@
+{
+  "strict": true,
+  "_why": "Editability findings BLOCK in this repo. Decline a specific case in the markup with data-cms-static=\"reason\"."
+}
