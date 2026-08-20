@@ -21,10 +21,37 @@ function SocialIcon({ platform }) {
   )
 }
 
+// One source of truth for navigation: the footer's link columns are DERIVED from
+// c.nav_links, the same array the header reads. They used to be 10 hardcoded
+// <Link>s, so renaming a page in the CMS updated the header and left the footer
+// showing the old label (and the two had already drifted: "Our Story" vs "About",
+// and Club Rules sat under a different heading in each).
+//
+// Grouped links become a column titled by their group. Ungrouped links get the
+// last column — except Home, which is the logo, and Contact, which already has
+// its own details column. nav order is preserved throughout, so reordering pages
+// in the CMS reorders the footer too.
+function footerColumns(links) {
+  const cols = []
+  const byGroup = {}
+  const loose = []
+  for (const l of links) {
+    if (l.to === '/' || l.to === '/contact') continue
+    if (l.group) {
+      if (!byGroup[l.group]) { byGroup[l.group] = { label: l.group, links: [] }; cols.push(byGroup[l.group]) }
+      byGroup[l.group].links.push(l)
+    } else {
+      loose.push(l)
+    }
+  }
+  if (loose.length) cols.push({ label: null, links: loose })
+  return cols
+}
+
 export default function Footer() {
   return (
     <footer className="bg-navy-dark text-white/80">
-      <div className="mx-auto grid max-w-6xl gap-10 px-5 py-14 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+      <div className="mx-auto grid max-w-6xl gap-10 px-5 py-14 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
         <div className="sm:col-span-2 md:col-span-1">
           <p className="text-lg font-extrabold text-white" data-cms="Footer - Brand - Name">
             {c.company_name}
@@ -34,30 +61,21 @@ export default function Footer() {
           </p>
         </div>
 
-        <div>
-          <p className="mb-3 font-semibold text-white">Boating</p>
-          <ul className="space-y-2 text-sm">
-            <li><Link to="/facilities" className="hover:text-white">Facilities</Link></li>
-            <li><Link to="/pricing" className="hover:text-white">Pricing</Link></li>
-            <li><Link to="/booking" className="hover:text-white">Book a Work Bay</Link></li>
-            <li><Link to="/membership" className="hover:text-white">Membership</Link></li>
-            <li><Link to="/club-rules" className="hover:text-white">Club Rules</Link></li>
-          </ul>
-        </div>
+        {footerColumns(c.nav_links).map((col, i) => (
+          <div key={i}>
+            <p className="mb-3 font-semibold text-white" data-cms-static="taken from the page's nav group — edit it in the nav, not here">
+              {col.label ?? 'Explore'}
+            </p>
+            <ul className="space-y-2 text-sm">
+              {col.links.map((l) => (
+                <li key={l.to}><Link to={l.to} className="hover:text-white">{l.label}</Link></li>
+              ))}
+            </ul>
+          </div>
+        ))}
 
         <div>
-          <p className="mb-3 font-semibold text-white">The Club</p>
-          <ul className="space-y-2 text-sm">
-            <li><Link to="/about" className="hover:text-white">Our Story</Link></li>
-            <li><Link to="/restaurant" className="hover:text-white">Restaurant & Bar</Link></li>
-            <li><Link to="/venue-hire" className="hover:text-white">Venue Hire</Link></li>
-            <li><Link to="/events" className="hover:text-white">What's On</Link></li>
-            <li><Link to="/gallery" className="hover:text-white">Gallery</Link></li>
-          </ul>
-        </div>
-
-        <div>
-          <p className="mb-3 font-semibold text-white">Contact</p>
+          <p className="mb-3 font-semibold text-white" data-cms-static="structural nav column label">Contact</p>
           <ul className="space-y-2 text-sm">
             <li><a href={`mailto:${c.email}`} className="hover:text-white" data-cms="Footer - Contact - Email">{c.email}</a></li>
             <li><a href={`tel:${c.phone.replace(/\s/g, '')}`} className="hover:text-white" data-cms="Footer - Contact - Phone">{c.phone}</a></li>
@@ -66,7 +84,7 @@ export default function Footer() {
         </div>
 
         <div>
-          <p className="mb-3 font-semibold text-white">Follow</p>
+          <p className="mb-3 font-semibold text-white" data-cms-static="structural nav column label">Follow</p>
           <ul className="flex gap-3" data-cms-repeater="Footer - Socials" data-cms-shape="list" data-cms-min="1" data-cms-max="6" data-cms-overflow="wrap">
             {c.socials.map((social, i) => (
               <li key={i}>
@@ -88,7 +106,7 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-white/10 py-5 text-center text-xs text-white/50">
-        © {c.company_name}. All rights reserved. · <a href="https://pubd.io" target="_blank" rel="noopener" className="transition-colors hover:text-white/80">Powered by Pubd</a>
+        © {c.company_name}. All rights reserved. · <a href="https://pubd.io" target="_blank" rel="noopener" className="transition-colors hover:text-white/80" data-cms-static="Pubd attribution — deliberately not client-editable">Powered by Pubd</a>
       </div>
     </footer>
   )

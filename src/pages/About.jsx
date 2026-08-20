@@ -24,7 +24,7 @@ export default function About() {
       {/* Story */}
       <section className="section grid items-center gap-12 md:grid-cols-2">
         <AnimatedSection>
-          <span className="eyebrow">Since the 1960s</span>
+          <span className="eyebrow" data-cms="About - Hero - Eyebrow">{c.about_hero_eyebrow}</span>
           <h2 className="text-3xl font-semibold md:text-4xl" data-cms="About - Story - Heading">
             {c.about_story_heading}
           </h2>

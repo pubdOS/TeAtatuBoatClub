@@ -94,7 +94,7 @@ export default function Restaurant() {
             />
           </button>
         </div>
-        <p className="mt-4 text-center text-sm text-navy/50">Tap a menu to enlarge.</p>
+        <p className="mt-4 text-center text-sm text-navy/50" data-cms="Restaurant - Menus - Hint">{c.restaurant_menus_hint}</p>
       </section>
 
       {/* CTA */}

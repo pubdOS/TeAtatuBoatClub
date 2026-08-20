@@ -67,7 +67,7 @@ export default function Contact() {
           </h2>
           <dl className="mt-6 space-y-4 text-navy/80">
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-navy/40">Email</dt>
+              <dt className="text-xs font-semibold uppercase tracking-wide text-navy/40" data-cms-static="label for the editable email field beside it">Email</dt>
               <dd>
                 <a href={`mailto:${c.contact_office_email}`} className="hover:text-accent" data-cms="Contact - Office - Email">
                   {c.contact_office_email}
@@ -75,7 +75,7 @@ export default function Contact() {
               </dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-navy/40">Phone</dt>
+              <dt className="text-xs font-semibold uppercase tracking-wide text-navy/40" data-cms-static="label for the editable phone field beside it">Phone</dt>
               <dd>
                 <a href={`tel:${c.contact_office_phone.replace(/\s/g, '')}`} className="hover:text-accent" data-cms="Contact - Office - Phone">
                   {c.contact_office_phone}
@@ -83,7 +83,7 @@ export default function Contact() {
               </dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-navy/40">Address</dt>
+              <dt className="text-xs font-semibold uppercase tracking-wide text-navy/40" data-cms-static="label for the editable address field beside it">Address</dt>
               <dd data-cms="Contact - Office - Address">{c.contact_office_address}</dd>
             </div>
           </dl>
@@ -105,9 +105,7 @@ export default function Contact() {
               {c.contact_form_heading}
             </h2>
             {sent ? (
-              <p className="mt-6 rounded-xl bg-accent/10 p-4 text-sm text-accent-dark">
-                Thanks for getting in touch — we’ve received your message and the office will get back to you soon.
-              </p>
+              <p className="mt-6 rounded-xl bg-accent/10 p-4 text-sm text-accent-dark" data-cms="Contact - Form - Success Body">{c.contact_form_success_body}</p>
             ) : (
               <form
                 name="contact"
@@ -119,7 +117,7 @@ export default function Contact() {
               >
                 {/* Honeypot — hidden from humans, bots fill it and get dropped */}
                 <p className="hidden">
-                  <label>Don’t fill this out: <input name="bot-field" /></label>
+                  <label data-cms-static="Netlify honeypot — hidden from visitors, must stay fixed">Don’t fill this out: <input name="bot-field" /></label>
                 </p>
                 <input name="name" required placeholder="Your name" className="w-full rounded-xl border border-navy/15 px-4 py-3 focus:border-accent focus:outline-none" />
                 <input name="email" type="email" required placeholder="Your email" className="w-full rounded-xl border border-navy/15 px-4 py-3 focus:border-accent focus:outline-none" />

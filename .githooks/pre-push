@@ -3,6 +3,18 @@
 # Why: the CMS publishes to main and Netlify deploys main, so main must always
 # be shippable. Do code work on a branch and merge it (see CLAUDE.md).
 # Deliberate exception? `git push --no-verify`.
+# Convention gate — cms-check must pass before code leaves the machine. In a
+# strict repo (.cms-check.json → {"strict": true}) that includes editability.
+# Runs before the branch guard below so stdin (the ref list) is untouched.
+CHECK="$HOME/.claude/skills/cms-check/check.mjs"
+ROOT=$(git rev-parse --show-toplevel)
+if [ -f "$CHECK" ] && command -v node >/dev/null 2>&1; then
+  if ! node "$CHECK" "$ROOT"; then
+    echo "✋ cms-check failed — fix the findings above, or 'git push --no-verify' if deliberate."
+    exit 1
+  fi
+fi
+
 while read -r _local_ref local_sha remote_ref _remote_sha; do
   [ "$remote_ref" = "refs/heads/main" ] || continue
   # branch deletion — nothing to check
