@@ -72,36 +72,38 @@ function post(msg) {
 // nearest-neighbour guessing. Active = the last section whose start sits above
 // the anchor line (upper third of the viewport).
 function activeSectionNow() {
-  const anchor = window.innerHeight * 0.35
+  // The anchor is the line a section's top must cross to become "current".
+  // A FIXED anchor (35% of the viewport) strands the end of every page: once the
+  // document bottoms out there is no scroll left to push the final sections up
+  // past that line, so they could never become current and the client had to
+  // reach for the dropdown. So the anchor SLIDES — as the remaining scroll runs
+  // out it walks down toward the foot of the viewport, giving each of the last
+  // sections its turn on the way. (A previous attempt put this after the anchor
+  // selection, where it was dead code: a section scrolled past always matched
+  // first and returned.)
+  const ih = window.innerHeight
+  const maxScroll = Math.max(0, document.documentElement.scrollHeight - ih)
+  const remaining = maxScroll - window.scrollY
+  const t = maxScroll <= 0 ? 1 : 1 - Math.min(1, Math.max(0, remaining) / ih)
+  const anchor = ih * (0.35 + 0.55 * t)
+
   const tops = new Map() // prefix → current min top
   for (const { el, prefix } of voters) {
     if (!el.getClientRects().length) continue
-    const t = el.getBoundingClientRect().top
+    const top = el.getBoundingClientRect().top
     const cur = tops.get(prefix)
-    if (cur === undefined || t < cur) tops.set(prefix, t)
+    if (cur === undefined || top < cur) tops.set(prefix, top)
   }
   let best = null
   let bestTop = -Infinity
-  tops.forEach((t, prefix) => {
-    if (t <= anchor && t > bestTop) { bestTop = t; best = prefix }
+  tops.forEach((top, prefix) => {
+    if (top <= anchor && top > bestTop) { bestTop = top; best = prefix }
   })
   if (best) return best
-  // At the very bottom of the document there is no scroll left to bring the
-  // final sections past the anchor line, so anything inside the last
-  // (viewport - anchor) pixels could NEVER become active by scrolling and the
-  // client had to reach for the dropdown to edit it. Hand it to the bottom-most
-  // section that is actually on screen.
-  const doc = document.documentElement
-  if (window.innerHeight + window.scrollY >= doc.scrollHeight - 2) {
-    let last = null
-    let lastTop = -Infinity
-    tops.forEach((t, prefix) => { if (t < window.innerHeight && t > lastTop) { lastTop = t; last = prefix } })
-    if (last) return last
-  }
   // Above the first section (page top) → the first section
   let first = null
   let firstTop = Infinity
-  tops.forEach((t, prefix) => { if (t < firstTop) { firstTop = t; first = prefix } })
+  tops.forEach((top, prefix) => { if (top < firstTop) { firstTop = top; first = prefix } })
   return first
 }
 
