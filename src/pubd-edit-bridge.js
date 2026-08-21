@@ -83,16 +83,22 @@ function activeSectionNow() {
   // first and returned.)
   const ih = window.innerHeight
   const maxScroll = Math.max(0, document.documentElement.scrollHeight - ih)
-  // Slide on scroll PROGRESS, not on remaining pixels. Keying off pixels meant a
-  // short page had "little scroll left" the moment it loaded, so the anchor was
-  // already near the foot of the viewport at scrollY 0 and the panel opened on
-  // the FOOTER instead of the hero (venue-hire, club-rules). Progress is 0 at
-  // the top of every page regardless of its length, and the anchor only starts
-  // walking down over the last fifth of the scroll, which is the only place the
-  // stranding problem actually exists.
-  const progress = maxScroll <= 0 ? 0 : window.scrollY / maxScroll
-  const t = Math.min(1, Math.max(0, (progress - 0.8) / 0.2))
-  const anchor = ih * (0.35 + 0.55 * t)
+  // The anchor walks down the viewport across the WHOLE page, 25% to 85%, in step
+  // with scroll progress. A section is current while its start sits above the
+  // anchor and below the next section's start, so the anchor's travel is what
+  // gives each section its turn — and a FIXED anchor gives that turn a width set
+  // by the section's height alone. That is why short sections became slivers a
+  // client could only reach with the arrows (Stead's Resources - Library owned
+  // 90px of a 540px page) and why the last section before a tall footer often
+  // got no turn at all.
+  //
+  // Chosen by measuring, not taste. Across four real pages, worst-case section
+  // window: fixed 0.35 (what shipped) 0/130/20/50px · fixed 0.5 30/260/150/190 ·
+  // largest-visible-territory 0/240/10/0 · this 110/210/250/250. Note the
+  // coverage model — the obvious "pick whatever fills the screen" answer — is
+  // WORSE than what it replaced: a tall neighbour swallows a short section whole.
+  const progress = maxScroll <= 0 ? 0 : Math.min(1, Math.max(0, window.scrollY / maxScroll))
+  const anchor = ih * (0.25 + 0.6 * progress)
 
   const tops = new Map() // prefix → current min top
   for (const { el, prefix } of voters) {
