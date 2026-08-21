@@ -83,8 +83,15 @@ function activeSectionNow() {
   // first and returned.)
   const ih = window.innerHeight
   const maxScroll = Math.max(0, document.documentElement.scrollHeight - ih)
-  const remaining = maxScroll - window.scrollY
-  const t = maxScroll <= 0 ? 1 : 1 - Math.min(1, Math.max(0, remaining) / ih)
+  // Slide on scroll PROGRESS, not on remaining pixels. Keying off pixels meant a
+  // short page had "little scroll left" the moment it loaded, so the anchor was
+  // already near the foot of the viewport at scrollY 0 and the panel opened on
+  // the FOOTER instead of the hero (venue-hire, club-rules). Progress is 0 at
+  // the top of every page regardless of its length, and the anchor only starts
+  // walking down over the last fifth of the scroll, which is the only place the
+  // stranding problem actually exists.
+  const progress = maxScroll <= 0 ? 0 : window.scrollY / maxScroll
+  const t = Math.min(1, Math.max(0, (progress - 0.8) / 0.2))
   const anchor = ih * (0.35 + 0.55 * t)
 
   const tops = new Map() // prefix → current min top
