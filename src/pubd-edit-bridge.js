@@ -193,14 +193,25 @@ function applyValue(el, value, scope) {
       ;(scope || document).querySelectorAll('img').forEach((n) => {
         if (n !== el && n.getAttribute('src') === old) n.src = value || ''
       })
-    } else if (el.parentElement && value) {
-      // Previously-empty slot: no old src to match. The hidden-companion
-      // convention keeps the CSS-background layer beside the img, so update
-      // background layers in the same parent that carry no decoration of
-      // their own ('none' or a real url) — never gradient washes.
-      el.parentElement.querySelectorAll('[style]').forEach((n) => {
-        const bg = n.style.backgroundImage
-        if (bg === 'none' || (bg && bg.includes('url('))) paint(n)
+    } else if (value) {
+      // Previously-empty slot: no old src to match on. This is the case for a
+      // NEWLY ADDED repeater item, whose companion starts blank — so the branch
+      // above never runs and the first picture the client uploads appeared
+      // nowhere on the page (Runpoint Product, 2026-08-21).
+      if (el.parentElement) {
+        // The hidden-companion convention keeps the CSS-background layer beside
+        // the img, so update background layers in the same parent that carry no
+        // decoration of their own ('none' or a real url) — never gradient washes.
+        el.parentElement.querySelectorAll('[style]').forEach((n) => {
+          const bg = n.style.backgroundImage
+          if (bg === 'none' || (bg && bg.includes('url('))) paint(n)
+        })
+      }
+      // …and the painter may equally be a plain <img> rendered by a component
+      // (a device frame, a card thumbnail). Search the whole item scope, since
+      // it usually sits in a sibling subtree rather than the same parent.
+      ;(scope || el.parentElement || document).querySelectorAll('img').forEach((n) => {
+        if (n !== el && !n.getAttribute('src')) n.src = value
       })
     }
   } else {
