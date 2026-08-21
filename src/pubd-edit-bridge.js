@@ -185,6 +185,14 @@ function applyValue(el, value, scope) {
       ;(scope || document).querySelectorAll('[style]').forEach((n) => {
         if (n.style.backgroundImage && n.style.backgroundImage.includes(old)) paint(n)
       })
+      // The visible painter is not always a CSS background. Where the mapping
+      // lives on a hidden companion and a COMPONENT renders the real <img>
+      // (Runpoint's DeviceFrame), that img carries no data-cms-field, so it kept
+      // the cloned item's picture while the companion updated — a newly added
+      // item showed the previous one's screenshot. Twin plain <img>s too.
+      ;(scope || document).querySelectorAll('img').forEach((n) => {
+        if (n !== el && n.getAttribute('src') === old) n.src = value || ''
+      })
     } else if (el.parentElement && value) {
       // Previously-empty slot: no old src to match. The hidden-companion
       // convention keeps the CSS-background layer beside the img, so update
