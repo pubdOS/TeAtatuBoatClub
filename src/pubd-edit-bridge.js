@@ -101,6 +101,20 @@ function activeSectionNow() {
     const cur = tops.get(prefix)
     if (cur === undefined || top < cur) tops.set(prefix, top)
   }
+  // At the very top of a page the answer is always the FIRST section. The rule
+  // below picks the LOWEST section still above the anchor, which is right while
+  // scrolling but wrong at rest on page load: if a hero is short, the hero AND
+  // the section under it can both sit above the anchor line, and the section
+  // under it wins. That is the "hero shows for a split second, then jumps to
+  // intro on its own" flicker — the first report lands before layout settles,
+  // then a second one after images and fonts resolve hands it to the intro.
+  if (window.scrollY <= 4) {
+    let first = null
+    let firstTop = Infinity
+    tops.forEach((top, prefix) => { if (top < firstTop) { firstTop = top; first = prefix } })
+    if (first) return first
+  }
+
   let best = null
   let bestTop = -Infinity
   tops.forEach((top, prefix) => {
