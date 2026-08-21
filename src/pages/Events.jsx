@@ -80,15 +80,15 @@ export default function Events() {
         <div className="section">
           <AnimatedSection>
             <div className="mx-auto mb-10 max-w-2xl text-center">
-              <h2 className="font-display text-3xl font-semibold text-navy" data-cms="Competitions - Heading">
+              <h2 className="font-display text-3xl font-semibold text-navy" data-cms="Events - Competitions - Heading">
                 {c.competitions_heading}
               </h2>
-              <p className="mt-3 text-navy/70" data-cms="Competitions - Sub">{c.competitions_sub}</p>
+              <p className="mt-3 text-navy/70" data-cms="Events - Competitions - Sub">{c.competitions_sub}</p>
             </div>
           </AnimatedSection>
 
           {c.competitions.length > 0 ? (
-            <div data-cms-repeater="Competitions - List" data-cms-shape="list" data-cms-min="1" data-cms-recommend="3" data-cms-max="9" data-cms-overflow="wrap" className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div data-cms-repeater="Events - Competitions - List" data-cms-shape="list" data-cms-min="1" data-cms-recommend="3" data-cms-max="9" data-cms-overflow="wrap" className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {c.competitions.map((comp, i) => (
                 <button
                   key={i}

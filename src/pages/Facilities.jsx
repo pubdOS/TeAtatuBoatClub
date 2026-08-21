@@ -48,7 +48,7 @@ export default function Facilities() {
           <p className="mt-4 text-navy/70" data-cms="Facilities - Bays - Body">{c.facilities_bays_body}</p>
         </AnimatedSection>
 
-        <div data-cms-repeater="Facilities - Work Bays" data-cms-shape="card" data-cms-min="2" data-cms-recommend="4" data-cms-max="8" data-cms-overflow="wrap" data-cms-note="Bays are named in booking order — keep them listed in the same order as the physical bays." className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div data-cms-repeater="Facilities - Bays - List" data-cms-shape="card" data-cms-min="2" data-cms-recommend="4" data-cms-max="8" data-cms-overflow="wrap" data-cms-note="Bays are named in booking order — keep them listed in the same order as the physical bays." className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {c.work_bays.map((bay, i) => (
             <div key={i} className="card group relative overflow-hidden p-6">
               <span className="absolute right-0 top-0 h-16 w-16 -translate-y-8 translate-x-8 rounded-full bg-gold/15 transition-transform group-hover:scale-150" />
@@ -64,11 +64,11 @@ export default function Facilities() {
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-4 rounded-2xl bg-navy px-6 py-6 text-center text-white sm:justify-between sm:text-left">
           <p className="text-lg">
-            <span data-cms="Facilities - Book - Note">{c.facilities_book_note}</span>{' '}
-            <span className="font-semibold text-gold" data-cms="Facilities - Book - Note Rate">{c.facilities_book_note_rate}</span>
+            <span data-cms="Facilities - Bays - Book Note">{c.facilities_book_note}</span>{' '}
+            <span className="font-semibold text-gold" data-cms="Facilities - Bays - Book Rate">{c.facilities_book_note_rate}</span>
           </p>
-          <SmartLink to={c.facilities_book_button_link} className="btn-primary shrink-0" data-cms="Facilities - Book - Button">{c.facilities_book_button}</SmartLink>
-          <span hidden data-cms="Facilities - Book - Button Link">{c.facilities_book_button_link}</span>
+          <SmartLink to={c.facilities_book_button_link} className="btn-primary shrink-0" data-cms="Facilities - Bays - Book Button">{c.facilities_book_button}</SmartLink>
+          <span hidden data-cms="Facilities - Bays - Book Button Link">{c.facilities_book_button_link}</span>
         </div>
       </section>
 

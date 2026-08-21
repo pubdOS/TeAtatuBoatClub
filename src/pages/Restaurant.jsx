@@ -39,7 +39,7 @@ export default function Restaurant() {
               <h2 className="text-xl font-semibold" data-cms="Restaurant - Club Rooms - Heading">
                 {c.restaurant_clubrooms_heading}
               </h2>
-              <ul data-cms-repeater="Restaurant - Club Rooms Hours" data-cms-shape="list" data-cms-min="1" data-cms-max="7" data-cms-overflow="wrap" className="mt-4 divide-y divide-navy/5">
+              <ul data-cms-repeater="Restaurant - Club Rooms - Hours" data-cms-shape="list" data-cms-min="1" data-cms-max="7" data-cms-overflow="wrap" className="mt-4 divide-y divide-navy/5">
                 {c.clubrooms_hours.map((row, i) => (
                   <li key={i} className="flex items-center justify-between py-2.5 text-sm">
                     <span className="font-medium text-navy" data-cms-field="days">{row.days}</span>
@@ -56,7 +56,7 @@ export default function Restaurant() {
                 {c.restaurant_kitchen_heading}
               </h2>
               <p className="mt-1 text-sm text-navy/60" data-cms="Restaurant - Kitchen - Sub">{c.restaurant_kitchen_sub}</p>
-              <ul data-cms-repeater="Restaurant - Kitchen Hours" data-cms-shape="list" data-cms-min="1" data-cms-max="7" data-cms-overflow="wrap" className="mt-4 divide-y divide-navy/5">
+              <ul data-cms-repeater="Restaurant - Kitchen - Hours" data-cms-shape="list" data-cms-min="1" data-cms-max="7" data-cms-overflow="wrap" className="mt-4 divide-y divide-navy/5">
                 {c.kitchen_hours.map((row, i) => (
                   <li key={i} className="flex items-center justify-between py-2.5 text-sm">
                     <span className="font-medium text-navy" data-cms-field="days">{row.days}</span>

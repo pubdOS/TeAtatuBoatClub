@@ -21,10 +21,10 @@ export default function Rules() {
 
       <section className="section mx-auto max-w-3xl">
         <AnimatedSection className="mb-8">
-          <p className="text-lg text-navy/70" data-cms="Rules - Intro - Body">{c.rules_intro_body}</p>
+          <p className="text-lg text-navy/70" data-cms="Rules - Content - Body">{c.rules_intro_body}</p>
         </AnimatedSection>
 
-        <div data-cms-repeater="Rules - Groups" data-cms-shape="card" data-cms-min="2" data-cms-overflow="wrap" className="space-y-5">
+        <div data-cms-repeater="Rules - Content - Groups" data-cms-shape="card" data-cms-min="2" data-cms-overflow="wrap" className="space-y-5">
           {c.rules_groups.map((g, i) => (
             <div key={i} className="card p-6">
               <h3 className="font-display text-lg font-semibold text-navy" data-cms-field="title">{g.title}</h3>
@@ -33,7 +33,7 @@ export default function Rules() {
           ))}
         </div>
 
-        <p className="mt-8 rounded-xl bg-amber-50 px-5 py-4 text-sm text-amber-900" data-cms="Rules - Notice - Body">
+        <p className="mt-8 rounded-xl bg-amber-50 px-5 py-4 text-sm text-amber-900" data-cms="Rules - Content - Notice">
           {c.rules_notice}
         </p>
       </section>
