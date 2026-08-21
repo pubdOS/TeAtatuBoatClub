@@ -56,3 +56,16 @@ body {
     @apply rounded-2xl border border-navy/10 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-navy/15;
   }
 }
+
+/* ── CMS safety net ───────────────────────────────────────────────────────────
+   Any editable slot can receive an UNBROKEN string: a pasted URL, a long token,
+   or a client mashing keys to see what happens. CSS cannot wrap a "word" that
+   offers no break opportunity, so without this it runs straight out of its
+   column and drags the page into horizontal scroll. Verified on a real field:
+   a 700px token inside a 498px column, page overflowing; with this rule it wraps
+   at 498px instead. Applies to every editable element, including ones added
+   later, which is why it keys off the attribute rather than a class. */
+[data-cms],
+[data-cms-field] {
+  overflow-wrap: break-word;
+}
