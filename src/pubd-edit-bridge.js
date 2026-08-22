@@ -10,7 +10,17 @@ const ALLOWED_PARENTS = ['https://cms.pubd.io', 'http://localhost:3000']
 let cmsOrigin = null
 
 // "Home - Hero - Heading" → prefix "Home - Hero" (page-qualified section id)
-function prefixOf(key) { return key.split(' - ').slice(0, 2).join(' - ') }
+// MUST match VisualEditor.prefixOf. The panel groups Nav and Footer as ONE
+// section each (they are single strips a visitor reads as one thing), so if this
+// keeps reporting two-segment prefixes the panel is handed a section name it does
+// not know — scrolling into the footer reported "Footer - Contact", the panel
+// could not match it, and fell back to the first section, so reaching the bottom
+// of a page bounced the editor back to the hero.
+const ONE_PIECE_PAGES = new Set(['Nav', 'Footer'])
+function prefixOf(key) {
+  const parts = key.split(' - ')
+  return ONE_PIECE_PAGES.has(parts[0]) ? parts[0] : parts.slice(0, 2).join(' - ')
+}
 
 // key → [elements]. Rebuilt on load + after SPA navigation.
 const fieldMap = new Map()

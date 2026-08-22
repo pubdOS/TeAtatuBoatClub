@@ -38,11 +38,11 @@ export default function NewsletterSignup() {
   return (
     <section className="bg-navy">
       <div className="section mx-auto max-w-xl text-center text-white">
-        <h2 className="font-display text-2xl font-semibold" data-cms="Newsletter - Heading">{c.newsletter_signup_heading}</h2>
-        <p className="mt-2 text-white/75" data-cms="Newsletter - Sub">{c.newsletter_signup_sub}</p>
+        <h2 className="font-display text-2xl font-semibold" data-cms="Events - Signup - Heading">{c.newsletter_signup_heading}</h2>
+        <p className="mt-2 text-white/75" data-cms="Events - Signup - Sub">{c.newsletter_signup_sub}</p>
 
         {done ? (
-          <p className="mt-6 text-lg font-medium text-gold" data-cms="Newsletter - Success">{c.newsletter_signup_success}</p>
+          <p className="mt-6 text-lg font-medium text-gold" data-cms="Events - Signup - Success">{c.newsletter_signup_success}</p>
         ) : (
           <form onSubmit={submit} className="mt-6 flex flex-col gap-3 sm:flex-row">
             {/* honeypot — visually hidden */}
@@ -57,7 +57,7 @@ export default function NewsletterSignup() {
               placeholder="Your email"
               className="flex-1 rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white/40"
             />
-            <button type="submit" disabled={busy} className="btn-primary shrink-0 disabled:opacity-60" data-cms="Newsletter - Button">
+            <button type="submit" disabled={busy} className="btn-primary shrink-0 disabled:opacity-60" data-cms="Events - Signup - Button">
               {busy ? 'Subscribing…' : c.newsletter_signup_button}
             </button>
           </form>
