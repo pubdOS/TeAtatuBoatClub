@@ -1045,7 +1045,7 @@ export default {
   "events_newsletter_document": "",
   "newsletter_signup_heading": "Stay in the loop",
   "newsletter_signup_sub": "Get club news, events and results straight to your inbox.",
-  "newsletter_signup_button": "Subscribe",
+  "newsletter_signup_button": "",
   "newsletter_signup_success": "You’re in — thanks for subscribing!",
   "events": [
     {
@@ -1134,7 +1134,7 @@ export default {
   "contact_office_address": "32 Bridge Ave, Te Atatu South, Auckland 0610",
   "contact_map_embed": "https://www.google.com/maps?q=32+Bridge+Ave,+Te+Atatu+South,+Auckland&output=embed",
   "contact_form_heading": "Send an Enquiry",
-  "contact_form_submit": "Send Message",
+  "contact_form_submit": "",
   "contact_form_success_body": "Thanks for getting in touch — we’ve received your message and the office will get back to you soon.",
   "footer_tagline": "A member-run boating club in Te Atatu South, Auckland — boating facilities, bar, restaurant and functions since the 1960s."
 }
