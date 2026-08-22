@@ -57,8 +57,9 @@ export default function NewsletterSignup() {
               placeholder="Your email"
               className="flex-1 rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-white/40"
             />
-            <button type="submit" disabled={busy} className="btn-primary shrink-0 disabled:opacity-60" data-cms="Events - Signup - Button">
-              {busy ? 'Subscribing…' : c.newsletter_signup_button}
+            <button type="submit" disabled={busy} className="btn-primary shrink-0 disabled:opacity-60">
+              <span data-cms-static="transient form state, not page copy" hidden={!busy}>Subscribing…</span>
+              <span data-cms="Events - Signup - Button" hidden={busy}>{c.newsletter_signup_button}</span>
             </button>
           </form>
         )}

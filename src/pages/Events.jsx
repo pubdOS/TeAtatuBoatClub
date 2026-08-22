@@ -27,7 +27,7 @@ export default function Events() {
 
       <section className="section mx-auto max-w-3xl text-center">
         <AnimatedSection>
-          <p className="text-lg text-navy/70" data-cms="Events - Intro - Body">{c.events_intro_body}</p>
+          <p className="text-lg text-navy/70" data-cms="Events - Whats On - Intro">{c.events_intro_body}</p>
         </AnimatedSection>
       </section>
 
@@ -37,12 +37,12 @@ export default function Events() {
       <section className="section pt-0">
         <AnimatedSection>
           <div className="mx-auto max-w-xl rounded-3xl border border-navy/10 bg-sand px-6 py-8 text-center">
-            <h2 className="font-display text-2xl font-semibold text-navy" data-cms="Events - Newsletter - Heading">
+            <h2 className="font-display text-2xl font-semibold text-navy" data-cms="Events - Whats On - Newsletter Heading">
               {c.events_newsletter_heading}
             </h2>
-            <p className="mt-2 text-navy/70" data-cms="Events - Newsletter - Body">{c.events_newsletter_body}</p>
+            <p className="mt-2 text-navy/70" data-cms="Events - Whats On - Newsletter Body">{c.events_newsletter_body}</p>
             {/* CMS-mapped file field (PDF upload happens here) — hidden on the live site. */}
-            <a hidden href={c.events_newsletter_document} data-cms="Events - Newsletter - Document">newsletter</a>
+            <a hidden href={c.events_newsletter_document} data-cms="Events - Whats On - Newsletter Document">newsletter</a>
             {c.events_newsletter_document ? (
               <a
                 href={c.events_newsletter_document}
@@ -53,10 +53,10 @@ export default function Events() {
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M4 6h16M4 6a2 2 0 012-2h12a2 2 0 012 2M4 6v12a2 2 0 002 2h12a2 2 0 002-2V6" />
                 </svg>
-                <span data-cms="Events - Newsletter - Download Label">{c.events_newsletter_download_label}</span>
+                <span data-cms="Events - Whats On - Newsletter Download Label">{c.events_newsletter_download_label}</span>
               </a>
             ) : (
-              <p className="mt-6 text-sm italic text-navy/45" data-cms="Events - Newsletter - Empty">{c.events_newsletter_empty}</p>
+              <p className="mt-6 text-sm italic text-navy/45" data-cms="Events - Whats On - Newsletter Empty">{c.events_newsletter_empty}</p>
             )}
           </div>
         </AnimatedSection>
@@ -64,7 +64,7 @@ export default function Events() {
 
       {/* Events (repeater) */}
       <section className="section pt-0">
-        <div data-cms-repeater="Events - List" data-cms-shape="list" data-cms-min="1" data-cms-recommend="3" data-cms-max="9" data-cms-overflow="wrap" className="grid gap-6 md:grid-cols-3">
+        <div data-cms-repeater="Events - Whats On - List" data-cms-shape="list" data-cms-min="1" data-cms-recommend="3" data-cms-max="9" data-cms-overflow="wrap" className="grid gap-6 md:grid-cols-3">
           {c.events.map((e, i) => (
             <div key={i} className="card flex flex-col p-6">
               <span className="text-xs font-semibold uppercase tracking-wide text-accent" data-cms-field="date">{e.date}</span>
