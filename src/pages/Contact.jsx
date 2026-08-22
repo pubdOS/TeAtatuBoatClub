@@ -123,8 +123,9 @@ export default function Contact() {
                 <input name="email" type="email" required placeholder="Your email" className="w-full rounded-xl border border-navy/15 px-4 py-3 focus:border-accent focus:outline-none" />
                 <textarea name="message" required rows={5} placeholder="How can we help?" className="w-full rounded-xl border border-navy/15 px-4 py-3 focus:border-accent focus:outline-none" />
                 {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
-                <button type="submit" disabled={sending} className="btn-primary w-full disabled:opacity-60" data-cms="Contact - Form - Submit">
-                  {sending ? 'Sending…' : c.contact_form_submit}
+                <button type="submit" disabled={sending} className="btn-primary w-full disabled:opacity-60">
+                  <span data-cms-static="transient form state, not page copy" hidden={!sending}>Sending…</span>
+                  <span data-cms="Contact - Form - Submit" hidden={sending}>{c.contact_form_submit}</span>
                 </button>
               </form>
             )}
