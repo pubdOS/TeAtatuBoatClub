@@ -45,19 +45,19 @@ export default function Facilities() {
           <h2 className="text-3xl font-semibold md:text-4xl" data-cms="Facilities - Bays - Heading">
             {c.facilities_bays_heading}
           </h2>
-          <p className="mt-4 text-navy/70" data-cms="Facilities - Bays - Body">{c.facilities_bays_body}</p>
+          <p className="mt-4 text-navy/70 whitespace-pre-line" data-cms="Facilities - Bays - Body">{c.facilities_bays_body}</p>
         </AnimatedSection>
 
-        <div data-cms-repeater="Facilities - Bays - List" data-cms-shape="card" data-cms-min="2" data-cms-recommend="4" data-cms-max="8" data-cms-overflow="wrap" data-cms-note="Bays are named in booking order — keep them listed in the same order as the physical bays." className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div data-cms-repeater="Facilities - Bays - List" data-cms-shape="card" data-cms-min="2" data-cms-recommend="4" data-cms-max="8" data-cms-overflow="wrap" data-cms-note="Bays are named in booking order — keep them listed in the same order as the physical bays." className="cms-count-root grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {c.work_bays.map((bay, i) => (
             <div key={i} className="card group relative overflow-hidden p-6">
               <span className="absolute right-0 top-0 h-16 w-16 -translate-y-8 translate-x-8 rounded-full bg-gold/15 transition-transform group-hover:scale-150" />
               <div className="relative mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-navy text-gold">
                 <WheelIcon />
               </div>
-              <p className="relative text-xs font-semibold uppercase tracking-widest text-accent" data-cms-static="index numbering inside a repeater — the bay name beside it is the editable field">Bay {i + 1}</p>
+              <p className="relative text-xs font-semibold uppercase tracking-widest text-accent" data-cms-static="index numbering inside a repeater — the bay name beside it is the editable field">Bay <span className="cms-count" /></p>
               <h3 className="relative mt-1 font-display text-xl font-semibold" data-cms-field="name">{bay.name}</h3>
-              <p className="relative mt-1.5 text-sm text-navy/60" data-cms-field="desc">{bay.desc}</p>
+              <p className="relative mt-1.5 text-sm text-navy/60 whitespace-pre-line" data-cms-field="desc">{bay.desc}</p>
             </div>
           ))}
         </div>
@@ -89,7 +89,7 @@ export default function Facilities() {
                 </div>
                 <div>
                   <h3 className="font-display text-lg font-semibold" data-cms-field="title">{f.title}</h3>
-                  <p className="mt-1 text-sm text-navy/65" data-cms-field="desc">{f.desc}</p>
+                  <p className="mt-1 text-sm text-navy/65 whitespace-pre-line" data-cms-field="desc">{f.desc}</p>
                 </div>
               </div>
             ))}
