@@ -23,7 +23,7 @@ export default function Venue() {
 
       <section className="section mx-auto max-w-3xl text-center">
         <AnimatedSection>
-          <p className="text-lg text-navy/70" data-cms="Venue - Intro - Body">{c.venue_intro_body}</p>
+          <p className="text-lg text-navy/70 whitespace-pre-line" data-cms="Venue - Intro - Body">{c.venue_intro_body}</p>
         </AnimatedSection>
       </section>
 
@@ -34,7 +34,7 @@ export default function Venue() {
             <div key={i} className="card p-7">
               <h3 className="font-display text-2xl font-semibold" data-cms-field="name">{v.name}</h3>
               <p className="mt-1 text-sm font-semibold text-accent" data-cms-field="capacity">{v.capacity}</p>
-              <p className="mt-3 text-navy/70" data-cms-field="desc">{v.desc}</p>
+              <p className="mt-3 text-navy/70 whitespace-pre-line" data-cms-field="desc">{v.desc}</p>
             </div>
           ))}
         </div>

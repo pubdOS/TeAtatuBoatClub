@@ -22,7 +22,7 @@ export default function Home() {
           <h1 className="max-w-3xl text-4xl font-semibold leading-tight md:text-6xl" data-cms="Home - Hero - Heading">
             {c.home_hero_heading}
           </h1>
-          <p className="mt-5 max-w-2xl text-lg text-white/80" data-cms="Home - Hero - Sub">
+          <p className="mt-5 max-w-2xl text-lg text-white/80 whitespace-pre-line" data-cms="Home - Hero - Sub">
             {c.home_hero_sub}
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
@@ -64,7 +64,7 @@ export default function Home() {
           <h2 className="text-3xl font-semibold md:text-4xl" data-cms="Home - About - Heading">
             {c.home_about_heading}
           </h2>
-          <p className="mt-4 text-navy/70" data-cms="Home - About - Body">{c.home_about_body}</p>
+          <p className="mt-4 text-navy/70 whitespace-pre-line" data-cms="Home - About - Body">{c.home_about_body}</p>
           <SmartLink to={c.home_about_cta_link} className="btn-outline mt-6" data-cms="Home - About - CTA">
             {c.home_about_cta}
           </SmartLink>
@@ -124,7 +124,7 @@ export default function Home() {
               <div key={i} className="card p-7">
                 <span className="mb-4 block h-1 w-10 rounded bg-gold" />
                 <h3 className="font-display text-xl font-semibold" data-cms-field="title">{f.title}</h3>
-                <p className="mt-2 text-navy/70" data-cms-field="desc">{f.desc}</p>
+                <p className="mt-2 text-navy/70 whitespace-pre-line" data-cms-field="desc">{f.desc}</p>
               </div>
             ))}
           </div>

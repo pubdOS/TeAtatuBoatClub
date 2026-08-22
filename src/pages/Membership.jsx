@@ -26,7 +26,7 @@ export default function Membership() {
           <h2 className="text-3xl font-semibold md:text-4xl" data-cms="Membership - Intro - Heading">
             {c.membership_intro_heading}
           </h2>
-          <p className="mt-4 text-navy/70" data-cms="Membership - Intro - Body">{c.membership_intro_body}</p>
+          <p className="mt-4 text-navy/70 whitespace-pre-line" data-cms="Membership - Intro - Body">{c.membership_intro_body}</p>
         </AnimatedSection>
 
         {/* Fees */}
@@ -54,14 +54,12 @@ export default function Membership() {
             {c.membership_how_heading}
           </h2>
         </AnimatedSection>
-        <div data-cms-repeater="Membership - Steps" data-cms-shape="list" data-cms-min="2" data-cms-recommend="4" data-cms-max="6" data-cms-overflow="wrap" className="grid gap-5 sm:grid-cols-2">
+        <div data-cms-repeater="Membership - Steps" data-cms-shape="list" data-cms-min="2" data-cms-recommend="4" data-cms-max="6" data-cms-overflow="wrap" className="cms-count-root grid gap-5 sm:grid-cols-2">
           {c.membership_steps.map((s, i) => (
             <div key={i} className="card p-6">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent text-sm font-bold text-white">
-                {i + 1}
-              </span>
+              <span className="cms-count flex h-8 w-8 items-center justify-center rounded-full bg-accent text-sm font-bold text-white" />
               <h3 className="mt-3 text-lg font-bold" data-cms-field="step">{s.step}</h3>
-              <p className="mt-1 text-sm text-navy/70" data-cms-field="desc">{s.desc}</p>
+              <p className="mt-1 text-sm text-navy/70 whitespace-pre-line" data-cms-field="desc">{s.desc}</p>
             </div>
           ))}
         </div>
@@ -73,7 +71,7 @@ export default function Membership() {
             {c.membership_benefits.map((b, i) => (
               <div key={i} className="card p-6 text-center">
                 <h3 className="text-lg font-bold" data-cms-field="title">{b.title}</h3>
-                <p className="mt-2 text-sm text-navy/70" data-cms-field="desc">{b.desc}</p>
+                <p className="mt-2 text-sm text-navy/70 whitespace-pre-line" data-cms-field="desc">{b.desc}</p>
               </div>
             ))}
           </div>

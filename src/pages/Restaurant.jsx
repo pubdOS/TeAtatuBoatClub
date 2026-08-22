@@ -27,7 +27,7 @@ export default function Restaurant() {
 
       <section className="section mx-auto max-w-3xl text-center">
         <AnimatedSection>
-          <p className="text-lg text-navy/70" data-cms="Restaurant - Intro - Body">{c.restaurant_intro_body}</p>
+          <p className="text-lg text-navy/70 whitespace-pre-line" data-cms="Restaurant - Intro - Body">{c.restaurant_intro_body}</p>
         </AnimatedSection>
       </section>
 

@@ -28,7 +28,7 @@ export default function About() {
           <h2 className="text-3xl font-semibold md:text-4xl" data-cms="About - Story - Heading">
             {c.about_story_heading}
           </h2>
-          <p className="mt-4 leading-relaxed text-navy/70" data-cms="About - Story - Body">{c.about_story_body}</p>
+          <p className="mt-4 leading-relaxed text-navy/70 whitespace-pre-line" data-cms="About - Story - Body">{c.about_story_body}</p>
         </AnimatedSection>
         <AnimatedSection delay={120}>
           <img
@@ -70,7 +70,7 @@ export default function About() {
       <section className="section">
         <AnimatedSection className="mx-auto max-w-3xl text-center">
           <span className="mx-auto mb-5 block h-1 w-12 rounded bg-gold" />
-          <p className="font-display text-2xl font-medium leading-relaxed text-navy/85 md:text-3xl" data-cms="About - Growth - Body">
+          <p className="font-display text-2xl font-medium leading-relaxed text-navy/85 md:text-3xl whitespace-pre-line" data-cms="About - Growth - Body">
             {c.about_growth_body}
           </p>
         </AnimatedSection>

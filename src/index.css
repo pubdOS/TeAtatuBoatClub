@@ -19,6 +19,17 @@ body {
   }
 }
 
+
+/* ── Index numerals from DOM POSITION, not the render index ──────────────────
+   The live editor previews an ADDED repeater item by cloning a sibling, so a
+   number baked in by JS arrives stale — a 7th item rendering "06". A counter
+   renumbers itself on add, remove and reorder, with no JS involved, so the
+   preview is right by construction rather than by patching the bridge. */
+.cms-count-root { counter-reset: cms-item; }
+.cms-count { counter-increment: cms-item; }
+.cms-count::before { content: counter(cms-item); }
+.cms-count-pad::before { content: counter(cms-item, decimal-leading-zero); }
+
 @layer components {
   .btn-primary {
     @apply inline-flex items-center justify-center rounded-full bg-gold px-6 py-3 font-bold text-navy shadow-sm transition-all hover:bg-gold-dark hover:shadow-md;

@@ -28,7 +28,7 @@ export default function Rules() {
           {c.rules_groups.map((g, i) => (
             <div key={i} className="card p-6">
               <h3 className="font-display text-lg font-semibold text-navy" data-cms-field="title">{g.title}</h3>
-              <p className="mt-2 text-sm text-navy/70" data-cms-field="body">{g.body}</p>
+              <p className="mt-2 text-sm text-navy/70 whitespace-pre-line" data-cms-field="body">{g.body}</p>
             </div>
           ))}
         </div>

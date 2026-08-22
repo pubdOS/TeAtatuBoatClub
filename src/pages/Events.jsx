@@ -69,7 +69,7 @@ export default function Events() {
             <div key={i} className="card flex flex-col p-6">
               <span className="text-xs font-semibold uppercase tracking-wide text-accent" data-cms-field="date">{e.date}</span>
               <h3 className="mt-2 font-display text-xl font-semibold" data-cms-field="title">{e.title}</h3>
-              <p className="mt-2 text-sm text-navy/70" data-cms-field="desc">{e.desc}</p>
+              <p className="mt-2 text-sm text-navy/70 whitespace-pre-line" data-cms-field="desc">{e.desc}</p>
             </div>
           ))}
         </div>
