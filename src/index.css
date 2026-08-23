@@ -66,6 +66,35 @@ body {
   .card {
     @apply rounded-2xl border border-navy/10 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-navy/15;
   }
+
+  /* BALANCE — a card row whose incomplete last row CENTRES instead of
+     left-anchoring. The item count is the client's to change, so the layout has
+     to be derived from it: with a grid, deleting one leaves a hole and adding one
+     strands it at the far left, and the client can fix neither.
+
+     Columns come from --rb-cols, set with the SAME responsive variants a grid
+     would use:
+         className="repeat-balance [--rb-cols:1] md:[--rb-cols:3]"
+
+     No breakpoints are baked in here, deliberately. A section keeps whatever
+     responsive ladder it already had, so converting an existing grid changes
+     nothing at any width except the orphan — which is the point of converting.
+
+     --rb-gap must match the container's own horizontal gap (default 1.5rem =
+     gap-6); the Tailwind gap-* class still sets the real gap, this only feeds
+     the width maths. */
+  .repeat-balance {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--rb-gap, 1.5rem);
+  }
+  .repeat-balance > * {
+    flex: 0 1 calc(
+      (100% - (var(--rb-cols, 1) - 1) * var(--rb-gap, 1.5rem)) / var(--rb-cols, 1)
+    );
+    max-width: 100%;
+  }
 }
 
 /* ── CMS safety net ───────────────────────────────────────────────────────────

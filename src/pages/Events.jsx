@@ -64,7 +64,7 @@ export default function Events() {
 
       {/* Events (repeater) */}
       <section className="section pt-0">
-        <div data-cms-repeater="Events - Whats On - List" data-cms-shape="list" data-cms-min="1" data-cms-recommend="3" data-cms-max="9" data-cms-overflow="wrap" className="grid gap-6 md:grid-cols-3">
+        <div data-cms-repeater="Events - Whats On - List" data-cms-shape="list" data-cms-min="1" data-cms-recommend="3" data-cms-max="9" data-cms-overflow="wrap" className="repeat-balance [--rb-cols:1] md:[--rb-cols:3] gap-6">
           {c.events.map((e, i) => (
             <div key={i} className="card flex flex-col p-6">
               <span className="text-xs font-semibold uppercase tracking-wide text-accent" data-cms-field="date">{e.date}</span>
@@ -88,7 +88,7 @@ export default function Events() {
           </AnimatedSection>
 
           {c.competitions.length > 0 ? (
-            <div data-cms-repeater="Events - Competitions - List" data-cms-shape="list" data-cms-min="1" data-cms-recommend="3" data-cms-max="9" data-cms-overflow="wrap" className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div data-cms-repeater="Events - Competitions - List" data-cms-shape="list" data-cms-min="1" data-cms-recommend="3" data-cms-max="9" data-cms-overflow="wrap" className="repeat-balance [--rb-cols:1] sm:[--rb-cols:2] lg:[--rb-cols:3] gap-6">
               {c.competitions.map((comp, i) => (
                 <button
                   key={i}

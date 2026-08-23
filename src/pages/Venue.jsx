@@ -29,7 +29,7 @@ export default function Venue() {
 
       {/* Spaces (repeater) */}
       <section className="section pt-0">
-        <div data-cms-repeater="Venue - Spaces" data-cms-shape="list" data-cms-min="1" data-cms-max="4" data-cms-overflow="wrap" className="grid gap-6 md:grid-cols-2">
+        <div data-cms-repeater="Venue - Spaces" data-cms-shape="list" data-cms-min="1" data-cms-max="4" data-cms-overflow="wrap" className="repeat-balance [--rb-cols:1] md:[--rb-cols:2] gap-6">
           {c.venues.map((v, i) => (
             <div key={i} className="card p-7">
               <h3 className="font-display text-2xl font-semibold" data-cms-field="name">{v.name}</h3>

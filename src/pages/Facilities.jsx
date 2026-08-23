@@ -48,7 +48,7 @@ export default function Facilities() {
           <p className="mt-4 text-navy/70 whitespace-pre-line" data-cms="Facilities - Bays - Body">{c.facilities_bays_body}</p>
         </AnimatedSection>
 
-        <div data-cms-repeater="Facilities - Bays - List" data-cms-shape="card" data-cms-min="2" data-cms-recommend="4" data-cms-max="8" data-cms-overflow="wrap" data-cms-note="Bays are named in booking order — keep them listed in the same order as the physical bays." className="cms-count-root grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div data-cms-repeater="Facilities - Bays - List" data-cms-shape="card" data-cms-min="2" data-cms-recommend="4" data-cms-max="8" data-cms-overflow="wrap" data-cms-note="Bays are named in booking order — keep them listed in the same order as the physical bays." className="repeat-balance [--rb-cols:1] sm:[--rb-cols:2] lg:[--rb-cols:4] cms-count-root gap-6">
           {c.work_bays.map((bay, i) => (
             <div key={i} className="card group relative overflow-hidden p-6">
               <span className="absolute right-0 top-0 h-16 w-16 -translate-y-8 translate-x-8 rounded-full bg-gold/15 transition-transform group-hover:scale-150" />
@@ -81,7 +81,7 @@ export default function Facilities() {
               {c.facilities_other_heading}
             </h2>
           </AnimatedSection>
-          <div data-cms-repeater="Facilities - Other" data-cms-shape="card" data-cms-min="2" data-cms-recommend="6" data-cms-max="9" data-cms-overflow="wrap" className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div data-cms-repeater="Facilities - Other" data-cms-shape="card" data-cms-min="2" data-cms-recommend="6" data-cms-max="9" data-cms-overflow="wrap" className="repeat-balance [--rb-cols:1] sm:[--rb-cols:2] lg:[--rb-cols:3] gap-6">
             {c.facilities_other.map((f, i) => (
               <div key={i} className="card flex gap-4 p-6">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent/10 text-accent">
