@@ -54,7 +54,7 @@ export default function Membership() {
             {c.membership_how_heading}
           </h2>
         </AnimatedSection>
-        <div data-cms-repeater="Membership - Steps" data-cms-shape="list" data-cms-min="2" data-cms-recommend="4" data-cms-max="6" data-cms-overflow="wrap" className="cms-count-root grid gap-5 sm:grid-cols-2">
+        <div data-cms-repeater="Membership - Steps" data-cms-shape="list" data-cms-min="2" data-cms-recommend="4" data-cms-max="6" data-cms-overflow="wrap" className="repeat-balance [--rb-cols:1] sm:[--rb-cols:2] [--rb-gap:1.25rem] cms-count-root gap-5">
           {c.membership_steps.map((s, i) => (
             <div key={i} className="card p-6">
               <span className="cms-count flex h-8 w-8 items-center justify-center rounded-full bg-accent text-sm font-bold text-white" />
@@ -67,7 +67,7 @@ export default function Membership() {
 
       <section className="bg-sand">
         <div className="section">
-          <div data-cms-repeater="Membership - Benefits" data-cms-shape="card" data-cms-min="2" data-cms-recommend="4" data-cms-max="8" data-cms-overflow="wrap" className="grid gap-6 sm:grid-cols-2 md:grid-cols-4">
+          <div data-cms-repeater="Membership - Benefits" data-cms-shape="card" data-cms-min="2" data-cms-recommend="4" data-cms-max="8" data-cms-overflow="wrap" className="repeat-balance [--rb-cols:1] sm:[--rb-cols:2] md:[--rb-cols:4] gap-6">
             {c.membership_benefits.map((b, i) => (
               <div key={i} className="card p-6 text-center">
                 <h3 className="text-lg font-bold" data-cms-field="title">{b.title}</h3>

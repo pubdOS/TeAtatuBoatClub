@@ -49,7 +49,7 @@ export default function About() {
               {c.about_committee_heading}
             </h2>
           </AnimatedSection>
-          <div data-cms-repeater="About - Committee" data-cms-shape="person" data-cms-min="3" data-cms-recommend="6" data-cms-max="12" data-cms-overflow="wrap" className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+          <div data-cms-repeater="About - Committee" data-cms-shape="person" data-cms-min="3" data-cms-recommend="6" data-cms-max="12" data-cms-overflow="wrap" className="repeat-balance [--rb-cols:1] sm:[--rb-cols:2] md:[--rb-cols:3] gap-6">
             {c.committee.map((m, i) => (
               <div key={i} className="card p-6 text-center">
                 <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-navy font-display text-xl font-semibold text-gold">

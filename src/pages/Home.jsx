@@ -43,7 +43,7 @@ export default function Home() {
 
       {/* ─── Stats (repeater — static container anchors section order) ─── */}
       <section className="bg-sand">
-        <div data-cms-repeater="Home - Stats" data-cms-shape="stat" data-cms-min="2" data-cms-recommend="3" data-cms-max="6" data-cms-overflow="wrap" className="mx-auto grid max-w-6xl gap-8 px-5 py-14 sm:grid-cols-3">
+        <div data-cms-repeater="Home - Stats" data-cms-shape="stat" data-cms-min="2" data-cms-recommend="3" data-cms-max="6" data-cms-overflow="wrap" className="repeat-balance [--rb-cols:1] sm:[--rb-cols:3] [--rb-gap:2rem] mx-auto max-w-6xl gap-8 px-5 py-14">
           {c.home_stats.map((stat, i) => (
             <div key={i} className="text-center">
               <p className="font-display text-5xl font-semibold text-accent" data-cms-field="value">
@@ -119,7 +119,7 @@ export default function Home() {
               {c.home_facilities_heading}
             </h2>
           </AnimatedSection>
-          <div data-cms-repeater="Home - Facilities - Facilities" data-cms-shape="card" data-cms-min="2" data-cms-recommend="3" data-cms-max="6" data-cms-overflow="wrap" className="grid gap-6 md:grid-cols-3">
+          <div data-cms-repeater="Home - Facilities - Facilities" data-cms-shape="card" data-cms-min="2" data-cms-recommend="3" data-cms-max="6" data-cms-overflow="wrap" className="repeat-balance [--rb-cols:1] md:[--rb-cols:3] gap-6">
             {c.home_facilities.map((f, i) => (
               <div key={i} className="card p-7">
                 <span className="mb-4 block h-1 w-10 rounded bg-gold" />
