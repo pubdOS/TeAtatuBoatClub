@@ -5,6 +5,10 @@ import Seo from '../components/Seo.jsx'
 import AnimatedSection from '../components/AnimatedSection.jsx'
 import WaveDivider from '../components/WaveDivider.jsx'
 
+// A 1x1 transparent GIF. Keeps a committee member's photo slot present and
+// editable while showing nothing, so the initial behind it stays visible.
+const BLANK_PHOTO = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+
 export default function About() {
   return (
     <>
@@ -52,14 +56,35 @@ export default function About() {
           <div data-cms-repeater="About - Committee" data-cms-shape="person" data-cms-min="3" data-cms-recommend="6" data-cms-max="12" data-cms-overflow="wrap" className="repeat-balance [--rb-cols:1] sm:[--rb-cols:2] md:[--rb-cols:3] gap-6">
             {c.committee.map((m, i) => (
               <div key={i} className="card p-6 text-center">
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-navy font-display text-xl font-semibold text-gold">
-                  {(m.name || '?').charAt(0)}
+                {/* The photo slot always exists so every member is editable, but a
+                    member without one still shows their initial: the transparent
+                    pixel sits over the initial until a real photo replaces it.
+                    Committee photos are coming, and wiring the slot later would
+                    mean a structural change plus a re-scan. */}
+                <div className="relative mx-auto mb-4 h-14 w-14 overflow-hidden rounded-full bg-navy">
+                  <span className="absolute inset-0 flex items-center justify-center font-display text-xl font-semibold text-gold">
+                    {(m.name || '?').charAt(0)}
+                  </span>
+                  <img
+                    src={m.image || BLANK_PHOTO}
+                    data-cms-field="image"
+                    alt={m.image ? m.name : ''}
+                    className="relative h-full w-full object-cover"
+                  />
                 </div>
                 <h3 className="font-display text-lg font-semibold" data-cms-field="name">{m.name}</h3>
                 <p className="text-sm font-semibold text-accent" data-cms-field="role">{m.role}</p>
-                <a href={`mailto:${m.email}`} className="mt-2 block text-sm text-navy/55 hover:text-accent" data-cms-field="email">
-                  {m.email}
-                </a>
+                {/* Most of the committee have no club address. Rendering the link
+                    unconditionally gave them a clickable `mailto:` going nowhere,
+                    so the element stays (it must, or the field is uneditable) but
+                    is only a link when there is somewhere to go. */}
+                {m.email ? (
+                  <a href={`mailto:${m.email}`} className="mt-2 block text-sm text-navy/55 hover:text-accent" data-cms-field="email">
+                    {m.email}
+                  </a>
+                ) : (
+                  <span className="mt-2 block text-sm text-navy/55" data-cms-field="email">{m.email}</span>
+                )}
               </div>
             ))}
           </div>
