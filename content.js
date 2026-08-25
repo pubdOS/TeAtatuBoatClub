@@ -124,49 +124,64 @@ export default {
   "about_committee_heading": "Club Executive Committee",
   "committee": [
     {
-      "name": "Dave Mackie",
-      "role": "Commodore",
-      "email": "office@teatatuboatclub.co.nz"
-    },
-    {
       "name": "Barry Hart",
-      "role": "Vice Commodore",
-      "email": "office@teatatuboatclub.co.nz"
-    },
-    {
-      "name": "Lyn Salvidge",
-      "role": "Acting Club Captain",
-      "email": "office@teatatuboatclub.co.nz"
+      "role": "Commodore",
+      "email": "commodore@teatatuboatclub.co.nz",
+      "image": ""
     },
     {
       "name": "Jared Wrennall",
+      "role": "Vice Commodore",
+      "email": "",
+      "image": ""
+    },
+    {
+      "name": "Natalie Waite",
+      "role": "Club Captain",
+      "email": "clubcaptain@teatatuboatclub.co.nz",
+      "image": ""
+    },
+    {
+      "name": "Michelle Calverley",
       "role": "Vice Club Captain",
-      "email": "office@teatatuboatclub.co.nz"
-    },
-    {
-      "name": "Ray Steel",
-      "role": "Property Officer",
-      "email": "office@teatatuboatclub.co.nz"
-    },
-    {
-      "name": "Maxine Costin",
-      "role": "Committee Member",
-      "email": "office@teatatuboatclub.co.nz"
+      "email": "",
+      "image": ""
     },
     {
       "name": "Matt Dalton",
-      "role": "Committee Member",
-      "email": "office@teatatuboatclub.co.nz"
+      "role": "Property Officer",
+      "email": "",
+      "image": ""
     },
     {
       "name": "Dave Forrest",
       "role": "Committee Member",
-      "email": "office@teatatuboatclub.co.nz"
+      "email": "",
+      "image": ""
     },
     {
-      "name": "James Mobberley",
+      "name": "Jackson Harpur",
       "role": "Committee Member",
-      "email": "office@teatatuboatclub.co.nz"
+      "email": "",
+      "image": ""
+    },
+    {
+      "name": "Kodie Paterson",
+      "role": "Committee Member",
+      "email": "",
+      "image": ""
+    },
+    {
+      "name": "Amit Pratap",
+      "role": "Committee Member",
+      "email": "",
+      "image": ""
+    },
+    {
+      "name": "Kane Westgaard",
+      "role": "Committee Member",
+      "email": "",
+      "image": ""
     }
   ],
   "about_cta_heading": "Want to get involved?",
@@ -1109,7 +1124,7 @@ export default {
     },
     {
       "title": "Pontoon Berthing",
-      "body": "Berthing time on the pontoon is a maximum of 3 hours (except booked work bays), and vessels must not be left unattended. Only minor work — servicing, cleaning, electrical, plumbing and brush painting — is permitted on the jetty, with no discharge into the river."
+      "body": "Berthing time on the pontoon is a maximum of 3 hours (except booked work bays), and vessels must not be left unattended. Vessels left in the loading area for more than 3 hours incur a $150 fine. Only minor work — servicing, cleaning, electrical, plumbing and brush painting — is permitted on the jetty, with no discharge into the river."
     },
     {
       "title": "Parking & Dinghies",
