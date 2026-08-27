@@ -358,24 +358,45 @@ function goTo(prefix) {
     window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' })
     return
   }
+  const onScreen = (e) => e && e.getClientRects().length > 0
+
+  const scrollTo = (el) => {
+    beginSuppress(prefix)
+    el.style.scrollMarginTop = '96px' // clear the sticky navbar
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  // Find something you can actually SEE.
+  //
+  // This used to take the first key matching the prefix and scroll to it, which
+  // silently did nothing whenever that first key was a hidden companion span —
+  // and hidden companions are a convention, not an edge case (Rule 16 button
+  // links, Rule 11 PDFs, and any eyebrow a design dropped but kept editable).
+  // `scrollIntoView` on a display:none element is a no-op, and the early return
+  // meant the visible heading two keys later was never considered.
+  let hidden = null
   for (const [key, els] of fieldMap) {
     if (!key.startsWith(prefix + ' - ')) continue
-    const el = els.find((e) => e.getClientRects().length) || els[0]
-    if (el) {
-      beginSuppress(prefix)
-      el.style.scrollMarginTop = '96px' // clear the sticky navbar
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      return
-    }
+    const visible = els.find(onScreen)
+    if (visible) { scrollTo(visible); return }
+    if (!hidden) hidden = els[0]
   }
-  // A section that is ONLY a repeater (e.g. "Services - List") has no flat
-  // data-cms field carrying the prefix — scroll to the repeater container itself.
-  const rep = repeaterMap.get(prefix)
-  if (rep) {
-    beginSuppress(prefix)
-    rep.style.scrollMarginTop = '96px'
-    rep.scrollIntoView({ behavior: 'smooth', block: 'start' })
+
+  // A section that is ONLY a repeater has no flat data-cms field to aim at, so
+  // scroll to the repeater container. Matched by PREFIX, not by exact key: a
+  // section is "Page - Section" while its repeater is "Page - Section - Name",
+  // so an exact lookup never hit and this fallback could not fire at all.
+  // A visible repeater also beats a hidden field — the point is to show
+  // something, not merely to find a match.
+  for (const [key, el] of repeaterMap) {
+    if (key !== prefix && !key.startsWith(prefix + ' - ')) continue
+    if (onScreen(el)) { scrollTo(el); return }
   }
+
+  // Nothing on this section is on screen (a whole hidden block). Aim at the
+  // hidden element anyway: it is a no-op visually, but it keeps the panel's
+  // active section in step with the arrows rather than stalling.
+  if (hidden) scrollTo(hidden)
 }
 
 function navigate(path) {
