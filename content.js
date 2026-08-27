@@ -882,38 +882,48 @@ export default {
   "pricing_workbay_note": "Rates apply for part or full day. Booking secures the discounted member rate.",
   "pricing_currency_note": "NZD, incl. GST",
   "pricing_other_heading": "Other Facility Fees",
+  "pricing_other_member_label": "Member",
+  "pricing_other_nonmember_label": "Non-member",
   "pricing_other": [
     {
-      "item": "Hardstand (50ft+, member)",
-      "rate": "$27 / day (first 6 months)"
+      "item": "Hardstand (under 40ft)",
+      "member_rate": "$20 / day (first 6 months)",
+      "nonmember_rate": "$75 / day"
     },
     {
-      "item": "Hardstand (under 40ft, member)",
-      "rate": "$20 / day (first 6 months)"
+      "item": "Hardstand (40–49ft)",
+      "member_rate": "$22 / day (first 6 months)",
+      "nonmember_rate": "$90 / day"
     },
     {
-      "item": "Hardstand (40–49ft, member)",
-      "rate": "$22 / day (first 6 months)"
+      "item": "Hardstand (50ft+)",
+      "member_rate": "$27 / day (first 6 months)",
+      "nonmember_rate": "$100 / day"
     },
     {
-      "item": "Haulout (member)",
-      "rate": "$175 each way"
+      "item": "Haulout",
+      "member_rate": "$175 each way",
+      "nonmember_rate": "$300 each way"
     },
     {
-      "item": "Waterblaster (member)",
-      "rate": "$65 / 60 min"
+      "item": "Waterblaster",
+      "member_rate": "$65 / 60 min",
+      "nonmember_rate": "$110 / 60 min"
     },
     {
-      "item": "Ramp (member)",
-      "rate": "Free"
+      "item": "Ramp",
+      "member_rate": "Free",
+      "nonmember_rate": "$20 per trailer boat"
     },
     {
       "item": "Boat/Trailer Compound",
-      "rate": "From $150 / month (waiting list)"
+      "member_rate": "From $150 / month (waiting list)",
+      "nonmember_rate": "Same"
     },
     {
       "item": "Dinghy Racks",
-      "rate": "$150 / year"
+      "member_rate": "$150 / year",
+      "nonmember_rate": "Same"
     }
   ],
   "pricing_notice": "Work-bay bookings are invoiced by the club office after your booking is confirmed. No payment is taken online.",
