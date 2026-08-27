@@ -124,64 +124,64 @@ export default {
   "about_committee_heading": "Club Executive Committee",
   "committee": [
     {
+      "image": "",
       "name": "Barry Hart",
       "role": "Commodore",
-      "email": "commodore@teatatuboatclub.co.nz",
-      "image": ""
+      "email": "commodore@teatatuboatclub.co.nz"
     },
     {
+      "image": "",
       "name": "Jared Wrennall",
       "role": "Vice Commodore",
-      "email": "",
-      "image": ""
+      "email": ""
     },
     {
+      "image": "",
       "name": "Natalie Waite",
       "role": "Club Captain",
-      "email": "clubcaptain@teatatuboatclub.co.nz",
-      "image": ""
+      "email": "clubcaptain@teatatuboatclub.co.nz"
     },
     {
+      "image": "",
       "name": "Michelle Calverley",
       "role": "Vice Club Captain",
-      "email": "",
-      "image": ""
+      "email": ""
     },
     {
+      "image": "",
       "name": "Matt Dalton",
       "role": "Property Officer",
-      "email": "",
-      "image": ""
+      "email": ""
     },
     {
+      "image": "",
       "name": "Dave Forrest",
       "role": "Committee Member",
-      "email": "",
-      "image": ""
+      "email": ""
     },
     {
+      "image": "",
       "name": "Jackson Harpur",
       "role": "Committee Member",
-      "email": "",
-      "image": ""
+      "email": ""
     },
     {
+      "image": "",
       "name": "Kodie Paterson",
       "role": "Committee Member",
-      "email": "",
-      "image": ""
+      "email": ""
     },
     {
+      "image": "",
       "name": "Amit Pratap",
       "role": "Committee Member",
-      "email": "",
-      "image": ""
+      "email": ""
     },
     {
+      "image": "",
       "name": "Kane Westgaard",
       "role": "Committee Member",
-      "email": "",
-      "image": ""
+      "email": ""
     }
   ],
   "about_cta_heading": "Want to get involved?",
