@@ -1,6 +1,10 @@
 [build]
   command = "npm run build"
   publish = "dist"
+  # Skip the build when a push only touches markdown (CONTEXT.md, docs). A
+  # production deploy costs Netlify credits, and a docs commit should not spend
+  # one. Exits 0 (=skip) when the diff is markdown-only.
+  ignore = "git diff --quiet HEAD^ HEAD -- ':(exclude)*.md'"
   functions = "netlify/functions"
 
 # SPA fallback for any path without a prerendered file. Non-forced, so real

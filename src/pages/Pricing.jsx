@@ -72,11 +72,29 @@ export default function Pricing() {
           <h2 className="mb-6 text-2xl font-semibold" data-cms="Pricing - Other - Heading">
             {c.pricing_other_heading}
           </h2>
+          {/* Column headings. Outside the repeater so they are ONE editable pair
+              rather than a duplicate key on every row. Hidden on mobile, where
+              each row carries its own inline labels instead. */}
+          <div className="hidden px-5 pb-2 text-[11px] uppercase tracking-wider text-navy/45 sm:grid sm:grid-cols-[1fr_8rem_8rem] sm:gap-x-6">
+            <span />
+            <span className="text-right" data-cms="Pricing - Other - Member Label">{c.pricing_other_member_label}</span>
+            <span className="text-right" data-cms="Pricing - Other - Nonmember Label">{c.pricing_other_nonmember_label}</span>
+          </div>
           <div data-cms-repeater="Pricing - Other" data-cms-shape="list" data-cms-min="1" data-cms-overflow="wrap" className="overflow-hidden rounded-2xl bg-white shadow-sm">
             {c.pricing_other.map((row, i) => (
-              <div key={i} className="flex items-center justify-between border-b border-navy/5 px-5 py-3 last:border-0">
-                <span className="text-sm text-navy/80" data-cms-field="item">{row.item}</span>
-                <span className="text-sm font-semibold text-navy" data-cms-field="rate">{row.rate}</span>
+              <div key={i} className="grid grid-cols-2 gap-x-4 gap-y-1 border-b border-navy/5 px-5 py-3.5 last:border-0 sm:grid-cols-[1fr_8rem_8rem] sm:items-baseline sm:gap-x-6">
+                <span className="col-span-2 text-sm text-navy/80 sm:col-span-1" data-cms-field="item">{row.item}</span>
+                {/* `sm:contents` dissolves these wrappers into the parent grid on
+                    desktop, so the rates line up under their headings; on mobile
+                    they stay as cells so each rate keeps its own label. */}
+                <div className="sm:contents">
+                  <span className="block text-[11px] uppercase tracking-wider text-navy/45 sm:hidden" data-cms-static="Column label repeated on every row; a data-cms here would be a duplicate key per item">Member</span>
+                  <span className="block text-sm font-semibold text-navy sm:text-right" data-cms-field="member_rate">{row.member_rate}</span>
+                </div>
+                <div className="sm:contents">
+                  <span className="block text-[11px] uppercase tracking-wider text-navy/45 sm:hidden" data-cms-static="Column label repeated on every row; a data-cms here would be a duplicate key per item">Non-member</span>
+                  <span className="block text-sm text-navy/70 sm:text-right" data-cms-field="nonmember_rate">{row.nonmember_rate}</span>
+                </div>
               </div>
             ))}
           </div>
