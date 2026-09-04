@@ -105,6 +105,10 @@ export default {
   "home_cta_body": "Members can reserve one of our four work bays up to two weeks ahead — and lock in the $25 member day rate.",
   "home_cta_button": "Book Now",
   "home_cta_button_link": "/booking",
+
+  "home_announcement_image": "/images/menu-fathers-day.jpg",
+  "home_announcement_ends": "2026-09-06 20:00",
+  "home_announcement_alt": "Father's Day specials menu at High Tide Kitchen",
   "pricing_cta_button": "Book a Work Bay",
   "pricing_cta_button_link": "/booking",
   "facilities_book_button": "Book a Work Bay",

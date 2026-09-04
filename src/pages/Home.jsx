@@ -1,11 +1,76 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import c from '../../content.js'
 import SmartLink from '../components/SmartLink.jsx'
 import Seo from '../components/Seo.jsx'
 import AnimatedSection from '../components/AnimatedSection.jsx'
 import WaveDivider from '../components/WaveDivider.jsx'
+import Lightbox from '../components/Lightbox.jsx'
+
+/**
+ * Is the announcement still running?
+ *
+ * `home_announcement_ends` is NZ wall-clock time ("2026-09-06 20:00") because
+ * that is what the club means by "8pm Sunday" — but a visitor's device can be in
+ * any timezone, and NZ itself changes offset in late September (NZST +12 → NZDT
+ * +13). So neither the visitor's local clock nor a hardcoded +12:00 is right.
+ *
+ * Format NOW into NZ wall-clock time and compare the two as strings. Intl knows
+ * the DST rules, so this keeps working for a summer announcement, and the
+ * YYYY-MM-DD HH:mm shape sorts correctly as text. No library, no date parsing.
+ *
+ * content.js cannot hold a computed value (the scanner forbids it), which is why
+ * the end time is a plain string field and this lives here.
+ */
+function announcementIsLive(ends) {
+  if (!ends) return false
+  try {
+    const nzNow = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Pacific/Auckland',
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', hour12: false,
+    }).format(new Date()).replace(',', '')
+    return nzNow < ends.trim()
+  } catch {
+    // Intl without tz data is not a reason to spam every visitor forever.
+    return false
+  }
+}
 
 export default function Home() {
+  // The announcement pop-up. Reuses Lightbox — the same viewer the dining and
+  // catering menus already open into — so it looks native rather than bolted on,
+  // and adds no new file to a repo that is already at the scanner's 30-file cap.
+  const [announcement, setAnnouncement] = useState(null)
+  const menu = c.home_announcement_image
+  const ends = c.home_announcement_ends
+
+  useEffect(() => {
+    if (!menu || !announcementIsLive(ends)) return
+    // Keyed by the END TIME, so the NEXT announcement still shows to someone who
+    // dismissed this one. A fixed key would quietly suppress every future
+    // announcement for anyone who ever closed one.
+    const key = `tabc-announcement-${ends}`
+    try {
+      if (localStorage.getItem(key)) return
+    } catch {
+      // Safari private mode throws on access rather than returning null. Not a
+      // reason to withhold the announcement — just show it and skip remembering.
+    }
+    setAnnouncement(0)
+  }, [menu, ends])
+
+  // Lightbox calls its setter BOTH ways: `setIndex(null)` to close, and
+  // `setIndex(i => …)` for the arrow keys. Treating every call as a dismiss
+  // meant pressing an arrow key closed the announcement and marked it seen.
+  // Only an actual close counts.
+  const onAnnouncementChange = (next) => {
+    const value = typeof next === 'function' ? next(announcement) : next
+    if (value !== null) { setAnnouncement(value); return }
+    setAnnouncement(null)
+    try { localStorage.setItem(`tabc-announcement-${ends}`, '1') } catch { /* see above */ }
+  }
+
   return (
     <>
       <Seo title={c.home_seo_title} description={c.home_seo_description} />
@@ -154,6 +219,27 @@ export default function Home() {
           </AnimatedSection>
         </div>
       </section>
+
+      {/* ─── Announcement ───────────────────────────────────────────────────
+          Set an image and an end time in the CMS and it pops up once per
+          visitor until that time passes. CLEAR THE IMAGE to take it down — that
+          also stops it being downloaded, which is why the <img> below is inside
+          this guard rather than always rendered. */}
+      {menu && (
+        <>
+          {/* Declares the fields for the scanner. Hidden: the pop-up is the
+              only place these are actually shown. */}
+          <img src={menu} data-cms="Home - Announcement - Image" alt="" className="hidden" />
+          <span hidden data-cms="Home - Announcement - Ends">{c.home_announcement_ends}</span>
+          <span hidden data-cms="Home - Announcement - Alt">{c.home_announcement_alt}</span>
+          <Lightbox
+            items={[menu]}
+            index={announcement}
+            setIndex={onAnnouncementChange}
+            label={c.home_announcement_alt}
+          />
+        </>
+      )}
     </>
   )
 }
