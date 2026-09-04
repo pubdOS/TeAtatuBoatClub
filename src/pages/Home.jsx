@@ -47,12 +47,18 @@ export default function Home() {
 
   useEffect(() => {
     if (!menu || !announcementIsLive(ends)) return
+    // SESSION, not device. Remembering a dismissal forever is right for something
+    // running for weeks; for a three-day weekend special it means anyone who
+    // glances at it on the Friday and closes it has opted out of the whole
+    // promotion. Per session, it stays gone while they browse around, and comes
+    // back on their next visit — which for a Friday-to-Sunday run is the point.
+    //
     // Keyed by the END TIME, so the NEXT announcement still shows to someone who
     // dismissed this one. A fixed key would quietly suppress every future
     // announcement for anyone who ever closed one.
     const key = `tabc-announcement-${ends}`
     try {
-      if (localStorage.getItem(key)) return
+      if (sessionStorage.getItem(key)) return
     } catch {
       // Safari private mode throws on access rather than returning null. Not a
       // reason to withhold the announcement — just show it and skip remembering.
@@ -68,7 +74,7 @@ export default function Home() {
     const value = typeof next === 'function' ? next(announcement) : next
     if (value !== null) { setAnnouncement(value); return }
     setAnnouncement(null)
-    try { localStorage.setItem(`tabc-announcement-${ends}`, '1') } catch { /* see above */ }
+    try { sessionStorage.setItem(`tabc-announcement-${ends}`, '1') } catch { /* see above */ }
   }
 
   return (
