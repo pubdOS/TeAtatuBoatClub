@@ -235,7 +235,13 @@ export default function Home() {
         <>
           {/* Declares the fields for the scanner. Hidden: the pop-up is the
               only place these are actually shown. */}
-          <img src={menu} data-cms="Home - Announcement - Image" alt="" className="hidden" />
+          {/* src MUST be `c.<key>` literally, not the `menu` alias above. The
+              scanner resolves an image field by matching `src={c.something}` in
+              the source; anything else scans as EMPTY and, worse, gets no content
+              path — so the club could change the image in the CMS and publishing
+              would never write it back to content.js. The alias is fine for the
+              logic above, which the scanner never reads. */}
+          <img src={c.home_announcement_image} data-cms="Home - Announcement - Image" alt="" className="hidden" />
           <span hidden data-cms="Home - Announcement - Ends">{c.home_announcement_ends}</span>
           <span hidden data-cms="Home - Announcement - Alt">{c.home_announcement_alt}</span>
           <Lightbox
