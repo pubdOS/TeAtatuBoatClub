@@ -107,8 +107,8 @@ export default {
   "home_cta_button_link": "/booking",
 
   "home_announcement_image": "/images/menu-fathers-day.jpg",
-  "home_announcement_ends": "2026-09-06 20:00",
-  "home_announcement_alt": "Father's Day specials menu at High Tide Kitchen",
+  "home_announcement_ends": "",
+  "home_announcement_alt": "",
   "pricing_cta_button": "Book a Work Bay",
   "pricing_cta_button_link": "/booking",
   "facilities_book_button": "Book a Work Bay",
@@ -1074,7 +1074,7 @@ export default {
   "events_newsletter_document": "",
   "newsletter_signup_heading": "Stay in the loop",
   "newsletter_signup_sub": "Get club news, events and results straight to your inbox.",
-  "newsletter_signup_button": "",
+  "newsletter_signup_button": "Sign Up ",
   "newsletter_signup_success": "You’re in — thanks for subscribing!",
   "events": [
     {
@@ -1107,12 +1107,6 @@ export default {
       "image": "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=900&q=70",
       "title": "Club Championship",
       "details": "Season-long points series across our scheduled competition days. The angler with the highest combined points takes the club championship trophy. See the rules document for the points system and qualifying events.",
-      "rules_document": ""
-    },
-    {
-      "image": "",
-      "title": "NEW EVENT ",
-      "details": "DETAILS",
       "rules_document": ""
     }
   ],
@@ -1163,7 +1157,7 @@ export default {
   "contact_office_address": "32 Bridge Ave, Te Atatu South, Auckland 0610",
   "contact_map_embed": "https://www.google.com/maps?q=32+Bridge+Ave,+Te+Atatu+South,+Auckland&output=embed",
   "contact_form_heading": "Send an Enquiry",
-  "contact_form_submit": "",
+  "contact_form_submit": "Submit",
   "contact_form_success_body": "Thanks for getting in touch — we’ve received your message and the office will get back to you soon.",
   "footer_tagline": "A member-run boating club in Te Atatu South, Auckland — boating facilities, bar, restaurant and functions since the 1960s."
 }
