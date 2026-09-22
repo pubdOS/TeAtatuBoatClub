@@ -29,6 +29,9 @@ export const handler = async (event) => {
     const body = parseBody(event)
     const fullName = String(body.fullName || '').trim()
     const membershipNumber = String(body.membershipNumber || '').trim()
+    // Supplied by the confirm step: either the address they typed because we
+    // held none, or a correction to the one we did.
+    const email = String(body.email || '').trim()
     const acknowledged = body.acknowledged === true
 
     // Accept an array of slots, or a single slot (legacy single-day payload).
@@ -64,6 +67,13 @@ export const handler = async (event) => {
       if (seen.has(key)) continue
       seen.add(key)
       norm.push({ berthId, slotDate, slotPeriod })
+    }
+
+    // Basic shape check only. An address that bounces is the club's problem to
+    // chase, but a value that is plainly not an address should not be written
+    // over a good one.
+    if (email && !/^[^@\s]+@[^@\s.]+\.[^@\s]+$/.test(email)) {
+      return json(400, { ok: false, error: 'That email address does not look right.' })
     }
 
     // ── Re-validate the member server-side ──
@@ -124,6 +134,23 @@ export const handler = async (event) => {
     const references = data.map((d) => d.id)
 
     // ── Notifications (best-effort — booking already succeeded) ──
+    // ── Keep the address ────────────────────────────────────────────────
+    // 40% of the club's list has no email on it, so the office cannot send
+    // anyone anything. Every booking is a chance to fill one of those gaps, and
+    // the member has just typed it to receive their own confirmation.
+    //
+    // Best-effort on purpose: the booking is already made by this point, and
+    // failing it over a contact-detail update would be absurd. Written before
+    // the emails go out so the confirmation uses the new address.
+    if (email && email.toLowerCase() !== String(member.email || '').toLowerCase()) {
+      try {
+        await supabase().from('members').update({ email }).eq('id', member.id)
+        member.email = email
+      } catch (e) {
+        console.error('could not save member email (booking unaffected)', e)
+      }
+    }
+
     await sendEmails({ items, member, references }).catch((e) =>
       console.error('email send failed (booking still confirmed)', e),
     )
