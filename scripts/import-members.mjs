@@ -132,12 +132,20 @@ const main = async () => {
     if (Object.keys(patch).length) toUpdate.push({ id: cur.id, number: m.membership_number, patch })
   }
 
-  const toDeactivate = existing.filter(m => m.active !== false && !incomingNumbers.has(String(m.membership_number).trim()))
+  // --no-deactivate: additive only. The right semantic for a FIRST load, where
+  // there is no prior roster to reconcile against — and the thing that stops it
+  // disabling the seeded test members, who are deliberately not on the office's
+  // list and carry our own email so confirmations during testing never reach a
+  // real member.
+  const additiveOnly = flags.includes('--no-deactivate')
+  const toDeactivate = additiveOnly
+    ? []
+    : existing.filter(m => m.active !== false && !incomingNumbers.has(String(m.membership_number).trim()))
 
   console.log(`\n  new members:            ${toInsert.length}`)
   console.log(`  updated:                ${toUpdate.length}`)
   console.log(`  emails KEPT (blank in the CSV, held here): ${keptEmails.length}`)
-  console.log(`  to deactivate (absent from the CSV):       ${toDeactivate.length}`)
+  console.log(`  to deactivate (absent from the CSV):       ${toDeactivate.length}${additiveOnly ? '  [--no-deactivate]' : ''}`)
 
   if (toUpdate.length) {
     console.log('\n  sample changes:')
