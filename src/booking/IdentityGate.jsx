@@ -21,7 +21,15 @@ export default function IdentityGate({ onValidated }) {
     try {
       const res = await validateMember(fullName.trim(), membershipNumber.trim())
       if (res.ok) {
-        onValidated({ fullName: fullName.trim(), membershipNumber: membershipNumber.trim(), largeVessel })
+        onValidated({
+          fullName: fullName.trim(),
+          membershipNumber: membershipNumber.trim(),
+          largeVessel,
+          // Carried through so the confirm step knows whether to ASK for an
+          // address or merely offer to change the one on file.
+          hasEmail: !!res.member?.hasEmail,
+          emailHint: res.member?.emailHint || null,
+        })
       } else {
         setError(res.error || "We couldn't match those details.")
       }

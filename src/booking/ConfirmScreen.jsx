@@ -49,14 +49,27 @@ export default function ConfirmScreen({ member, selections, fallback, onBack, on
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
 
+  // Where the confirmation goes. Two in five members have no address on the
+  // club's list, so for them this is blank and required — and the club gets a
+  // contact detail it did not have. For everyone else it is optional, with a
+  // masked hint of the address we hold so they can recognise it without us
+  // disclosing it to anyone who guessed their membership number.
+  const [email, setEmail] = useState('')
+  const needEmail = !member.hasEmail
+
   async function handleConfirm() {
     setError('')
+    if (needEmail && !email.trim()) {
+      setError('Please add an email address so we can send your confirmation.')
+      return
+    }
     setBusy(true)
     try {
       const res = await createBooking({
         fullName: member.fullName,
         membershipNumber: member.membershipNumber,
         acknowledged: ack,
+        email: email.trim(),
         slots: selections.map((s) => ({ berthId: s.berthId, slotDate: s.slotDate, slotPeriod: s.period })),
       })
       if (res.ok) onSuccess(res.booking)
@@ -124,6 +137,31 @@ export default function ConfirmScreen({ member, selections, fallback, onBack, on
         </p>
       </div>
 
+      {/* Where the confirmation goes. Asked here rather than at the identity
+          gate because at this point it answers a question the member already
+          has — "how do I know this is booked?" — instead of being one more
+          field in the way of finding out whether a bay is free. */}
+      <div className="mt-5">
+        <label htmlFor="bookingEmail" className="mb-1 block text-sm font-semibold text-navy">
+          Email for your confirmation{!needEmail && <span className="font-normal text-navy/50"> (optional)</span>}
+        </label>
+        <input
+          id="bookingEmail"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required={needEmail}
+          autoComplete="email"
+          placeholder={member.emailHint || 'you@example.com'}
+          className="w-full rounded-xl border border-navy/15 px-4 py-3"
+        />
+        <p className="mt-1.5 text-xs text-navy/55">
+          {needEmail
+            ? "We don't have an email address for you. Add one and we'll send your booking confirmation, and keep it on file for the club."
+            : `We'll send it to ${member.emailHint}. Enter a different address to use that instead.`}
+        </p>
+      </div>
+
       <label className="mt-5 flex cursor-pointer items-start gap-3 text-sm text-navy">
         <input
           type="checkbox"
@@ -138,7 +176,7 @@ export default function ConfirmScreen({ member, selections, fallback, onBack, on
 
       <button
         onClick={handleConfirm}
-        disabled={!ack || busy}
+        disabled={!ack || busy || (needEmail && !email.trim())}
         className="btn-primary mt-5 w-full disabled:cursor-not-allowed disabled:opacity-50"
       >
         {busy ? 'Confirming…' : `Confirm ${dayCount} day${dayCount !== 1 ? 's' : ''}`}
