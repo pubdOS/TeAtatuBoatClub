@@ -1,5 +1,5 @@
 # TeAtatuBoatClub — working context
-_Last wrapped: 2026-08-25 · LIVE on teatatuboatclub.co.nz · CMS-wired · Pro_
+_Last wrapped: 2026-09-23 · LIVE on teatatuboatclub.co.nz · CMS-wired · Pro · **BOOKING IS LIVE**_
 
 ## What this is
 Te Atatū Boating Club: a ~750-family social + boating club. 12 pages, plus a **bespoke
@@ -8,14 +8,56 @@ of the CMS. Contacts: **Dan** (manager, the one who emails changes) and **Barry 
 (Commodore since the 2026 AGM). Committee-run, so the people change annually.
 
 ## Current state
-- Live and healthy. Committee, rules and facilities copy all current as of 2026-08-25.
-- **Booking is BUILT but gated off**: `content.js booking_live: false`. The only thing
-  standing between it and going live is the **members CSV from the office** (name +
-  membership number + email) loaded into the booking Supabase.
-- In flight: nothing. `committee-photos-and-links` was merged 2026-08-25.
-- **Bridge is one version behind.** The live-editor `goTo` fix (section arrows) is in
-  `sitemog-starter` but not here yet — it rides this site's next real deploy, deliberately
-  (see BACKLOG "Bridge fix awaiting a fleet rollout").
+- Live and healthy.
+- **Booking went LIVE 2026-09-23.** `content.js booking_live: true`. The members list is
+  loaded: **1,012 active members, 609 with an email, 403 without.**
+- Tested end to end on the live site before announcing: a booking as a member WITH an
+  email (optional field, masked hint) and one as a member WITHOUT (required field), and
+  the captured address was verified written back to their row. All test bookings were then
+  deleted — the table is at zero.
+- **Dan has not been told yet** as of the wrap. That is the next action.
+
+### What was built 2026-09-23
+- **`scripts/import-members.mjs`** — a MERGE, not a replace. Rules in order of how much
+  damage getting them wrong would do: (1) an email we hold is never replaced by a blank;
+  (2) match on membership number, which is unique and always present — email is NOT unique,
+  14 addresses are shared by couples; (3) absent from the list means inactive, not deleted;
+  (4) deactivating >20% of the roster is REFUSED. Dry-run by default. Reads the office's
+  own export format directly, so October needs no transform.
+  ⚠️ `--no-deactivate` for a FIRST load. The guard fired on the first real run because the
+  three seeded TEST members are deliberately not on the office list, so a reconciling
+  import wanted to disable 100% of the roster. Those rows carry our own email so
+  confirmations during testing never reach a real member; disabling them would have been
+  the wrong outcome.
+- **Email capture at booking.** 40% of the club has no address on file, so the club cannot
+  contact two in five of its own members. Every booking now fills one of those gaps.
+  `validate-member` returns `hasEmail` and a MASKED hint (`a••••@gmail.com`), never the
+  address: name plus membership number is a weak credential (both knowable), so returning
+  someone's email to anyone who can guess them would be a real leak. Asked on the CONFIRM
+  step, not the identity gate — there it answers a question the member already has rather
+  than standing between them and finding out if a bay is free. Required when we hold none,
+  optional otherwise.
+- **The confirm button explains itself.** It used to grey out with no reason, and two
+  different things could be the cause. It now always clicks, names what is missing, and
+  focuses that field.
+
+### Email routing
+`EMAIL_OFFICE = office@teatatuboatclub.co.nz`. `EMAIL_MANAGER` is now EMPTY — Lazar's call,
+2026-09-23, confirmations go to the office not the manager. Both were briefly pointed at
+`lazar@pubd.io` for the live test and have been put back.
+
+### Known and deliberate
+- ⚠️ **A name that differs from the club's records will not match.** "Tracey" vs "Tracy", a
+  married name, a nickname. Matching is case-insensitive but exact otherwise. If Dan
+  reports members stuck, this is almost certainly why, and the fix is matching on SURNAME
+  plus number rather than full name.
+- ⬜ **Dan cannot upload a new list himself.** The rules exist, but only as a CLI. See
+  BACKLOG "Booking module: the multi-tenant migration" — a panel on the existing
+  password-gated `/admin` would be cheap, but is throwaway once booking moves onto the
+  shared database and the CMS can host it properly. October is the natural deadline.
+- This site uses **its own Supabase project** (`ihgziwddxobqjmjyhbxo`), not the CMS's. That
+  is the ~$10/mo the multi-tenant migration would remove. Local credentials live in `.env`
+  (gitignored) for running the import.
 
 ## Decisions & why
 - **Committee photos: the slot is wired NOW, before the photos exist.** Every member carries
