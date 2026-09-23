@@ -1,10 +1,17 @@
 [build]
   command = "npm run build"
   publish = "dist"
-  # Skip the build when a push only touches markdown (CONTEXT.md, docs). A
-  # production deploy costs Netlify credits, and a docs commit should not spend
-  # one. Exits 0 (=skip) when the diff is markdown-only.
-  ignore = "git diff --quiet HEAD^ HEAD -- ':(exclude)*.md'"
+  # Skip the build when nothing but markdown has changed SINCE THE LAST BUILD.
+  # Netlify treats exit 0 from `ignore` as "nothing to build", and a production
+  # deploy costs 15 credits, so a docs commit should not spend one.
+  #
+  # The baseline is CACHED_COMMIT_REF (the last commit Netlify actually built),
+  # NOT HEAD^. Comparing against HEAD^ only asks "was the newest commit docs?",
+  # so a push of code commits topped by a CONTEXT.md commit (a fast-forward
+  # merge after /wrap) is cancelled with the code left undeployed. That is what
+  # swallowed Elevate's go-live. With no cache the variable is empty and we
+  # build unconditionally.
+  ignore = "[ -n \"$CACHED_COMMIT_REF\" ] && git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- ':(exclude)*.md'"
   functions = "netlify/functions"
 
 # SPA fallback for any path without a prerendered file. Non-forced, so real
