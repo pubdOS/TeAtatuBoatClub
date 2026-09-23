@@ -7,6 +7,28 @@
 // command (suppressing self-triggered scroll reports).
 
 const ALLOWED_PARENTS = ['https://cms.pubd.io', 'http://localhost:3000']
+
+// WHAT THIS COPY OF THE BRIDGE CAN DO.
+//
+// The bridge ships inside every client repo, so at any moment the fleet is
+// running several different versions of this file — and they drift, because a
+// site only picks up a change when someone deploys it. On 2026-09-03 there were
+// THREE genuinely different bridge files across 13 repos and every one of them
+// posted `version: 5`, so the CMS had no way to know what the site in front of
+// it could actually do.
+//
+// A version NUMBER cannot fix that on its own: it only works if it is bumped
+// every time the file changes, and history says it will not be. So the bridge
+// declares its capabilities by NAME instead. The CMS asks "can this site do X",
+// never "is this version >= N", which is self-describing and survives drift.
+//
+// An older bridge sends no `can` at all. The CMS reads that as "nothing beyond
+// the original set", which is exactly right, and degrades instead of sending
+// messages into a void. Add a name here in the same commit that adds the
+// feature — never before it works.
+const CAN = [
+  'set-collection', // rewrite a whole list in place: galleries and sub-lists
+]
 let cmsOrigin = null
 
 // "Home - Hero - Heading" → prefix "Home - Hero" (page-qualified section id)
@@ -319,6 +341,53 @@ function itemAdd(repeaterKey, values) {
   })
 }
 
+// ── Sub-lists: a repeatable list belonging to ONE repeater item ──────────────
+//
+// A service's own schedule of bullets, say. Edits to these used to save fine and
+// then sit there invisibly: the panel speaks in FIELDS (`set-item`), and there
+// was no message that could rewrite a whole list of rows, so the client typed a
+// bullet and watched the page not move until the next publish.
+//
+// Deliberately NOT used for galleries. A gallery's DOM is a FILTERED projection
+// of its array — the boat club's drops any photo outside the current album — so
+// rebuilding the list from the array would resurrect photos the visitor has
+// filtered out. That needs its own answer, not this one.
+//
+// The first row is kept as a template the moment we first see the list, so a
+// list emptied to zero can still be rebuilt afterwards. Without that, deleting
+// the last bullet would remove the only thing left to clone and every later add
+// would silently do nothing until a reload.
+const sublistTemplates = new WeakMap()
+
+function setCollection(msg) {
+  if (msg.kind !== 'sublist') return
+  const parent = repeaterMap.get(msg.key)
+  if (!parent) return
+  const item = itemsOf(parent)[msg.index]
+  if (!item) return
+  const sel = `[data-cms-sublist="${msg.name}"]`
+  const container = item.matches(sel) ? item : item.querySelector(sel)
+  if (!container) return
+
+  if (!sublistTemplates.has(container) && container.firstElementChild) {
+    sublistTemplates.set(container, container.firstElementChild.cloneNode(true))
+  }
+  const template = sublistTemplates.get(container)
+  if (!template) return
+
+  const rows = Array.isArray(msg.items) ? msg.items : []
+  while (container.children.length > rows.length) container.lastElementChild.remove()
+  while (container.children.length < rows.length) container.appendChild(template.cloneNode(true))
+
+  Array.from(container.children).forEach((row, i) => {
+    Object.entries(rows[i] || {}).forEach(([field, value]) => {
+      const fsel = `[data-cms-subfield="${field}"]`
+      const targets = row.matches(fsel) ? [row] : Array.from(row.querySelectorAll(fsel))
+      for (const el of targets) applyValue(el, String(value ?? ''), row)
+    })
+  })
+}
+
 function itemRemove(repeaterKey, index) {
   const container = repeaterMap.get(repeaterKey)
   if (!container) return
@@ -474,6 +543,7 @@ window.addEventListener('message', (event) => {
   if (msg.type === 'cache') applied[msg.key] = msg.value // replay state only — no DOM work
   if (msg.type === 'set-item') setItemField(msg.key, msg.index, msg.field, msg.value)
   if (msg.type === 'item-add') itemAdd(msg.key, msg.values)
+  if (msg.type === 'set-collection') setCollection(msg)
   if (msg.type === 'item-remove') itemRemove(msg.key, msg.index)
   if (msg.type === 'item-move') itemMove(msg.key, msg.from, msg.to)
   if (msg.type === 'goto') goTo(msg.prefix)
@@ -488,6 +558,6 @@ window.addEventListener('pagehide', () => post({ type: 'bye' }))
 scan()
 window.addEventListener('scroll', onScroll, { passive: true })
 window.addEventListener('resize', onScroll, { passive: true })
-post({ type: 'hello', version: 5, path: window.location.pathname })
+post({ type: 'hello', version: 6, can: CAN, path: window.location.pathname })
 setTimeout(report, 300)
 setTimeout(measureAspects, 600) // after first paint settles
