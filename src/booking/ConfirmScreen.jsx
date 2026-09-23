@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useCmsContent } from '../hooks/useCmsContent.js'
 import { createBooking } from './api.js'
 
@@ -56,11 +56,25 @@ export default function ConfirmScreen({ member, selections, fallback, onBack, on
   // disclosing it to anyone who guessed their membership number.
   const [email, setEmail] = useState('')
   const needEmail = !member.hasEmail
+  // Focused when it is the thing standing in the way, so the fix is where the
+  // eye already is rather than somewhere up the page.
+  const emailRef = useRef(null)
+  const ackRef = useRef(null)
 
   async function handleConfirm() {
     setError('')
+    // The button used to be DISABLED until these were satisfied, which left
+    // someone looking at a greyed-out control with no idea which of two things
+    // was wrong. A disabled control that cannot say why is a dead end. It now
+    // always clicks, and always names what is missing — and takes you to it.
     if (needEmail && !email.trim()) {
       setError('Please add an email address so we can send your confirmation.')
+      emailRef.current?.focus()
+      return
+    }
+    if (!ack) {
+      setError('Please tick the box to confirm you understand the charge.')
+      ackRef.current?.focus()
       return
     }
     setBusy(true)
@@ -147,6 +161,7 @@ export default function ConfirmScreen({ member, selections, fallback, onBack, on
         </label>
         <input
           id="bookingEmail"
+          ref={emailRef}
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -164,6 +179,7 @@ export default function ConfirmScreen({ member, selections, fallback, onBack, on
 
       <label className="mt-5 flex cursor-pointer items-start gap-3 text-sm text-navy">
         <input
+          ref={ackRef}
           type="checkbox"
           checked={ack}
           onChange={(e) => setAck(e.target.checked)}
@@ -176,7 +192,7 @@ export default function ConfirmScreen({ member, selections, fallback, onBack, on
 
       <button
         onClick={handleConfirm}
-        disabled={!ack || busy || (needEmail && !email.trim())}
+        disabled={busy}
         className="btn-primary mt-5 w-full disabled:cursor-not-allowed disabled:opacity-50"
       >
         {busy ? 'Confirming…' : `Confirm ${dayCount} day${dayCount !== 1 ? 's' : ''}`}
