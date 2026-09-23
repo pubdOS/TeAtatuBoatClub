@@ -8,10 +8,11 @@
   # The baseline is CACHED_COMMIT_REF (the last commit Netlify actually built),
   # NOT HEAD^. Comparing against HEAD^ only asks "was the newest commit docs?",
   # so a push of code commits topped by a CONTEXT.md commit (a fast-forward
-  # merge after /wrap) is cancelled with the code left undeployed. That is what
-  # swallowed Elevate's go-live. With no cache the variable is empty and we
-  # build unconditionally.
-  ignore = "[ -n \"$CACHED_COMMIT_REF\" ] && git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- ':(exclude)*.md'"
+  # With NO build cache, Netlify sets CACHED_COMMIT_REF equal to COMMIT_REF (its
+  # docs say so), so a commit is compared with itself and every change looks like
+  # none: that cancelled a real Hart deploy on 2026-09-24. Equal refs therefore mean
+  # "no baseline" and we build.
+  ignore = "[ -n \"$CACHED_COMMIT_REF\" ] && [ \"$CACHED_COMMIT_REF\" != \"$COMMIT_REF\" ] && git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- ':(exclude)*.md'"
   functions = "netlify/functions"
 
 # SPA fallback for any path without a prerendered file. Non-forced, so real
