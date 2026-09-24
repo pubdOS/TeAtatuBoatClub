@@ -115,6 +115,10 @@ export default function Contact() {
                 onSubmit={handleSubmit}
                 className="mt-6 space-y-4"
               >
+                {/* Netlify injects this input into the pre-rendered HTML at deploy time.
+                    Rendering it ourselves keeps that HTML identical to what React renders;
+                    without it every visit to this page failed hydration (2026-09-24). */}
+                <input type="hidden" name="form-name" value="contact" />
                 {/* Honeypot — hidden from humans, bots fill it and get dropped */}
                 <p className="hidden">
                   <label data-cms-static="Netlify honeypot — hidden from visitors, must stay fixed">Don’t fill this out: <input name="bot-field" /></label>
