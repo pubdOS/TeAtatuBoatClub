@@ -28,6 +28,7 @@ const ALLOWED_PARENTS = ['https://cms.pubd.io', 'http://localhost:3000']
 // feature — never before it works.
 const CAN = [
   'set-collection', // rewrite a whole list in place: galleries and sub-lists
+  'tap-select', // phone editor: edit mode, tap reports a field, select highlights it
 ]
 let cmsOrigin = null
 
@@ -468,6 +469,151 @@ function goTo(prefix) {
   if (hidden) scrollTo(hidden)
 }
 
+// ── Tap to edit (the phone editor) ────────────────────────────────────────────
+// A phone has no room for a panel listing fields, so the site itself is the
+// interface: in edit mode every editable element gets a quiet outline, a tap on
+// one is REPORTED instead of followed, and the CMS opens that one field in a
+// sheet. Off by default and only switched on by `edit-mode`, which the desktop
+// editor never sends, so nothing here runs there.
+let editMode = false
+let selectedEls = []
+const EDITABLE = '[data-cms], [data-cms-field]'
+// A gallery is edited as a whole (photos, albums, order) in the CMS's photo
+// manager, so a tap anywhere on it reports the gallery rather than one image.
+const TAPPABLE = EDITABLE + ', [data-cms-gallery]'
+
+function editStyle(on) {
+  let el = document.getElementById('pubd-edit-style')
+  if (!on) { if (el) el.remove(); return }
+  if (el) return
+  el = document.createElement('style')
+  el.id = 'pubd-edit-style'
+  el.textContent =
+    'html.pubd-editing [data-cms], html.pubd-editing [data-cms-field], html.pubd-editing .pubd-photo, html.pubd-editing [data-cms-gallery]' +
+    '{outline:1.5px dashed rgba(15,118,110,.6);outline-offset:3px;border-radius:4px;cursor:pointer}' +
+    'html.pubd-editing .pubd-selected' +
+    '{outline:2px solid #14b8a6 !important;outline-offset:4px;box-shadow:0 0 0 8px rgba(20,184,166,.16)}'
+  document.head.appendChild(el)
+}
+
+// A photo is usually painted by an untagged layer (a CSS background, a component's
+// <img>) and edited through a hidden `<img data-cms…>` companion beside it. The
+// companion has no box to outline or tap, so its visible parent stands in for it.
+const isPhotoCompanion = (el) => el.tagName === 'IMG' && !el.getClientRects().length
+function markPhotos(on) {
+  document.querySelectorAll('.pubd-photo').forEach((n) => n.classList.remove('pubd-photo'))
+  if (!on) return
+  document.querySelectorAll(EDITABLE).forEach((el) => {
+    if (isPhotoCompanion(el) && el.parentElement) el.parentElement.classList.add('pubd-photo')
+  })
+}
+function boxOf(el) {
+  if (el.getClientRects().length) return el.getBoundingClientRect()
+  return isPhotoCompanion(el) && el.parentElement ? el.parentElement.getBoundingClientRect() : null
+}
+
+// What the CMS calls a field: a flat key, or one field of one repeater item.
+function describe(el) {
+  if (el.hasAttribute('data-cms-gallery')) return { kind: 'gallery', key: el.getAttribute('data-cms-gallery') }
+  if (el.hasAttribute('data-cms')) return { kind: 'field', key: el.getAttribute('data-cms') }
+  const field = el.getAttribute('data-cms-field')
+  const container = el.closest('[data-cms-repeater]')
+  if (!field || !container) return null
+  const index = itemsOf(container).findIndex((it) => it === el || it.contains(el))
+  return index < 0 ? null : { kind: 'item', key: container.getAttribute('data-cms-repeater'), index, field }
+}
+const sameField = (a, b) => !!a && !!b && a.kind === b.kind && a.key === b.key && a.index === b.index && a.field === b.field
+
+function elementsFor(d) {
+  if (!d) return []
+  if (d.kind === 'gallery') return Array.from(document.querySelectorAll(`[data-cms-gallery="${d.key}"]`))
+  if (d.kind === 'field') return fieldMap.get(d.key) || []
+  const container = repeaterMap.get(d.key)
+  const item = container && itemsOf(container)[d.index]
+  if (!item) return []
+  const sel = `[data-cms-field="${d.field}"]`
+  return item.matches(sel) ? [item] : Array.from(item.querySelectorAll(sel))
+}
+
+// The tapped element, or the hidden photo companion of what was tapped. Anything
+// else (a hamburger, a tab, a plain link) is not ours and behaves normally.
+function editableFrom(node) {
+  const direct = node && node.closest ? node.closest(TAPPABLE) : null
+  if (direct && boxOf(direct)) return direct
+  let n = node
+  for (let i = 0; n && n.children && i < 4; i++, n = n.parentElement) {
+    const img = Array.from(n.children).find((c) => c.tagName === 'IMG' && c.matches(EDITABLE))
+    if (img) return img
+  }
+  return null
+}
+
+// Every editable field on screen, in page order: the phone sheet's ‹ › walk.
+function fieldList() {
+  const out = []
+  document.querySelectorAll(TAPPABLE).forEach((el) => {
+    if (!boxOf(el)) return // hidden: a collapsed menu, a "… Link" companion
+    const d = describe(el)
+    if (d && !out.some((o) => sameField(o, d))) out.push(d)
+  })
+  return out
+}
+function postFields() { if (editMode) post({ type: 'fields', list: fieldList() }) }
+
+// Fields within a thumb's width of the tap, nearest first. The sheet offers
+// them as chips when a tap lands between an eyebrow, a heading and a button.
+function nearbyAt(x, y, target) {
+  const hits = []
+  document.querySelectorAll(EDITABLE).forEach((el) => {
+    const r = boxOf(el)
+    if (!r || !r.width) return
+    const dx = Math.max(r.left - x, 0, x - r.right)
+    const dy = Math.max(r.top - y, 0, y - r.bottom)
+    if (dx > 22 || dy > 22) return
+    const d = describe(el)
+    if (d && !sameField(d, target) && !hits.some((h) => sameField(h.d, d))) hits.push({ d, dist: dx + dy })
+  })
+  return hits.sort((a, b) => a.dist - b.dist).slice(0, 4).map((h) => h.d)
+}
+
+// Capture phase on the document: runs before the site's own handlers, so a tap
+// on an editable link or button opens the field instead of navigating.
+function onTap(e) {
+  if (!editMode) return
+  const el = editableFrom(e.target)
+  const target = el && describe(el)
+  if (!target) return
+  e.preventDefault()
+  e.stopPropagation()
+  post({ type: 'tap', target, nearby: nearbyAt(e.clientX, e.clientY, target) })
+}
+document.addEventListener('click', onTap, true)
+
+function setEditMode(on) {
+  editMode = on
+  document.documentElement.classList.toggle('pubd-editing', on)
+  editStyle(on)
+  markPhotos(on)
+  if (on) postFields()
+  else select(null)
+}
+
+// Highlight the field being edited and bring it into the top of the screen,
+// above the sheet that now covers the bottom half.
+function select(target, topRatio) {
+  selectedEls.forEach((n) => n.classList.remove('pubd-selected'))
+  selectedEls = []
+  if (!target) return
+  const els = elementsFor(target).map((el) => (isPhotoCompanion(el) ? el.parentElement : el)).filter(Boolean)
+  els.forEach((n) => n.classList.add('pubd-selected'))
+  selectedEls = els
+  const first = els.find((n) => n.getClientRects().length)
+  if (!first) return
+  const r = first.getBoundingClientRect()
+  beginSuppress(prefixOf(target.key))
+  window.scrollTo({ top: Math.max(0, r.top + window.scrollY - window.innerHeight * (topRatio ?? 0.16)), behavior: 'smooth' })
+}
+
 function navigate(path) {
   window.history.pushState({}, '', path) // patched below — triggers the rescan
   window.dispatchEvent(new PopStateEvent('popstate')) // react-router follows
@@ -489,6 +635,7 @@ function routeWork() {
   post({ type: 'page', path: window.location.pathname })
   report()
   measureAspects()
+  if (editMode) { markPhotos(true); postFields() }
 }
 
 // Report each image slot's real rendered aspect so the panel previews the crop
@@ -548,6 +695,10 @@ window.addEventListener('message', (event) => {
   if (msg.type === 'item-move') itemMove(msg.key, msg.from, msg.to)
   if (msg.type === 'goto') goTo(msg.prefix)
   if (msg.type === 'navigate') navigate(msg.path)
+  if (msg.type === 'edit-mode') setEditMode(!!msg.on)
+  if (msg.type === 'select') select(msg.target || null, msg.topRatio)
+  // Adding or removing an item changes what ‹ › walks through.
+  if (msg.type === 'item-add' || msg.type === 'item-remove' || msg.type === 'item-move' || msg.type === 'hydrate') postFields()
 })
 
 // The page is really unloading (external link, hard reload) — tell the panel
