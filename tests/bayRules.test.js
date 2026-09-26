@@ -1,7 +1,7 @@
 // node --test netlify/functions/_bayRules.test.js
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { frontBayOpen, backBayFirstViolation } from './_bayRules.js'
+import { frontBayOpen, backBayFirstViolation } from '../netlify/functions/_bayRules.js'
 
 const takenSet = (keys) => (b, d) => keys.includes(`${b}|${d}`)
 const D = '2026-10-10'
