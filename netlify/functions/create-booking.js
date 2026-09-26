@@ -12,6 +12,7 @@
 //     half-booked range.
 import { Resend } from 'resend'
 import { json, parseBody, supabase, findActiveMember, isWithinWindow, nzToday, addDays, BOOKING_WINDOW_DAYS } from './_supabase.js'
+import { backBayFirstViolation } from './_bayRules.js'
 
 const VALID_BERTHS = new Set([1, 2, 3, 4])
 // Booking limits (Dan 2026-08): a member can hold up to MAX_TOTAL_DAYS booked
@@ -104,6 +105,27 @@ export const handler = async (event) => {
     }
     if (maxRun > MAX_CONSECUTIVE) {
       return json(400, { ok: false, error: `Bookings can run for at most ${MAX_CONSECUTIVE} days in a row.` })
+    }
+
+    // ── Back bays fill first (Dan 2026-09-26): Bay 2 is behind Bay 1 and Bay 3
+    // behind Bay 4, so a front bay needs its back bay taken that day, or booked
+    // in this same go. The grid enforces this too; this is the check that counts.
+    const days = [...new Set(norm.map((s) => s.slotDate))]
+    const { data: dayRows, error: dayErr } = await sb
+      .from('bookings')
+      .select('berth_id, slot_date')
+      .eq('status', 'confirmed')
+      .in('slot_date', days)
+    if (dayErr) throw dayErr
+    const takenKeys = new Set((dayRows || []).map((r) => `${r.berth_id}|${r.slot_date}`))
+    const clash = backBayFirstViolation(norm, (b, d) => takenKeys.has(`${b}|${d}`))
+    if (clash) {
+      const when = new Date(`${clash.date}T00:00:00`).toLocaleDateString('en-NZ', { day: 'numeric', month: 'short' })
+      return json(400, {
+        ok: false,
+        code: 'back-bay-first',
+        error: `Bay ${clash.back} sits behind Bay ${clash.front}, so it fills first. On ${when}, please book Bay ${clash.back} instead (or both together).`,
+      })
     }
 
     // ── Atomic multi-row insert (unique index rejects any double-booking) ──
