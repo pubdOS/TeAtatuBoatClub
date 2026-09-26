@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getAvailability } from './api.js'
+import { BEHIND, frontBayOpen } from '../../netlify/functions/_bayRules.js'
 
 const PERIOD = 'day' // current slot granularity (see schema.sql / Part C #1)
 const MAX_DAYS = 10  // per-selection cap; server also enforces 10 total days + max 5 in a row
@@ -82,6 +83,11 @@ export default function AvailabilityGrid({ member, onSelect }) {
     : Object.values(selected).sort((a, b) => a.slotDate.localeCompare(b.slotDate))
   const dayCount = largeVessel ? Object.keys(selected).length : selectedList.length
 
+  // Back bays fill first: a front bay (1, 4) opens once the bay behind it (2, 3)
+  // is taken that day or chosen in this booking. Same rule the server enforces.
+  const occupied = (berthId, iso) => !!taken[`${berthId}|${iso}|${PERIOD}`] || !!selected[`${berthId}|${iso}`]
+  const frontOf = Object.fromEntries(Object.entries(BEHIND).map(([front, back]) => [back, Number(front)]))
+
   const toggle = (berth, iso) => {
     const key = `${berth.id}|${iso}`
     if (!selected[key]) {
@@ -91,8 +97,12 @@ export default function AvailabilityGrid({ member, onSelect }) {
     setLimitHit(false)
     setSelected((prev) => {
       const next = { ...prev }
-      if (next[key]) delete next[key]
-      else next[key] = { berthId: berth.id, berthName: berth.name, slotDate: iso, period: PERIOD }
+      if (next[key]) {
+        delete next[key]
+        // Letting go of a back bay also lets go of the front bay that relied on it.
+        const front = frontOf[berth.id]
+        if (front && !taken[`${berth.id}|${iso}|${PERIOD}`]) delete next[`${front}|${iso}`]
+      } else next[key] = { berthId: berth.id, berthName: berth.name, slotDate: iso, period: PERIOD }
       return next
     })
   }
@@ -192,6 +202,7 @@ export default function AvailabilityGrid({ member, onSelect }) {
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-navy/70">
           Signed in as <strong>{member.fullName}</strong>. Tap any free days to select — up to {MAX_DAYS} days total, max 5 in a row.
+          <span className="mt-1 block text-navy/55">Bays 2 and 3 sit behind Bays 1 and 4, so they fill first each day.</span>
         </p>
         <div className="flex items-center gap-4 text-xs text-navy/60">
           <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded bg-accent/20 ring-1 ring-accent/40" /> Available</span>
@@ -225,10 +236,15 @@ export default function AvailabilityGrid({ member, onSelect }) {
                 {shownDays.map((iso) => {
                   const isTaken = taken[`${berth.id}|${iso}|${PERIOD}`]
                   const isSelected = !!selected[`${berth.id}|${iso}`]
+                  const waiting = !isTaken && !isSelected && !frontBayOpen(berth.id, iso, occupied)
                   return (
                     <td key={iso} className="px-1.5 py-1.5 text-center">
                       {isTaken ? (
                         <span className="block rounded-md bg-navy/10 px-2 py-2 text-[11px] text-navy/40">Taken</span>
+                      ) : waiting ? (
+                        <span className="block rounded-md bg-navy/5 px-1 py-2 text-[10.5px] text-navy/45" title={`Bay ${BEHIND[berth.id]} sits behind this bay, so it fills first`}>
+                          Bay {BEHIND[berth.id]} first
+                        </span>
                       ) : (
                         <button
                           onClick={() => toggle(berth, iso)}
