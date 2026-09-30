@@ -173,7 +173,7 @@ export default function ConfirmScreen({ member, selections, fallback, onBack, on
         <p className="mt-1.5 text-xs text-navy/55">
           {needEmail
             ? "We don't have an email address for you. Add one and we'll send your booking confirmation, and keep it on file for the club."
-            : `We'll send it to ${member.emailHint}. Enter a different address to use that instead.`}
+            : `We'll send it to ${member.emailHint}. Add another address to get a copy there too. To change the address the club holds, contact the office.`}
         </p>
       </div>
 
