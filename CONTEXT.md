@@ -1,5 +1,5 @@
 # TeAtatuBoatClub — working context
-_Last wrapped: 2026-09-23 · LIVE on teatatuboatclub.co.nz · CMS-wired · Pro · **BOOKING IS LIVE**_
+_Last wrapped: 2026-10-01 · LIVE on teatatuboatclub.co.nz · CMS-wired · Pro · **BOOKING NOW SERVED BY THE PUBD CMS**_
 
 ## What this is
 Te Atatū Boating Club: a ~750-family social + boating club. 12 pages, plus a **bespoke
@@ -8,6 +8,28 @@ of the CMS. Contacts: **Dan** (manager, the one who emails changes) and **Barry 
 (Commodore since the 2026 AGM). Committee-run, so the people change annually.
 
 ## Current state
+
+### ▶ 2026-09-30: booking moved to the Pubd CMS (read this first)
+- **Booking is served by `cms.pubd.io/api/booking/teatatu/…`** from the CMS's shared booking tables.
+  `src/booking/api.js` holds the one URL (override `VITE_BOOKING_API` for local testing against
+  `next dev`; that origin must be in the club's `allowed_origins` in `booking_settings`). This site
+  holds NO database key any more. Plan: `sitemog-toolkit/BOOKING_SHARED_DB_PLAN.md`.
+- **The old Netlify functions are RETIRED** (`netlify/functions/_retired.js`): they answer 410 "please
+  refresh", because they still pointed at the old database. `_bayRules.js` STAYS (the grid imports
+  `BEHIND` from it). `keepalive` still pings the old project until it is deleted.
+- **Rules now live in the CMS** (`booking_settings` for this club): 90-day window, 10 held days,
+  5 in a row, back bays first `{1:2, 4:3}`. Changing a number = a settings row, not a code change.
+- **Members are managed in the CMS Bookings tab** (Dan's login): upcoming bookings + cancel, and the
+  member-list upload with a preview and the same four merge rules. `scripts/import-members.mjs` is
+  now legacy (it targets the old project).
+- **/admin still works** (kept as a fallback, Lazar's call), now via the CMS with the same office
+  password (stored as a hash). Retire later by nulling `admin_password_hash`.
+- **Emails:** still from `bookings@send.teatatuboatclub.co.nz` (verified in Pubd's Resend), to
+  office@ AND manager@ (Lazar: keep manager@). A member who types a different email than the one on
+  file gets a copy there, but the stored address is never replaced from the public form; the office
+  email flags it.
+
+### Before 2026-09-30 (history)
 - Live and healthy.
 - **Booking went LIVE 2026-09-23.** `content.js booking_live: true`. The members list is
   loaded: **1,012 active members, 609 with an email, 403 without.**
@@ -97,6 +119,9 @@ of the CMS. Contacts: **Dan** (manager, the one who emails changes) and **Barry 
   no editable fields today, but it is two files from silently dropping a real page.
 
 ## Open todos
+- [ ] **Dan's October member list** → Dan uploads it in the CMS Bookings tab himself (preview first). Not received yet as of 1 Oct. (owner: Dan; Lazar to point him at the tab)
+- [ ] Lazar: test /admin once with the office password.
+- [ ] ~14 Oct: export + delete the old Supabase project `ihgziwddxobqjmjyhbxo` (−US$10/mo), then remove `netlify/functions` except `_bayRules.js` (and keepalive). Ride a real deploy.
 - [ ] **Members CSV** from the office → load into the booking Supabase → flip `booking_live`
       to true. (owner: Dan/office, then you). This is the last thing before booking ships.
 - [ ] **Confirm the $150 loading-area fine is on the right rule.** Dan wrote "vessels ... in
@@ -112,6 +137,7 @@ of the CMS. Contacts: **Dan** (manager, the one who emails changes) and **Barry 
       next real deploy. (owner: you)
 
 ## Session log (brief, newest first)
+- 2026-09-30: booking cut over to the CMS shared database; old functions retired (410) after a security sweep; email-on-file can no longer be replaced from the booking form.
 - 2026-08-25: Dan's post-AGM committee (10 people) + loading-area fine shipped; committee photo
   slot wired; empty-email dead links fixed; CMS re-scanned + values adopted; CONTEXT created.
 - 2026-08-23: repeater layout converted to count-derived (merged).
