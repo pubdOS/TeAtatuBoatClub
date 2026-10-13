@@ -29,6 +29,14 @@ const ALLOWED_PARENTS = ['https://cms.pubd.io', 'http://localhost:3000']
 const CAN = [
   'set-collection', // rewrite a whole list in place: galleries and sub-lists
   'tap-select', // phone editor: edit mode, tap reports a field, select highlights it
+  'reveal', // show a field that sits in a hidden state of an interactive piece
+  'structure', // describe the page: its sections in order, and each field's section, role and state
+  'settled', // <html class="pubd-editor"> from boot, so the site can hold still while it is edited
+  'reveal-target', // `reveal` takes a target, so one field of one list item can be shown
+  'groups', // `structure` says which fields are pieces of one thing (a two-part headline)
+  'fit', // after an edit, report whether the text still fits the slot it was designed for
+  'click-section', // a click on the page names the section it landed in
+  'labels', // `structure` carries the plain names the site gives a field and a state
 ]
 let cmsOrigin = null
 
@@ -64,6 +72,55 @@ function isPinned(el) {
 
 const repeaterMap = new Map() // repeater key → container element
 
+// ── What a field IS, read from the page (EDITOR_CONTRACT.md) ──────────────────
+// These depend on wrappers that can live in another component, so only the
+// rendered page knows them; the scanner reads source and cannot.
+//
+// SECTION: a `data-cms-section="Page - Section"` wrapper is the section's real
+// box, and everything inside it belongs to that section whatever its key says.
+// That is what lets one component render on several pages (its keys name a
+// "page" that is not a route) and what stops a section whose fields are sparse,
+// pinned, or beside another section's fields from confusing the scroll tracker.
+// Without a wrapper the section is the key's prefix, as it always was.
+function sectionOf(el, key) {
+  const wrap = el.closest('[data-cms-section]')
+  return (wrap && wrap.getAttribute('data-cms-section')) || prefixOf(key)
+}
+// ROLE: content unless a wrapper (or the element) says `detail` (real but minor
+// copy) or `illustration` (text inside a graphic we built, admin-only).
+function roleOf(el) {
+  const holder = el.closest('[data-cms-role]')
+  const role = holder && holder.getAttribute('data-cms-role')
+  return role === 'detail' || role === 'illustration' ? role : 'content'
+}
+// GROUP: fields that are pieces of ONE thing, so the panel can show them as one
+// item and warn before a piece is left empty. Fields sharing a heading are a
+// group without being told (a headline with one line in an accent colour is two
+// fields and one sentence); `data-cms-group="Name"` on a wrapper names any other.
+function groupOf(el) {
+  const named = el.closest('[data-cms-group]')
+  if (named) return named.getAttribute('data-cms-group') || null
+  const heading = el.closest('h1, h2, h3, h4, h5, h6')
+  return heading && heading.querySelectorAll('[data-cms]').length > 1 ? 'Headline' : null
+}
+// NAMES: what a client should read. A field's own (`data-cms-label`), and the
+// name of the state it sits in (`data-cms-state-label` on the nearest holder
+// that has one: "Evening version", "After it is sent"). State ids are for code.
+function stateLabelOf(el) {
+  let holder = el.closest('[data-cms-state]')
+  while (holder) {
+    const label = holder.getAttribute('data-cms-state-label')
+    if (label) return label
+    holder = holder.parentElement ? holder.parentElement.closest('[data-cms-state]') : null
+  }
+  return null
+}
+// STATE: the id of the hidden state this sits in, if any (innermost holder).
+function stateOf(el) {
+  const holder = el.closest('[data-cms-state]')
+  return holder ? holder.getAttribute('data-cms-state') : null
+}
+
 function scan() {
   fieldMap.clear()
   repeaterMap.clear()
@@ -78,12 +135,19 @@ function scan() {
     const key = el.getAttribute('data-cms-repeater')
     if (key) repeaterMap.set(key, el)
   })
+  // An illustration never votes: a mock screen beside the hero text would
+  // otherwise claim the scroll position from the section it merely decorates.
   fieldMap.forEach((els, key) => {
-    const prefix = prefixOf(key)
-    for (const el of els) if (!isPinned(el)) voters.push({ el, prefix })
+    for (const el of els) if (!isPinned(el) && roleOf(el) !== 'illustration') voters.push({ el, prefix: sectionOf(el, key) })
   })
   repeaterMap.forEach((el, key) => {
-    if (!isPinned(el)) voters.push({ el, prefix: prefixOf(key) })
+    if (!isPinned(el) && roleOf(el) !== 'illustration') voters.push({ el, prefix: sectionOf(el, key) })
+  })
+  // A declared section votes with its own box, so it has a start even where its
+  // first field sits low inside it.
+  document.querySelectorAll('[data-cms-section]').forEach((el) => {
+    const prefix = el.getAttribute('data-cms-section')
+    if (prefix && !isPinned(el)) voters.push({ el, prefix })
   })
 }
 
@@ -262,6 +326,23 @@ function setField(key, value) {
   const els = fieldMap.get(key)
   if (!els) return
   for (const el of els) applyValue(el, value, document)
+}
+
+// Interactive pieces (a toggle, a stepper, an explorer) render every state's
+// copy in the DOM and show one state at a time. When the editor focuses or edits
+// a field that sits in a state not showing, ask the piece to show it: a
+// `pubd:reveal` event bubbles from the field's element, and a component that
+// opted in (src/lib/useReveal.js) switches to the state holding it.
+// Nothing listens on ordinary hidden companions (a "… Link", SEO spans), so for
+// those it is a no-op.
+const showing = (el) => el.getClientRects().length > 0 && !el.closest('[aria-hidden="true"], [inert]')
+// `target` (same shape as a tap) reaches one field of one list item, which a
+// key alone cannot name: a row whose daytime answer shows while its evening
+// answer is hidden.
+function reveal(key, target) {
+  const els = target ? elementsFor(target) : fieldMap.get(key)
+  if (!els || !els.length || els.some(showing)) return
+  els[0].dispatchEvent(new CustomEvent('pubd:reveal', { bubbles: true, detail: { key: key || (target && target.key) } }))
 }
 
 // Reconcile a whole repeater to a draft array (hydration): top up / trim the
@@ -554,11 +635,56 @@ function fieldList() {
   document.querySelectorAll(TAPPABLE).forEach((el) => {
     if (!boxOf(el)) return // hidden: a collapsed menu, a "… Link" companion
     const d = describe(el)
-    if (d && !out.some((o) => sameField(o, d))) out.push(d)
+    // `role` rides along so the sheet's ‹ › can step through content only.
+    if (d && !out.some((o) => sameField(o, d))) out.push({ ...d, role: roleOf(el) })
   })
   return out
 }
 function postFields() { if (editMode) post({ type: 'fields', list: fieldList() }) }
+
+// The page, described: its sections in the order they sit on it, and every
+// editable thing with the section, role and state it belongs to. The CMS builds
+// a page's section list from this instead of guessing from key names, so a
+// section it is told about is never one it does not know.
+function structure() {
+  const boxes = new Map() // prefix → { top, bottom, pinned }
+  const grow = (prefix, el, pinned) => {
+    if (!el.getClientRects().length) return
+    const r = el.getBoundingClientRect()
+    const top = r.top + window.scrollY
+    const cur = boxes.get(prefix)
+    if (!cur) boxes.set(prefix, { top, bottom: top + r.height, pinned, first: el })
+    else { cur.top = Math.min(cur.top, top); cur.bottom = Math.max(cur.bottom, top + r.height); cur.pinned = cur.pinned && pinned }
+  }
+  const declared = new Set()
+  document.querySelectorAll('[data-cms-section]').forEach((el) => {
+    const prefix = el.getAttribute('data-cms-section')
+    if (!prefix) return
+    declared.add(prefix)
+    grow(prefix, el, isPinned(el))
+  })
+  const fields = []
+  document.querySelectorAll(TAPPABLE + ', [data-cms-repeater]').forEach((el) => {
+    const isRepeater = el.hasAttribute('data-cms-repeater')
+    const target = isRepeater ? { kind: 'repeater', key: el.getAttribute('data-cms-repeater') } : describe(el)
+    if (!target || fields.some((f) => sameField(f.target, target))) return
+    const section = sectionOf(el, target.key)
+    const role = roleOf(el)
+    // A declared section keeps the box it declared; an undeclared one is as big
+    // as its visible content fields.
+    if (!declared.has(section) && role !== 'illustration') grow(section, el, isPinned(el))
+    fields.push({ target, section, role, group: isRepeater ? null : groupOf(el), state: stateOf(el), stateLabel: stateLabelOf(el), label: el.getAttribute('data-cms-label') || null, hasBox: !!boxOf(el), visible: showing(el) })
+  })
+  // In the order the page is WRITTEN, not by pixel position: two sections side
+  // by side share a top, and which is "first" then flips with a font load or a
+  // few pixels of padding. Source order is the reading order, and it is the
+  // order they stack in on a phone.
+  const sections = Array.from(boxes, ([prefix, b]) => ({ prefix, top: Math.round(b.top), height: Math.round(b.bottom - b.top), pinned: b.pinned, first: b.first }))
+    .sort((a, b) => (a.first.compareDocumentPosition(b.first) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1))
+    .map(({ first, ...rest }) => rest)
+  return { path: window.location.pathname, sections, fields }
+}
+function postStructure() { post({ type: 'structure', ...structure() }) }
 
 // Fields within a thumb's width of the tap, nearest first. The sheet offers
 // them as chips when a tap lands between an eyebrow, a heading and a button.
@@ -635,6 +761,7 @@ function routeWork() {
   post({ type: 'page', path: window.location.pathname })
   report()
   measureAspects()
+  postStructure()
   if (editMode) { markPhotos(true); postFields() }
 }
 
@@ -686,29 +813,105 @@ window.addEventListener('message', (event) => {
   if (!msg || msg.source !== 'pubd-cms') return
   cmsOrigin = event.origin
   if (msg.type === 'hydrate') Object.entries(msg.diff || {}).forEach(([k, v]) => { applied[k] = v; apply(k, v) })
-  if (msg.type === 'set') { applied[msg.key] = msg.value; setField(msg.key, msg.value) }
+  // Only a live edit reveals; hydration replays every field and must not flip
+  // interactive pieces through their states on load.
+  if (msg.type === 'set') { noteBefore(fieldMap.get(msg.key)); applied[msg.key] = msg.value; setField(msg.key, msg.value); reveal(msg.key); reportFit({ kind: 'field', key: msg.key }, fieldMap.get(msg.key)) }
   if (msg.type === 'cache') applied[msg.key] = msg.value // replay state only — no DOM work
-  if (msg.type === 'set-item') setItemField(msg.key, msg.index, msg.field, msg.value)
+  if (msg.type === 'set-item') {
+    const t = { kind: 'item', key: msg.key, index: msg.index, field: msg.field }
+    noteBefore(elementsFor(t)); setItemField(msg.key, msg.index, msg.field, msg.value); reportFit(t, elementsFor(t))
+  }
   if (msg.type === 'item-add') itemAdd(msg.key, msg.values)
   if (msg.type === 'set-collection') setCollection(msg)
   if (msg.type === 'item-remove') itemRemove(msg.key, msg.index)
   if (msg.type === 'item-move') itemMove(msg.key, msg.from, msg.to)
   if (msg.type === 'goto') goTo(msg.prefix)
+  if (msg.type === 'reveal') reveal(msg.key, msg.target)
   if (msg.type === 'navigate') navigate(msg.path)
   if (msg.type === 'edit-mode') setEditMode(!!msg.on)
   if (msg.type === 'select') select(msg.target || null, msg.topRatio)
   // Adding or removing an item changes what ‹ › walks through.
-  if (msg.type === 'item-add' || msg.type === 'item-remove' || msg.type === 'item-move' || msg.type === 'hydrate') postFields()
+  if (msg.type === 'item-add' || msg.type === 'item-remove' || msg.type === 'item-move' || msg.type === 'hydrate') { postFields(); postStructure() }
 })
 
 // The page is really unloading (external link, hard reload) — tell the panel
 // so it doesn't keep floating over a page we no longer control.
 window.addEventListener('pagehide', () => post({ type: 'bye' }))
 
+// ── Does it still fit? ────────────────────────────────────────────────────────
+// A bespoke layout is fitted to its copy: a display headline set to break over
+// two lines, a label in a narrow slot. Nothing can know in advance what a longer
+// sentence does to it, so after every edit the page is MEASURED and the result
+// reported. The panel shows a quiet hint; it never blocks. The site can state
+// its intent (`data-cms-lines`, `data-cms-maxlen`); without that, the line count
+// the text had before the first edit is what it is held to.
+const baseLines = new Map() // element → lines before its first edit this session
+function linesOf(el) {
+  const cs = getComputedStyle(el)
+  const lh = parseFloat(cs.lineHeight) || parseFloat(cs.fontSize) * 1.2
+  return lh ? Math.max(1, Math.round(el.getBoundingClientRect().height / lh)) : 1
+}
+function noteBefore(els) { for (const el of els || []) if (!baseLines.has(el) && el.getClientRects().length && el.tagName !== 'IMG') baseLines.set(el, linesOf(el)) }
+function reportFit(target, els) {
+  const el = (els || []).find((n) => n.getClientRects().length && n.tagName !== 'IMG')
+  if (!el) return
+  requestAnimationFrame(() => {
+    const lines = linesOf(el)
+    const designed = parseInt(el.getAttribute('data-cms-lines') || '', 10) || null
+    const maxlen = parseInt(el.getAttribute('data-cms-maxlen') || '', 10) || null
+    const cs = getComputedStyle(el)
+    post({
+      type: 'fit', target, lines, designedLines: designed, maxlen, length: (el.textContent || '').length,
+      changedLines: lines !== (designed ?? baseLines.get(el) ?? lines),
+      overflowX: el.scrollWidth > el.clientWidth + 1 || document.documentElement.scrollWidth > window.innerWidth + 1,
+      clipped: cs.overflow !== 'visible' && el.scrollHeight > el.clientHeight + 1,
+    })
+  })
+}
+
+// ── A click says where you are ────────────────────────────────────────────────
+// Scrolling can only tell sections apart when they are stacked. Two that sit
+// side by side share a scroll position, and one in a pinned column has none, so
+// neither could ever become the panel's current section by scrolling. A click
+// inside a section is unambiguous, so it names that section. The click itself is
+// left alone: links, switches and tabs on the page still work.
+document.addEventListener('click', (e) => {
+  if (editMode || !(e.target instanceof Element)) return
+  const field = e.target.closest('[data-cms], [data-cms-repeater]')
+  const wrap = e.target.closest('[data-cms-section]')
+  const prefix = field
+    ? sectionOf(field, field.getAttribute('data-cms') || field.getAttribute('data-cms-repeater'))
+    : wrap && wrap.getAttribute('data-cms-section')
+  if (!prefix || prefix === lastPrefix) return
+  lastPrefix = prefix
+  post({ type: 'section', prefix })
+}, true)
+
+// ── The page changes under us ─────────────────────────────────────────────────
+// A switch is thrown, a tab opens, a form shows its confirmation: fields appear
+// and disappear without any navigation. Describe the page again when that
+// happens, so the phone's ‹ › and the panel's idea of what is showing stay true.
+// Watches only what changes visibility (elements added or removed, `hidden`,
+// `open`, and a state holder's class), never text, so typing costs nothing.
+let mutateT = null
+const watcher = new MutationObserver((list) => {
+  const matters = list.some((m) => (m.type === 'childList'
+    ? [...m.addedNodes, ...m.removedNodes].some((n) => n.nodeType === 1)
+    : m.attributeName !== 'class' || m.target.hasAttribute('data-cms-state')))
+  if (!matters) return
+  clearTimeout(mutateT)
+  mutateT = setTimeout(() => { scan(); postStructure(); postFields() }, 200)
+})
+
 // ── Boot ──────────────────────────────────────────────────────────────────────
+// The page is inside the editor: say so, on <html>, before anything else. Under
+// this class a site holds still (scroll fade-ins finished, loops paused), so
+// every field can be found and selected (EDITOR_CONTRACT.md).
+document.documentElement.classList.add('pubd-editor')
+watcher.observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['hidden', 'open', 'class'] })
 scan()
 window.addEventListener('scroll', onScroll, { passive: true })
 window.addEventListener('resize', onScroll, { passive: true })
 post({ type: 'hello', version: 6, can: CAN, path: window.location.pathname })
-setTimeout(report, 300)
+setTimeout(() => { report(); postStructure() }, 300)
 setTimeout(measureAspects, 600) // after first paint settles
