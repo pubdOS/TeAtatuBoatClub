@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getAvailability } from './api.js'
-import { BEHIND, frontBayOpen } from '../../netlify/functions/_bayRules.js'
+import { BEHIND, frontBayOpen } from './bayRules.js'
 
 const PERIOD = 'day' // current slot granularity (see schema.sql / Part C #1)
 const MAX_DAYS = 10  // per-selection cap; server also enforces 10 total days + max 5 in a row

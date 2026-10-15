@@ -4,9 +4,10 @@
 // bay can only be booked once the bay behind it is taken, or is being booked in
 // the same go (a large boat taking the pair, or someone choosing both).
 //
-// Shared by the server check (create-booking) and the booking grid, so the two
-// can never disagree. Keyed by berth id, which matches the bay number
-// (supabase/schema.sql).
+// The booking grid's copy, so a front bay shows as unavailable before anyone
+// tries it. The rule that decides is the CMS's (lib/booking/rules.ts in the CMS
+// repo), which checks every booking on the server. Keyed by berth id, which
+// matches the bay number.
 export const BEHIND = { 1: 2, 4: 3 }
 
 /**
