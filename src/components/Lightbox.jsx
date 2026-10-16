@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 // Full-screen image viewer. Controlled by the parent:
 //   const [i, setI] = useState(null)        // null = closed
@@ -147,6 +147,73 @@ export default function Lightbox({ items, index, setIndex, label, footer, panel 
           {index + 1} / {count}
         </span>
       )}
+    </div>
+  )
+}
+
+const encode = (data) =>
+  Object.keys(data).map((k) => encodeURIComponent(k) + '=' + encodeURIComponent(data[k])).join('&')
+
+// A short enquiry (name, email, how many) for the home announcement and the
+// Events competition cards. Lives in this file, not its own, because the repo is
+// at the scanner's file cap. Posts to the Netlify form "announcement", declared
+// in index.html, which emails office@ and (this form only) manager@ and lands in
+// the club's Pubd inbox. `about` says what it is for; `message` carries a
+// readable line ("Snapper Classic / Number of tickets: 3") because that is what
+// the inbox and email show first.
+export function EnquiryForm({ about, heading, quantityLabel, success, onBack, backLabel }) {
+  const [sent, setSent] = useState(false)
+  const [sending, setSending] = useState(false)
+  const [error, setError] = useState('')
+
+  async function submit(e) {
+    e.preventDefault()
+    const data = new FormData(e.target)
+    if (data.get('bot-field')) return
+    setSending(true); setError('')
+    try {
+      const res = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: encode({
+          'form-name': 'announcement',
+          name: data.get('name'),
+          email: data.get('email'),
+          quantity: data.get('quantity'),
+          about,
+          message: `${about}\n${quantityLabel || 'How many'}: ${data.get('quantity')}`,
+        }),
+      })
+      if (!res.ok) throw new Error('bad status')
+      setSent(true)
+    } catch {
+      setError('That did not send. Please try again, or call the office.')
+    } finally {
+      setSending(false)
+    }
+  }
+
+  const field = 'w-full rounded-xl border border-navy/15 px-4 py-3 focus:border-accent focus:outline-none'
+  return (
+    <div>
+      <h2 className="font-display text-2xl font-semibold">{heading}</h2>
+      {sent ? (
+        <p className="mt-4 rounded-xl bg-accent/10 p-4 text-sm text-accent-dark">{success}</p>
+      ) : (
+        <form name="announcement" method="POST" data-netlify="true" netlify-honeypot="bot-field" onSubmit={submit} className="mt-5 space-y-3">
+          <input type="hidden" name="form-name" value="announcement" />
+          <p className="hidden"><label data-cms-static="Netlify honeypot, hidden from visitors">Leave this empty: <input name="bot-field" /></label></p>
+          <input name="name" required autoComplete="name" placeholder="Your name" className={field} />
+          <input name="email" type="email" required autoComplete="email" placeholder="Your email" className={field} />
+          <label className="block text-sm text-navy/70">
+            {quantityLabel}
+            <input name="quantity" type="number" required min="1" max="50" defaultValue="1" inputMode="numeric" className={`${field} mt-1`} />
+          </label>
+          {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
+          <button type="submit" disabled={sending} className="btn-primary w-full disabled:opacity-60" data-cms-static="form control inside the pop-up, not page copy">{sending ? 'Sending…' : 'Send'}</button>
+        </form>
+      )}
+      <button type="button" onClick={onBack} className="mt-4 text-sm text-navy/60 underline" data-cms-static="pop-up navigation, not page copy">{backLabel}</button>
     </div>
   )
 }
