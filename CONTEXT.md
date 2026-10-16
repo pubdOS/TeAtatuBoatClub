@@ -14,9 +14,9 @@ of the CMS. Contacts: **Dan** (manager, the one who emails changes) and **Barry 
   `src/booking/api.js` holds the one URL (override `VITE_BOOKING_API` for local testing against
   `next dev`; that origin must be in the club's `allowed_origins` in `booking_settings`). This site
   holds NO database key any more. Plan: `sitemog-toolkit/BOOKING_SHARED_DB_PLAN.md`.
-- **The old Netlify functions are RETIRED** (`netlify/functions/_retired.js`): they answer 410 "please
-  refresh", because they still pointed at the old database. `_bayRules.js` STAYS (the grid imports
-  `BEHIND` from it). `keepalive` still pings the old project until it is deleted.
+- **The old Netlify functions and the old database are GONE** (2026-10-15). The site has no functions;
+  the grid's copy of the back-bays rule lives in `src/booking/bayRules.js`. Old data backed up to
+  `~/Documents/Pubd backups/boatclub-old-booking-db-2026-10-15/` before the project was deleted.
 - **Rules now live in the CMS** (`booking_settings` for this club): 90-day window, 10 held days,
   5 in a row, back bays first `{1:2, 4:3}`. Changing a number = a settings row, not a code change.
 - **Members are managed in the CMS Bookings tab** (Dan's login): upcoming bookings + cancel, and the
@@ -121,7 +121,7 @@ of the CMS. Contacts: **Dan** (manager, the one who emails changes) and **Barry 
 ## Open todos
 - [ ] **Dan's October member list** → Dan uploads it in the CMS Bookings tab himself (preview first). Not received yet as of 1 Oct. (owner: Dan; Lazar to point him at the tab)
 - [ ] Lazar: test /admin once with the office password.
-- [ ] ~14 Oct: export + delete the old Supabase project `ihgziwddxobqjmjyhbxo` (−US$10/mo), then remove `netlify/functions` except `_bayRules.js` (and keepalive). Ride a real deploy.
+- [x] 2026-10-15: old booking data exported, `netlify/functions` removed (branch `retire-old-booking-db`). Lazar deletes project `ihgziwddxobqjmjyhbxo` in Supabase.
 - [ ] **Members CSV** from the office → load into the booking Supabase → flip `booking_live`
       to true. (owner: Dan/office, then you). This is the last thing before booking ships.
 - [ ] **Confirm the $150 loading-area fine is on the right rule.** Dan wrote "vessels ... in

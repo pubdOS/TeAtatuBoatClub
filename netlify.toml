@@ -13,7 +13,6 @@
   # none: that cancelled a real Hart deploy on 2026-09-24. Equal refs therefore mean
   # "no baseline" and we build.
   ignore = "[ -n \"$CACHED_COMMIT_REF\" ] && [ \"$CACHED_COMMIT_REF\" != \"$COMMIT_REF\" ] && git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- ':(exclude)*.md'"
-  functions = "netlify/functions"
 
 # SPA fallback for any path without a prerendered file. Non-forced, so real
 # prerendered pages are served first.
