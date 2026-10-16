@@ -4,11 +4,15 @@ import Seo from '../components/Seo.jsx'
 import AnimatedSection from '../components/AnimatedSection.jsx'
 import WaveDivider from '../components/WaveDivider.jsx'
 import NewsletterSignup from '../components/NewsletterSignup.jsx'
+import { EnquiryForm } from '../components/Lightbox.jsx'
 
 export default function Events() {
   // Which competition's details modal is open (index into c.competitions), or null.
   const [openComp, setOpenComp] = useState(null)
   const comp = openComp != null ? c.competitions[openComp] : null
+  // The ticket enquiry form, shown in place of the details inside the modal.
+  const [enquiring, setEnquiring] = useState(false)
+  const close = () => { setOpenComp(null); setEnquiring(false) }
 
   return (
     <>
@@ -111,6 +115,8 @@ export default function Events() {
                     {/* Hidden fields so the CMS maps them — shown in the modal, not the card. */}
                     <span className="hidden" data-cms-field="details">{comp.details}</span>
                     <span className="hidden" data-cms-field="rules_document">{comp.rules_document}</span>
+                    {/* Label for the modal's ticket button; empty = no button (clear it when entries close). */}
+                    <span className="hidden" data-cms-field="tickets_button">{comp.tickets_button}</span>
                   </div>
                 </button>
               ))}
@@ -139,11 +145,16 @@ export default function Events() {
         </div>
       </section>
 
+      {/* Ticket enquiry copy, shown in the modal's form (Lightbox EnquiryForm). */}
+      <span hidden data-cms="Events - Tickets - Form Heading">{c.events_tickets_heading}</span>
+      <span hidden data-cms="Events - Tickets - Quantity Label">{c.events_tickets_quantity_label}</span>
+      <span hidden data-cms="Events - Tickets - Success">{c.events_tickets_success}</span>
+
       {/* Competition details modal */}
       {comp && (
         <div
           className="fixed inset-0 z-50 flex items-end justify-center bg-navy/60 p-0 backdrop-blur-sm sm:items-center sm:p-5"
-          onClick={() => setOpenComp(null)}
+          onClick={close}
           role="dialog"
           aria-modal="true"
         >
@@ -152,7 +163,7 @@ export default function Events() {
             onClick={(e) => e.stopPropagation()}
           >
             <button
-              onClick={() => setOpenComp(null)}
+              onClick={close}
               aria-label="Close"
               className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-navy shadow ring-1 ring-navy/10 transition hover:bg-white"
             >
@@ -163,15 +174,35 @@ export default function Events() {
                 <img src={comp.image} alt="" className="h-full w-full object-cover" />
               </div>
             )}
+            {enquiring ? (
+              <div className="p-6 sm:p-7">
+                <EnquiryForm
+                  about={comp.title}
+                  heading={c.events_tickets_heading}
+                  quantityLabel={c.events_tickets_quantity_label}
+                  success={c.events_tickets_success}
+                  onBack={() => setEnquiring(false)}
+                  backLabel="Back to the details"
+                />
+              </div>
+            ) : (
             <div className="p-6 sm:p-7">
               <h3 className="font-display text-2xl font-semibold text-navy">{comp.title}</h3>
               <p className="mt-3 whitespace-pre-line text-navy/75">{comp.details}</p>
+              {/* Buying is the main action when a competition sells tickets, so it
+                  takes the gold button and the rules step down to an outline. */}
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+              {comp.tickets_button && (
+                <button type="button" onClick={() => setEnquiring(true)} className="btn-primary w-full sm:w-auto" data-cms-static="label is the card's tickets_button field, mapped on the card">
+                  {comp.tickets_button}
+                </button>
+              )}
               {comp.rules_document ? (
                 <a
                   href={comp.rules_document}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-primary mt-6 inline-flex items-center gap-2"
+                  className={`${comp.tickets_button ? 'btn-outline w-full sm:w-auto' : 'btn-primary'} inline-flex items-center gap-2`}
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M4 6h16M4 6a2 2 0 012-2h12a2 2 0 012 2M4 6v12a2 2 0 002 2h12a2 2 0 002-2V6" />
@@ -179,9 +210,11 @@ export default function Events() {
                   <span data-cms="Events - Rules - Download Label">{c.events_rules_download_label}</span>
                 </a>
               ) : (
-                <p className="mt-6 text-sm italic text-navy/45" data-cms="Events - Rules - Empty">{c.events_rules_empty}</p>
+                <p className="text-sm italic text-navy/45" data-cms="Events - Rules - Empty">{c.events_rules_empty}</p>
               )}
+              </div>
             </div>
+            )}
           </div>
         </div>
       )}
