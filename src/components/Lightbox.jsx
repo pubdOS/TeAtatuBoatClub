@@ -12,7 +12,10 @@ import { useEffect, useRef } from 'react'
 // reader user nothing at all. When it is given, focus moves to Close on open and
 // returns to wherever it was on close, so a keyboard user is not left tabbing
 // around behind an overlay they did not ask for.
-export default function Lightbox({ items, index, setIndex, label }) {
+//
+// `action` is optional, { label, href }: one button under the image, for an
+// announcement that asks for something ("Buy your tickets here" → an email).
+export default function Lightbox({ items, index, setIndex, label, action }) {
   const open = index != null && Array.isArray(items) && items.length > 0
   const count = open ? items.length : 0
 
@@ -83,12 +86,32 @@ export default function Lightbox({ items, index, setIndex, label }) {
         </button>
       )}
 
-      <img
-        src={src}
-        alt={label || ''}
-        onClick={(e) => e.stopPropagation()}
-        className="max-h-[88vh] max-w-[92vw] rounded-lg object-contain shadow-2xl"
-      />
+      {action ? (
+        // Image and its button as one column, so the button sits right under the
+        // poster at any size instead of floating at the screen's edge.
+        <div className="flex max-w-[92vw] flex-col items-center gap-4" onClick={(e) => e.stopPropagation()}>
+          <img
+            src={src}
+            alt={label || ''}
+            className="max-h-[calc(88vh-7rem)] max-w-[92vw] rounded-lg object-contain shadow-2xl sm:max-h-[calc(88vh-4rem)]"
+          />
+          <a
+            href={action.href}
+            target={/^https?:/.test(action.href) ? '_blank' : undefined}
+            rel={/^https?:/.test(action.href) ? 'noopener noreferrer' : undefined}
+            className="btn-primary"
+          >
+            {action.label}
+          </a>
+        </div>
+      ) : (
+        <img
+          src={src}
+          alt={label || ''}
+          onClick={(e) => e.stopPropagation()}
+          className="max-h-[88vh] max-w-[92vw] rounded-lg object-contain shadow-2xl"
+        />
+      )}
 
       {/* A tall document on a narrow screen is limited by WIDTH, not height, so a
           portrait menu lands at about a third of its real size and its body text

@@ -109,6 +109,8 @@ export default {
   "home_announcement_image": "/images/menu-fathers-day.jpg",
   "home_announcement_ends": "",
   "home_announcement_alt": "",
+  "home_announcement_button": "",
+  "home_announcement_button_link": "",
   "pricing_cta_button": "Book a Work Bay",
   "pricing_cta_button_link": "/booking",
   "facilities_book_button": "Book a Work Bay",

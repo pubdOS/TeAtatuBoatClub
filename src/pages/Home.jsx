@@ -244,11 +244,19 @@ export default function Home() {
           <img src={c.home_announcement_image} data-cms="Home - Announcement - Image" alt="" className="hidden" />
           <span hidden data-cms="Home - Announcement - Ends">{c.home_announcement_ends}</span>
           <span hidden data-cms="Home - Announcement - Alt">{c.home_announcement_alt}</span>
+          {/* Optional button under the image (e.g. "Buy your tickets here" opening an
+              email). Shown only when BOTH label and link are set, so an announcement
+              without one stays a plain image. */}
+          <span hidden data-cms="Home - Announcement - Button">{c.home_announcement_button}</span>
+          <span hidden data-cms="Home - Announcement - Button Link">{c.home_announcement_button_link}</span>
           <Lightbox
             items={[menu]}
             index={announcement}
             setIndex={onAnnouncementChange}
             label={c.home_announcement_alt}
+            action={c.home_announcement_button && c.home_announcement_button_link
+              ? { label: c.home_announcement_button, href: c.home_announcement_button_link }
+              : null}
           />
         </>
       )}
