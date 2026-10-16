@@ -13,9 +13,10 @@ import { useEffect, useRef } from 'react'
 // returns to wherever it was on close, so a keyboard user is not left tabbing
 // around behind an overlay they did not ask for.
 //
-// `action` is optional, { label, href }: one button under the image, for an
-// announcement that asks for something ("Buy your tickets here" → an email).
-export default function Lightbox({ items, index, setIndex, label, action }) {
+// `footer` is optional: something under the image, for an announcement that asks
+// for something (a "Buy your tickets here" button). `panel` replaces the image
+// with that content instead, for a step that needs the room (the ticket form).
+export default function Lightbox({ items, index, setIndex, label, footer, panel }) {
   const open = index != null && Array.isArray(items) && items.length > 0
   const count = open ? items.length : 0
 
@@ -86,8 +87,12 @@ export default function Lightbox({ items, index, setIndex, label, action }) {
         </button>
       )}
 
-      {action ? (
-        // Image and its button as one column, so the button sits right under the
+      {panel ? (
+        <div className="max-h-[88vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 text-navy shadow-2xl" onClick={(e) => e.stopPropagation()}>
+          {panel}
+        </div>
+      ) : footer ? (
+        // Image and its footer as one column, so the button sits right under the
         // poster at any size instead of floating at the screen's edge.
         <div className="flex max-w-[92vw] flex-col items-center gap-4" onClick={(e) => e.stopPropagation()}>
           <img
@@ -95,14 +100,7 @@ export default function Lightbox({ items, index, setIndex, label, action }) {
             alt={label || ''}
             className="max-h-[calc(88vh-7rem)] max-w-[92vw] rounded-lg object-contain shadow-2xl sm:max-h-[calc(88vh-4rem)]"
           />
-          <a
-            href={action.href}
-            target={/^https?:/.test(action.href) ? '_blank' : undefined}
-            rel={/^https?:/.test(action.href) ? 'noopener noreferrer' : undefined}
-            className="btn-primary"
-          >
-            {action.label}
-          </a>
+          {footer}
         </div>
       ) : (
         <img
@@ -122,7 +120,7 @@ export default function Lightbox({ items, index, setIndex, label, action }) {
           browser's own viewer pinches and pans properly. Only on small screens,
           and only for a labelled (announcement) viewer — a gallery someone
           clicked into on a desktop has no such problem. */}
-      {label && (
+      {label && !panel && (
         <a
           href={src}
           target="_blank"

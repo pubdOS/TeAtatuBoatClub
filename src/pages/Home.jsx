@@ -37,11 +37,77 @@ function announcementIsLive(ends) {
   }
 }
 
+const encode = (data) =>
+  Object.keys(data).map((k) => encodeURIComponent(k) + '=' + encodeURIComponent(data[k])).join('&')
+
+// The announcement's enquiry form (kept in this file: the repo is at the
+// scanner's file cap). Posts to the Netlify form "announcement", declared in
+// index.html. `message` carries a readable line ("Snapper Classic: 3") because
+// that is what the club's inbox and email show first.
+function AnnouncementEnquiry({ onBack }) {
+  const [sent, setSent] = useState(false)
+  const [sending, setSending] = useState(false)
+  const [error, setError] = useState('')
+
+  async function submit(e) {
+    e.preventDefault()
+    const data = new FormData(e.target)
+    if (data.get('bot-field')) return
+    setSending(true); setError('')
+    const about = c.home_announcement_alt || 'Announcement'
+    try {
+      const res = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: encode({
+          'form-name': 'announcement',
+          name: data.get('name'),
+          email: data.get('email'),
+          quantity: data.get('quantity'),
+          about,
+          message: `${about}\n${c.home_announcement_form_quantity_label || 'How many'}: ${data.get('quantity')}`,
+        }),
+      })
+      if (!res.ok) throw new Error('bad status')
+      setSent(true)
+    } catch {
+      setError(`That did not send. Please email ${c.email} instead.`)
+    } finally {
+      setSending(false)
+    }
+  }
+
+  const field = 'w-full rounded-xl border border-navy/15 px-4 py-3 focus:border-accent focus:outline-none'
+  return (
+    <div>
+      <h2 className="font-display text-2xl font-semibold">{c.home_announcement_form_heading}</h2>
+      {sent ? (
+        <p className="mt-4 rounded-xl bg-accent/10 p-4 text-sm text-accent-dark">{c.home_announcement_form_success}</p>
+      ) : (
+        <form name="announcement" method="POST" data-netlify="true" netlify-honeypot="bot-field" onSubmit={submit} className="mt-5 space-y-3">
+          <input type="hidden" name="form-name" value="announcement" />
+          <p className="hidden"><label data-cms-static="Netlify honeypot, hidden from visitors">Leave this empty: <input name="bot-field" /></label></p>
+          <input name="name" required autoComplete="name" placeholder="Your name" className={field} />
+          <input name="email" type="email" required autoComplete="email" placeholder="Your email" className={field} />
+          <label className="block text-sm text-navy/70">
+            {c.home_announcement_form_quantity_label}
+            <input name="quantity" type="number" required min="1" max="50" defaultValue="1" inputMode="numeric" className={`${field} mt-1`} />
+          </label>
+          {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
+          <button type="submit" disabled={sending} className="btn-primary w-full disabled:opacity-60" data-cms-static="form control inside the pop-up, not page copy">{sending ? 'Sending…' : 'Send'}</button>
+        </form>
+      )}
+      <button type="button" onClick={onBack} className="mt-4 text-sm text-navy/60 underline" data-cms-static="pop-up navigation, not page copy">Back to the poster</button>
+    </div>
+  )
+}
+
 export default function Home() {
   // The announcement pop-up. Reuses Lightbox — the same viewer the dining and
   // catering menus already open into — so it looks native rather than bolted on,
   // and adds no new file to a repo that is already at the scanner's 30-file cap.
   const [announcement, setAnnouncement] = useState(null)
+  const [enquiring, setEnquiring] = useState(false)
   const menu = c.home_announcement_image
   const ends = c.home_announcement_ends
 
@@ -74,6 +140,7 @@ export default function Home() {
     const value = typeof next === 'function' ? next(announcement) : next
     if (value !== null) { setAnnouncement(value); return }
     setAnnouncement(null)
+    setEnquiring(false)
     try { sessionStorage.setItem(`tabc-announcement-${ends}`, '1') } catch { /* see above */ }
   }
 
@@ -244,19 +311,25 @@ export default function Home() {
           <img src={c.home_announcement_image} data-cms="Home - Announcement - Image" alt="" className="hidden" />
           <span hidden data-cms="Home - Announcement - Ends">{c.home_announcement_ends}</span>
           <span hidden data-cms="Home - Announcement - Alt">{c.home_announcement_alt}</span>
-          {/* Optional button under the image (e.g. "Buy your tickets here" opening an
-              email). Shown only when BOTH label and link are set, so an announcement
-              without one stays a plain image. */}
+          {/* Optional enquiry under the image: a button ("Buy your tickets here")
+              that opens a short form (name, email, how many) in place of the
+              poster. Shown only when the button label is set, so an announcement
+              without one stays a plain image. Submissions go to the Netlify form
+              "announcement" (declared in index.html), so they reach the club's
+              inbox and email like the contact form. */}
           <span hidden data-cms="Home - Announcement - Button">{c.home_announcement_button}</span>
-          <span hidden data-cms="Home - Announcement - Button Link">{c.home_announcement_button_link}</span>
+          <span hidden data-cms="Home - Announcement - Form Heading">{c.home_announcement_form_heading}</span>
+          <span hidden data-cms="Home - Announcement - Form Quantity Label">{c.home_announcement_form_quantity_label}</span>
+          <span hidden data-cms="Home - Announcement - Form Success">{c.home_announcement_form_success}</span>
           <Lightbox
             items={[menu]}
             index={announcement}
             setIndex={onAnnouncementChange}
             label={c.home_announcement_alt}
-            action={c.home_announcement_button && c.home_announcement_button_link
-              ? { label: c.home_announcement_button, href: c.home_announcement_button_link }
-              : null}
+            footer={c.home_announcement_button ? (
+              <button type="button" onClick={() => setEnquiring(true)} className="btn-primary">{c.home_announcement_button}</button>
+            ) : null}
+            panel={enquiring ? <AnnouncementEnquiry onBack={() => setEnquiring(false)} /> : null}
           />
         </>
       )}
