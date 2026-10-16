@@ -1114,9 +1114,9 @@ export default {
   "events_competitions_empty_body": "Check back soon — new competitions are posted here through the season.",
   "events_social_cta": "Follow on Facebook",
   "events_rules_download_label": "Download rules (PDF)",
-  "events_tickets_heading": "",
-  "events_tickets_quantity_label": "",
-  "events_tickets_success": "",
+  "events_tickets_heading": "Ticket enquiry",
+  "events_tickets_quantity_label": "Number of tickets",
+  "events_tickets_success": "Thanks! The club will be in touch to confirm your tickets and payment.",
   "events_rules_empty": "Full rules will be available here soon.",
   "events_intro_body": "There’s always something happening at the club — from meat raffles to live music and seasonal events. For the most up-to-date listings, follow us on Facebook.",
   "events_newsletter_heading": "Club Newsletter",
@@ -1152,7 +1152,7 @@ export default {
       "title": "Marine Deals Commodore's Snapper Classic",
       "details": "Our inaugural Snapper Classic, 6 to 8 November 2026. A three-day measure tournament for snapper and kingfish, open to the public and all experience levels, with approx $25,000 in prizes.\n\nTickets are $70 per person. Entries paid by midnight 25 October go in the early-bird prize draw, and entries close 5pm Sunday 1 November.\n\nThe skippers' briefing is compulsory: Thursday 5 November, 6pm at the club. Weigh-in is Sunday 8 November, 2pm to 4pm sharp, with prize-giving from about 6pm.\n\nTickets: manager@teatatuboatclub.co.nz or 09 834 4006. Full rules are in the PDF below.",
       "rules_document": "https://ckzojvudzugbdmdwlukw.supabase.co/storage/v1/object/public/cms-assets/514ae72b-9328-4189-9617-ab0f62ddefbc/assets/1792114267551-snapper-classic-rules-2026.pdf",
-      "tickets_button": ""
+      "tickets_button": "Buy your tickets here"
     },
     {
       "image": "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=900&q=70",
