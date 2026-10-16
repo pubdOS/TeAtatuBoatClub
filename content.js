@@ -38,18 +38,62 @@ export default {
   "nav_cta": "Book a Work Bay",
   "nav_cta_link": "/booking",
   "nav_links": [
-    { "to": "/", "label": "Home" },
-    { "to": "/about", "label": "About" },
-    { "to": "/facilities", "label": "Facilities", "group": "Boating" },
-    { "to": "/pricing", "label": "Pricing", "group": "Boating" },
-    { "to": "/booking", "label": "Book a Work Bay", "group": "Boating" },
-    { "to": "/membership", "label": "Membership" },
-    { "to": "/restaurant", "label": "Restaurant & Bar", "group": "Club" },
-    { "to": "/venue-hire", "label": "Venue Hire", "group": "Club" },
-    { "to": "/events", "label": "What's On", "group": "Club" },
-    { "to": "/gallery", "label": "Gallery", "group": "Club" },
-    { "to": "/club-rules", "label": "Club Rules", "group": "Club" },
-    { "to": "/contact", "label": "Contact" }
+    {
+      "to": "/",
+      "label": "Home"
+    },
+    {
+      "to": "/about",
+      "label": "About"
+    },
+    {
+      "to": "/facilities",
+      "label": "Facilities",
+      "group": "Boating"
+    },
+    {
+      "to": "/pricing",
+      "label": "Pricing",
+      "group": "Boating"
+    },
+    {
+      "to": "/booking",
+      "label": "Book a Work Bay",
+      "group": "Boating"
+    },
+    {
+      "to": "/membership",
+      "label": "Membership"
+    },
+    {
+      "to": "/restaurant",
+      "label": "Restaurant & Bar",
+      "group": "Club"
+    },
+    {
+      "to": "/venue-hire",
+      "label": "Venue Hire",
+      "group": "Club"
+    },
+    {
+      "to": "/events",
+      "label": "What's On",
+      "group": "Club"
+    },
+    {
+      "to": "/gallery",
+      "label": "Gallery",
+      "group": "Club"
+    },
+    {
+      "to": "/club-rules",
+      "label": "Club Rules",
+      "group": "Club"
+    },
+    {
+      "to": "/contact",
+      "label": "Contact"
+    }
   ],
   "home_hero_image": "/images/hero.jpg",
   "home_hero_heading": "Te Atatu Boating Club",
@@ -105,11 +149,10 @@ export default {
   "home_cta_body": "Members can reserve one of our four work bays up to two weeks ahead — and lock in the $25 member day rate.",
   "home_cta_button": "Book Now",
   "home_cta_button_link": "/booking",
-
-  "home_announcement_image": "/images/menu-fathers-day.jpg",
-  "home_announcement_ends": "",
-  "home_announcement_alt": "",
-  "home_announcement_button": "",
+  "home_announcement_image": "https://ckzojvudzugbdmdwlukw.supabase.co/storage/v1/object/public/cms-assets/514ae72b-9328-4189-9617-ab0f62ddefbc/assets/1792114266154-snapper-classic-poster.jpg",
+  "home_announcement_ends": "2026-11-01 17:00",
+  "home_announcement_alt": "Commodore's Snapper Classic, 6 to 8 November 2026. Tickets $70 per person.",
+  "home_announcement_button": "Buy your tickets here",
   "home_announcement_form_heading": "",
   "home_announcement_form_quantity_label": "",
   "home_announcement_form_success": "",
@@ -1102,10 +1145,10 @@ export default {
   "competitions_sub": "Fishing competitions and club contests through the season. Tap a competition for full rules and details.",
   "competitions": [
     {
-      "image": "https://ckzojvudzugbdmdwlukw.supabase.co/storage/v1/object/public/cms-assets/514ae72b-9328-4189-9617-ab0f62ddefbc/assets/1781060855003-1vtwne.png",
-      "title": "Commodore's Snapper Classic",
-      "details": "Our flagship summer competition open to all members. Weigh-in at the club. Prizes across multiple categories — snapper, kingfish and junior anglers. Full rules, entry fees and weigh-in times are in the rules document.",
-      "rules_document": ""
+      "image": "https://ckzojvudzugbdmdwlukw.supabase.co/storage/v1/object/public/cms-assets/514ae72b-9328-4189-9617-ab0f62ddefbc/assets/1792114266154-snapper-classic-poster.jpg",
+      "title": "Marine Deals Commodore's Snapper Classic",
+      "details": "Our inaugural Snapper Classic, 6 to 8 November 2026. A three-day measure tournament for snapper and kingfish, open to the public and all experience levels, with approx $25,000 in prizes.\n\nTickets are $70 per person. Entries paid by midnight 25 October go in the early-bird prize draw, and entries close 5pm Sunday 1 November.\n\nThe skippers' briefing is compulsory: Thursday 5 November, 6pm at the club. Weigh-in is Sunday 8 November, 2pm to 4pm sharp, with prize-giving from about 6pm.\n\nTickets: manager@teatatuboatclub.co.nz or 09 834 4006. Full rules are in the PDF below.",
+      "rules_document": "https://ckzojvudzugbdmdwlukw.supabase.co/storage/v1/object/public/cms-assets/514ae72b-9328-4189-9617-ab0f62ddefbc/assets/1792114267551-snapper-classic-rules-2026.pdf"
     },
     {
       "image": "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=900&q=70",
@@ -1163,5 +1206,6 @@ export default {
   "contact_form_heading": "Send an Enquiry",
   "contact_form_submit": "Submit",
   "contact_form_success_body": "Thanks for getting in touch — we’ve received your message and the office will get back to you soon.",
-  "footer_tagline": "A member-run boating club in Te Atatu South, Auckland — boating facilities, bar, restaurant and functions since the 1960s."
+  "footer_tagline": "A member-run boating club in Te Atatu South, Auckland — boating facilities, bar, restaurant and functions since the 1960s.",
+  "home_announcement_button_link": "mailto:manager@teatatuboatclub.co.nz?subject=Commodore's%20Snapper%20Classic%20tickets"
 }
