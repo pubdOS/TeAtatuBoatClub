@@ -7,6 +7,7 @@ import Membership from './pages/Membership.jsx'
 import Restaurant from './pages/Restaurant.jsx'
 import Venue from './pages/Venue.jsx'
 import Events from './pages/Events.jsx'
+import SnapperClassic from './pages/SnapperClassic.jsx'
 import Rules from './pages/Rules.jsx'
 import Gallery from './pages/Gallery.jsx'
 import Contact from './pages/Contact.jsx'
@@ -31,6 +32,8 @@ export const routes = [
       { path: 'restaurant', element: <Restaurant /> },
       { path: 'venue-hire', element: <Venue /> },
       { path: 'events', element: <Events /> },
+      // Event page, linked from the home hero promo and the Events card; not in the nav.
+      { path: 'events/snapper-classic', element: <SnapperClassic /> },
       { path: 'club-rules', element: <Rules /> },
       { path: 'gallery', element: <Gallery /> },
       { path: 'contact', element: <Contact /> },

@@ -14,8 +14,9 @@ if (!existsSync(dist)) mkdirSync(dist, { recursive: true })
 const base = (c.url || '').replace(/\/$/, '')
 const today = new Date().toISOString().slice(0, 10) // build date (plain Node script)
 
-// One <url> per nav route (dynamic/catch-all routes are not listed).
-const paths = (c.nav_links || []).map((l) => l.to)
+// One <url> per nav route (dynamic/catch-all routes are not listed), plus real
+// pages that are deliberately not in the nav (an event page, say): `sitemap_extra`.
+const paths = [...new Set([...(c.nav_links || []).map((l) => l.to), ...(c.sitemap_extra || [])])]
 const sitemap =
   `<?xml version="1.0" encoding="UTF-8"?>\n` +
   `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +

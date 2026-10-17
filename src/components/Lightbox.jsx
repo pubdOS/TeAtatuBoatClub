@@ -154,8 +154,8 @@ export default function Lightbox({ items, index, setIndex, label, footer, panel 
 const encode = (data) =>
   Object.keys(data).map((k) => encodeURIComponent(k) + '=' + encodeURIComponent(data[k])).join('&')
 
-// A short enquiry (name, email, how many) for the home announcement and the
-// Events competition cards. Lives in this file, not its own, because the repo is
+// A short enquiry (name, email, how many) for the Events competition cards and
+// the Snapper Classic page. Lives in this file, not its own, because the repo is
 // at the scanner's file cap. Posts to the Netlify form "announcement", declared
 // in index.html, which emails office@ and (this form only) manager@ and lands in
 // the club's Pubd inbox. `about` says what it is for; `message` carries a
@@ -213,7 +213,10 @@ export function EnquiryForm({ about, heading, quantityLabel, success, onBack, ba
           <button type="submit" disabled={sending} className="btn-primary w-full disabled:opacity-60" data-cms-static="form control inside the pop-up, not page copy">{sending ? 'Sending…' : 'Send'}</button>
         </form>
       )}
-      <button type="button" onClick={onBack} className="mt-4 text-sm text-navy/60 underline" data-cms-static="pop-up navigation, not page copy">{backLabel}</button>
+      {/* Inside a modal there is somewhere to go back to; inline on a page there is not. */}
+      {onBack && (
+        <button type="button" onClick={onBack} className="mt-4 text-sm text-navy/60 underline" data-cms-static="pop-up navigation, not page copy">{backLabel}</button>
+      )}
     </div>
   )
 }

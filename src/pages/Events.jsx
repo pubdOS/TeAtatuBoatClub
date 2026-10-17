@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import c from '../../content.js'
 import Seo from '../components/Seo.jsx'
 import AnimatedSection from '../components/AnimatedSection.jsx'
@@ -93,11 +94,15 @@ export default function Events() {
 
           {c.competitions.length > 0 ? (
             <div data-cms-repeater="Events - Competitions - List" data-cms-shape="list" data-cms-min="1" data-cms-recommend="3" data-cms-max="9" data-cms-overflow="wrap" className="repeat-balance [--rb-cols:1] sm:[--rb-cols:2] lg:[--rb-cols:3] gap-6">
-              {c.competitions.map((comp, i) => (
-                <button
+              {c.competitions.map((comp, i) => {
+                // A competition with its own page (`page`, e.g. /events/snapper-classic)
+                // links there; the rest open the details modal below.
+                const Card = comp.page ? Link : 'button'
+                const how = comp.page ? { to: comp.page } : { type: 'button', onClick: () => setOpenComp(i) }
+                return (
+                <Card
                   key={i}
-                  type="button"
-                  onClick={() => setOpenComp(i)}
+                  {...how}
                   className="card group flex flex-col overflow-hidden p-0 text-left transition hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-accent"
                 >
                   <div className="aspect-[16/10] w-full overflow-hidden bg-navy/5">
@@ -111,15 +116,18 @@ export default function Events() {
                   </div>
                   <div className="flex flex-1 flex-col p-5">
                     <h3 className="font-display text-lg font-semibold text-navy" data-cms-field="title">{comp.title}</h3>
-                    <span className="mt-auto pt-3 text-sm font-semibold text-accent" data-cms-static="per-card affordance inside a repeater — a data-cms here would duplicate its key on every card">View rules &amp; details →</span>
+                    <span className="mt-auto pt-3 text-sm font-semibold text-accent" data-cms-static="per-card affordance inside a repeater — a data-cms here would duplicate its key on every card">{comp.page ? 'See the event page →' : 'View rules & details →'}</span>
                     {/* Hidden fields so the CMS maps them — shown in the modal, not the card. */}
                     <span className="hidden" data-cms-field="details">{comp.details}</span>
                     <span className="hidden" data-cms-field="rules_document">{comp.rules_document}</span>
                     {/* Label for the modal's ticket button; empty = no button (clear it when entries close). */}
                     <span className="hidden" data-cms-field="tickets_button">{comp.tickets_button}</span>
+                    {/* Link to the competition's own page; empty = the card opens the details modal. */}
+                    <span className="hidden" data-cms-field="page">{comp.page}</span>
                   </div>
-                </button>
-              ))}
+                </Card>
+                )
+              })}
             </div>
           ) : (
             <div className="mx-auto max-w-md rounded-2xl border border-navy/10 bg-white/60 px-6 py-10 text-center">
