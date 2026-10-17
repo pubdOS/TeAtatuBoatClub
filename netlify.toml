@@ -14,6 +14,55 @@
   # "no baseline" and we build.
   ignore = "[ -n \"$CACHED_COMMIT_REF\" ] && [ \"$CACHED_COMMIT_REF\" != \"$COMMIT_REF\" ] && git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- ':(exclude)*.md'"
 
+# Old Wix addresses Google still lists (Search Console, 2026-10-18). Without
+# these they fell through to the SPA fallback and showed "Page not found" with
+# a 200, so Google kept them. Permanent, so their rankings move to the new pages.
+# Must sit above the fallback: Netlify uses the first rule that matches.
+[[redirects]]
+  from = "/restaurant-bar"
+  to = "/restaurant"
+  status = 301
+
+[[redirects]]
+  from = "/club-bar"
+  to = "/restaurant"
+  status = 301
+
+[[redirects]]
+  from = "/bar"
+  to = "/restaurant"
+  status = 301
+
+[[redirects]]
+  from = "/copy-of-bar"
+  to = "/restaurant"
+  status = 301
+
+[[redirects]]
+  from = "/boating-facilities"
+  to = "/facilities"
+  status = 301
+
+[[redirects]]
+  from = "/copy-of-gallery"
+  to = "/gallery"
+  status = 301
+
+[[redirects]]
+  from = "/our-story"
+  to = "/about"
+  status = 301
+
+[[redirects]]
+  from = "/other-club-events"
+  to = "/events"
+  status = 301
+
+[[redirects]]
+  from = "/vacancies-1"
+  to = "/contact"
+  status = 301
+
 # SPA fallback for any path without a prerendered file. Non-forced, so real
 # prerendered pages are served first.
 [[redirects]]
