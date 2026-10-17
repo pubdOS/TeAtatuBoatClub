@@ -9,6 +9,24 @@ of the CMS. Contacts: **Dan** (manager, the one who emails changes) and **Barry 
 
 ## Current state
 
+### ▶ 2026-10-18: Snapper Classic BUILT on branch `snapper-page` (not merged), Wix redirects LIVE
+- Sara sent the text-free banner (2400x1350), the comp logo PNG and an updated rules PDF (early bird
+  now 25 Oct; the "Thursday 5th February 2026" registration typo is STILL in it). Barry approved her
+  CMS login (Barry, not Dan; the hero swap itself was implied by her sending the banner).
+- Branch `snapper-page` (pushed, commit 8cfbda5): `/events/snapper-classic` (everything from the PDF,
+  inline ticket enquiry on the same Netlify form "announcement", Event JSON-LD, in the sitemap via
+  `sitemap_extra`), a **time-boxed home hero promo** (`Home - Promo - *`, ends `2026-11-01 17:00` NZ:
+  the normal hero returns BY ITSELF, no revert needed), the Events Snapper card links to the page
+  (per-competition `page` field), and the **pop-up is removed** (`home_announcement_*` keys deleted).
+  ScrollToTop now honours #anchors. cms-check 0 fails. Assets live in the repo (`public/images/snapper`,
+  `public/docs`), sponsor logos were cut from the PDF (one composite image).
+- Scanner file cap: now 34 candidate files; `src/booking/BookingWidget.jsx` (the only low-priority file
+  with a data-cms) sits at slot 30. ONE more page/component file pushes it out of the scan.
+- After merge: Merge rescan in the CMS (adds the promo + page fields, drops the pop-up ones).
+- **Wix redirects shipped 2026-10-18** (netlify.toml, 9 old URLs Google still listed, e.g.
+  /copy-of-gallery -> /gallery, /restaurant-bar -> /restaurant). Verified 301 live. Follow-up: unknown
+  URLs still soft-404 (200 + NotFound page); cms-check warns about it.
+
 ### ▶ 2026-10-17: Snapper Classic promo, AGREED with Sara, waiting on Dan (read this first)
 - Sara Reid (GFM, the club's marketing contact, also Runpoint's) asked for a rotating hero; we agreed instead on a
   **temporary hero swap** (no carousel): hero heading/sub/buttons switch to the Snapper Classic ("Get tickets" +
