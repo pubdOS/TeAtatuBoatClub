@@ -102,6 +102,17 @@ export default {
   "home_hero_cta1_link": "/booking",
   "home_hero_cta2": "Become a Member",
   "home_hero_cta2_link": "/membership",
+  "home_promo_ends": "2026-11-01 17:00",
+  "home_promo_image": "/images/snapper/banner.jpg",
+  "home_promo_logo": "/images/snapper/logo.png",
+  "home_promo_label": "Te Atatu Boating Club presents",
+  "home_promo_title": "Commodore's Snapper Classic",
+  "home_promo_date": "6 to 8 November 2026",
+  "home_promo_sub": "Three days chasing snapper and kingfish across the Hauraki Gulf, open to everyone and every experience level. Enter by 25 October for the early-bird prize draw.",
+  "home_promo_cta1": "Get tickets",
+  "home_promo_cta1_link": "/events/snapper-classic#tickets",
+  "home_promo_cta2": "Find out more",
+  "home_promo_cta2_link": "/events/snapper-classic",
   "home_stats": [
     {
       "value": "750+",
@@ -149,13 +160,6 @@ export default {
   "home_cta_body": "Members can reserve one of our four work bays up to two weeks ahead — and lock in the $25 member day rate.",
   "home_cta_button": "Book Now",
   "home_cta_button_link": "/booking",
-  "home_announcement_image": "https://ckzojvudzugbdmdwlukw.supabase.co/storage/v1/object/public/cms-assets/514ae72b-9328-4189-9617-ab0f62ddefbc/assets/1792114266154-snapper-classic-poster.jpg",
-  "home_announcement_ends": "2026-11-01 17:00",
-  "home_announcement_alt": "Commodore's Snapper Classic, 6 to 8 November 2026. Tickets $70 per person.",
-  "home_announcement_button": "Buy your tickets here",
-  "home_announcement_form_heading": "Snapper Classic tickets",
-  "home_announcement_form_quantity_label": "Number of tickets",
-  "home_announcement_form_success": "Thanks! The club will be in touch to confirm your tickets and payment.",
   "pricing_cta_button": "Book a Work Bay",
   "pricing_cta_button_link": "/booking",
   "facilities_book_button": "Book a Work Bay",
@@ -1152,14 +1156,16 @@ export default {
       "title": "Marine Deals Commodore's Snapper Classic",
       "details": "Our inaugural Snapper Classic, 6 to 8 November 2026. A three-day measure tournament for snapper and kingfish, open to the public and all experience levels, with approx $25,000 in prizes.\n\nTickets are $70 per person. Entries paid by midnight 25 October go in the early-bird prize draw, and entries close 5pm Sunday 1 November.\n\nThe skippers' briefing is compulsory: Thursday 5 November, 6pm at the club. Weigh-in is Sunday 8 November, 2pm to 4pm sharp, with prize-giving from about 6pm.\n\nTickets: manager@teatatuboatclub.co.nz or 09 834 4006. Full rules are in the PDF below.",
       "rules_document": "https://ckzojvudzugbdmdwlukw.supabase.co/storage/v1/object/public/cms-assets/514ae72b-9328-4189-9617-ab0f62ddefbc/assets/1792114267551-snapper-classic-rules-2026.pdf",
-      "tickets_button": "Buy your tickets here"
+      "tickets_button": "Buy your tickets here",
+      "page": "/events/snapper-classic"
     },
     {
       "image": "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=900&q=70",
       "title": "Club Championship",
       "details": "Season-long points series across our scheduled competition days. The angler with the highest combined points takes the club championship trophy. See the rules document for the points system and qualifying events.",
       "rules_document": "",
-      "tickets_button": ""
+      "tickets_button": "",
+      "page": ""
     }
   ],
   "rules_hero_heading": "Club Rules",
@@ -1212,5 +1218,245 @@ export default {
   "contact_form_submit": "Submit",
   "contact_form_success_body": "Thanks for getting in touch — we’ve received your message and the office will get back to you soon.",
   "footer_tagline": "A member-run boating club in Te Atatu South, Auckland — boating facilities, bar, restaurant and functions since the 1960s.",
-  "home_announcement_button_link": "mailto:manager@teatatuboatclub.co.nz?subject=Commodore's%20Snapper%20Classic%20tickets"
+  "snapper_seo_title": "Commodore's Snapper Classic 2026 | Te Atatu Boating Club",
+  "snapper_seo_description": "The inaugural Marine Deals Commodore's Snapper Classic, 6 to 8 November 2026. A three-day snapper and kingfish measure tournament on the Hauraki Gulf with approx $25,000 in prizes. Open to everyone, $70 per angler.",
+  "snapper_event_start": "2026-11-06T06:00:00+13:00",
+  "snapper_event_end": "2026-11-08T19:00:00+13:00",
+  "snapper_ticket_price": "70",
+  "snapper_hero_image": "/images/snapper/banner.jpg",
+  "snapper_hero_logo": "/images/snapper/logo.png",
+  "snapper_hero_label": "Te Atatu Boating Club presents the inaugural",
+  "snapper_hero_title": "Marine Deals Commodore's Snapper Classic",
+  "snapper_hero_date": "6 to 8 November 2026",
+  "snapper_hero_sub": "A three-day measure tournament for snapper and kingfish on the Hauraki Gulf, with daily prizes, two social nights, and the weigh-in and prize-giving at the club. Open to the public, all experience levels welcome.",
+  "snapper_hero_cta": "Get tickets",
+  "snapper_hero_sponsor_label": "Presented by",
+  "snapper_hero_sponsor_logo": "/images/snapper/marine-deals.png",
+  "snapper_rules_document": "/docs/snapper-classic-rules-2026.pdf",
+  "snapper_rules_label": "Download the rules",
+  "snapper_facts": [
+    {
+      "value": "$25k",
+      "label": "In prizes, approx."
+    },
+    {
+      "value": "$70",
+      "label": "Per angler"
+    },
+    {
+      "value": "25 Oct",
+      "label": "Early-bird draw closes"
+    },
+    {
+      "value": "1 Nov",
+      "label": "Entries close, 5pm"
+    }
+  ],
+  "snapper_schedule_label": "The weekend",
+  "snapper_schedule_heading": "How the weekend runs",
+  "snapper_schedule": [
+    {
+      "when": "Thu 5 Nov, 6pm",
+      "title": "Skippers' briefing",
+      "desc": "Compulsory, at the club. Team captains or individual anglers sign the rules acknowledgement, each boat collects its starter pack, and the early-bird prize draw is made."
+    },
+    {
+      "when": "Fri 6 Nov, 6am",
+      "title": "Lines in",
+      "desc": "Fishing opens across the tournament area. Leave from any ramp or marina inside the boundaries and tell us where you are departing from."
+    },
+    {
+      "when": "Every day, 1pm",
+      "title": "Check-in",
+      "desc": "Every boat checks in through the WhatsApp group, or by text to 021 31 99 00, with its boat name, largest fish per category and grid location."
+    },
+    {
+      "when": "Fri 6 and Sat 7 Nov, 6pm",
+      "title": "Social catch-ups",
+      "desc": "Optional get-togethers with daily prizes and spot prizes. Which bay is shared in the WhatsApp group on the day."
+    },
+    {
+      "when": "Sun 8 Nov, 2pm to 4pm",
+      "title": "Weigh-in",
+      "desc": "Fishing closes at 3pm and the weigh station closes at 4pm sharp, at the club, 32 Bridge Ave. One fish per species per angler."
+    },
+    {
+      "when": "Sun 8 Nov, about 6pm",
+      "title": "Prize-giving",
+      "desc": "The overall winners are announced at Te Atatu Boating Club."
+    }
+  ],
+  "snapper_format_label": "The format",
+  "snapper_format_heading": "How it works",
+  "snapper_format": [
+    {
+      "title": "Measure and release",
+      "body": "Snapper and kingfish are measured on the official SnapCatch mat (one per skipper, supplied) and entered by photo in the SnapCatch app, free for this tournament. Releasing the big ones is encouraged, but keeping your fish is your call."
+    },
+    {
+      "title": "Daily cut-offs",
+      "body": "Friday's measured entries run from 6am to 7pm and Saturday's from 7:01pm Friday to 7pm. Sunday closes at 3pm sharp, and no entries are accepted after that."
+    },
+    {
+      "title": "Weigh-in",
+      "body": "Sunday only, 2pm to 4pm sharp. Rod and reel or handline, fish whole, fresh and within NZ legal limits, weighed from the boat they were caught on. One fish per species per angler."
+    },
+    {
+      "title": "Skippers' pot",
+      "body": "An optional $50 buy-in per vessel, taken at the briefing. The overall winner of the competition takes 80% of the pot and second place takes 20%."
+    },
+    {
+      "title": "The She'll Be Right Award",
+      "body": "Given out daily for the best story, mishap or moment. Dob in your crew by private WhatsApp message to the committee or at clubcaptain@teatatuboatclub.co.nz."
+    },
+    {
+      "title": "Fair play",
+      "body": "Stay inside the boundaries and check in every day: missing a check-in without good reason can cost you that day. In a tie, the first fish weighed or recorded wins."
+    }
+  ],
+  "snapper_area_label": "Fishing area",
+  "snapper_area_heading": "Where you can fish",
+  "snapper_area_body": "Anywhere in the Hauraki Gulf inside the boundaries on the official chart. HPAs and marine reserves are out of bounds.",
+  "snapper_area_lines": "Mainland to Little Barrier: Cape Rodney Lighthouse to Te Titoki Point.\n\nLittle Barrier to Great Barrier: the Hauruia Stream outlet on Little Barrier (36°13.213S, 175°6.542E) to False Head, continuing to Great Barrier Island.\n\nCoromandel: Square Top Island to Ruahine Rock (36°20.816S, 175°30.361E).",
+  "snapper_area_note": "Boats normally kept outside the area can ask for an exception to travel to and from port. No fishing outside the area.",
+  "snapper_area_image": "/images/snapper/fishing-area.jpg",
+  "snapper_area_caption": "The official tournament chart",
+  "snapper_prizes_label": "Prizes",
+  "snapper_prizes_heading": "Approx $25,000 in prizes",
+  "snapper_prizes_sub": "Daily prizes every day of the tournament, then the overall prizes at Sunday night’s prize-giving.",
+  "snapper_prizes_daily_heading": "Daily prizes",
+  "snapper_prizes_daily": [
+    {
+      "category": "Longest Snapper, Overall",
+      "placing": "1st"
+    },
+    {
+      "category": "Longest Snapper, Ladies",
+      "placing": "1st"
+    },
+    {
+      "category": "Longest Snapper, Junior",
+      "placing": "1st"
+    },
+    {
+      "category": "Longest Kingfish, Overall",
+      "placing": "1st"
+    },
+    {
+      "category": "Longest Kingfish, Ladies",
+      "placing": "1st"
+    },
+    {
+      "category": "Longest Kingfish, Junior",
+      "placing": "1st"
+    }
+  ],
+  "snapper_prizes_daily_note": "Plus spot prizes drawn at each gathering (the named angler must be there to claim), and other species: John Dory, kahawai, trevally and gurnard.",
+  "snapper_prizes_overall_heading": "Overall prizes",
+  "snapper_prizes_overall": [
+    {
+      "category": "Heaviest Snapper, Overall",
+      "placing": "1st, 2nd, 3rd, AVG"
+    },
+    {
+      "category": "Heaviest Snapper, Ladies",
+      "placing": "1st, 2nd, 3rd, AVG"
+    },
+    {
+      "category": "Heaviest Snapper, Junior (U16)",
+      "placing": "1st, 2nd, 3rd, AVG"
+    },
+    {
+      "category": "Longest Snapper, Overall",
+      "placing": "1st, 2nd, 3rd, AVG"
+    },
+    {
+      "category": "Longest Snapper, Ladies",
+      "placing": "1st, 2nd, 3rd, AVG"
+    },
+    {
+      "category": "Longest Snapper, Junior",
+      "placing": "1st, 2nd, 3rd, AVG"
+    },
+    {
+      "category": "Heaviest Kingfish, Overall",
+      "placing": "1st, 2nd, 3rd, AVG"
+    },
+    {
+      "category": "Heaviest Kingfish, Ladies",
+      "placing": "1st, 2nd, 3rd, AVG"
+    },
+    {
+      "category": "Heaviest Kingfish, Junior (U16)",
+      "placing": "1st, 2nd, 3rd, AVG"
+    },
+    {
+      "category": "Longest Kingfish, Overall",
+      "placing": "1st, 2nd, 3rd, AVG"
+    },
+    {
+      "category": "Longest Kingfish, Ladies",
+      "placing": "1st, 2nd, 3rd, AVG"
+    },
+    {
+      "category": "Longest Kingfish, Junior",
+      "placing": "1st, 2nd, 3rd, AVG"
+    },
+    {
+      "category": "Heaviest John Dory",
+      "placing": "1st, AVG"
+    },
+    {
+      "category": "Heaviest Trevally",
+      "placing": "1st, AVG"
+    },
+    {
+      "category": "Heaviest Kahawai",
+      "placing": "1st, AVG"
+    },
+    {
+      "category": "Heaviest Gurnard",
+      "placing": "1st, AVG"
+    },
+    {
+      "category": "Heaviest Other",
+      "placing": "1st, AVG"
+    }
+  ],
+  "snapper_prizes_overall_note": "Sharks, stingrays and eels are not accepted. A category with no winner is drawn among the anglers present. The committee may increase prizes if entries are well above expectations.",
+  "snapper_bonus_heading": "Marine Deals bonus draw",
+  "snapper_bonus_body": "Registered anglers who shop at Marine Deals between 16 October and 2 November go in an extra prize draw. Email your receipt to clubcaptain@teatatuboatclub.co.nz.",
+  "snapper_tickets_label": "Tickets",
+  "snapper_tickets_heading": "Get your tickets",
+  "snapper_tickets_body": "Entry is $70 per angler. Send this through and the club will be in touch to confirm your entry and payment.",
+  "snapper_tickets_contact": "Questions? Call 09 834 4006 or email office@teatatuboatclub.co.nz.",
+  "snapper_tickets_form_heading": "Snapper Classic tickets",
+  "snapper_tickets_quantity_label": "Number of anglers",
+  "snapper_tickets_success": "Thanks! The club will be in touch to confirm your tickets and payment.",
+  "snapper_sponsors_heading": "Our generous sponsors",
+  "snapper_sponsors_sub": "With thanks to the businesses helping make the inaugural tournament possible.",
+  "snapper_sponsors_main": "/images/snapper/marine-deals.png",
+  "snapper_sponsors_logos": "/images/snapper/sponsors.png",
+  "snapper_fine_heading": "Good to know",
+  "snapper_fine": [
+    {
+      "title": "Late entries and refunds",
+      "body": "Registrations close at 5pm on Sunday 1 November. There are no refunds after 2 November without the committee’s approval: send requests in writing to clubcaptain@teatatuboatclub.co.nz."
+    },
+    {
+      "title": "Weather",
+      "body": "If bad weather hits the weekend, the committee may move the tournament to another date. Registered anglers will hear by email."
+    },
+    {
+      "title": "Protests",
+      "body": "A protest about a catch or a rule must be in writing, signed, and handed to the tournament convenor before the weigh station closes at 4pm on Sunday. The committee’s decision is final."
+    },
+    {
+      "title": "Safety",
+      "body": "Everyone takes part at their own risk. Skippers are responsible for a seaworthy vessel that meets Maritime NZ safety requirements."
+    }
+  ],
+  "sitemap_extra": [
+    "/events/snapper-classic"
+  ]
 }

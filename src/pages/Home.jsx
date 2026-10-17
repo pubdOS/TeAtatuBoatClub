@@ -5,114 +5,130 @@ import SmartLink from '../components/SmartLink.jsx'
 import Seo from '../components/Seo.jsx'
 import AnimatedSection from '../components/AnimatedSection.jsx'
 import WaveDivider from '../components/WaveDivider.jsx'
-import Lightbox, { EnquiryForm } from '../components/Lightbox.jsx'
 
 /**
- * Is the announcement still running?
+ * Is a time-boxed promotion still running?
  *
- * `home_announcement_ends` is NZ wall-clock time ("2026-09-06 20:00") because
- * that is what the club means by "8pm Sunday" — but a visitor's device can be in
- * any timezone, and NZ itself changes offset in late September (NZST +12 → NZDT
+ * `home_promo_ends` is NZ wall-clock time ("2026-11-01 17:00") because that is
+ * what the club means by "5pm Sunday", but a visitor's device can be in any
+ * timezone, and NZ itself changes offset in late September (NZST +12 to NZDT
  * +13). So neither the visitor's local clock nor a hardcoded +12:00 is right.
  *
- * Format NOW into NZ wall-clock time and compare the two as strings. Intl knows
- * the DST rules, so this keeps working for a summer announcement, and the
- * YYYY-MM-DD HH:mm shape sorts correctly as text. No library, no date parsing.
+ * Format the moment into NZ wall-clock time and compare the two as strings. Intl
+ * knows the DST rules, and the YYYY-MM-DD HH:mm shape sorts correctly as text.
  *
  * content.js cannot hold a computed value (the scanner forbids it), which is why
  * the end time is a plain string field and this lives here.
  */
-function announcementIsLive(ends) {
+function promoIsLive(ends, at) {
   if (!ends) return false
   try {
-    const nzNow = new Intl.DateTimeFormat('en-CA', {
+    const nz = new Intl.DateTimeFormat('en-CA', {
       timeZone: 'Pacific/Auckland',
       year: 'numeric', month: '2-digit', day: '2-digit',
       hour: '2-digit', minute: '2-digit', hour12: false,
-    }).format(new Date()).replace(',', '')
-    return nzNow < ends.trim()
+    }).format(at).replace(',', '')
+    return nz < ends.trim()
   } catch {
-    // Intl without tz data is not a reason to spam every visitor forever.
     return false
   }
 }
 
 export default function Home() {
-  // The announcement pop-up. Reuses Lightbox — the same viewer the dining and
-  // catering menus already open into — so it looks native rather than bolted on,
-  // and adds no new file to a repo that is already at the scanner's 30-file cap.
-  const [announcement, setAnnouncement] = useState(null)
-  const [enquiring, setEnquiring] = useState(false)
-  const menu = c.home_announcement_image
-  const ends = c.home_announcement_ends
-
-  useEffect(() => {
-    if (!menu || !announcementIsLive(ends)) return
-    // SESSION, not device. Remembering a dismissal forever is right for something
-    // running for weeks; for a three-day weekend special it means anyone who
-    // glances at it on the Friday and closes it has opted out of the whole
-    // promotion. Per session, it stays gone while they browse around, and comes
-    // back on their next visit — which for a Friday-to-Sunday run is the point.
-    //
-    // Keyed by the END TIME, so the NEXT announcement still shows to someone who
-    // dismissed this one. A fixed key would quietly suppress every future
-    // announcement for anyone who ever closed one.
-    const key = `tabc-announcement-${ends}`
-    try {
-      if (sessionStorage.getItem(key)) return
-    } catch {
-      // Safari private mode throws on access rather than returning null. Not a
-      // reason to withhold the announcement — just show it and skip remembering.
-    }
-    setAnnouncement(0)
-  }, [menu, ends])
-
-  // Lightbox calls its setter BOTH ways: `setIndex(null)` to close, and
-  // `setIndex(i => …)` for the arrow keys. Treating every call as a dismiss
-  // meant pressing an arrow key closed the announcement and marked it seen.
-  // Only an actual close counts.
-  const onAnnouncementChange = (next) => {
-    const value = typeof next === 'function' ? next(announcement) : next
-    if (value !== null) { setAnnouncement(value); return }
-    setAnnouncement(null)
-    setEnquiring(false)
-    try { sessionStorage.setItem(`tabc-announcement-${ends}`, '1') } catch { /* see above */ }
-  }
+  // The hero promotion (2026-10-18, replaced the old pop-up). While
+  // `home_promo_ends` is in the future the hero shows the promo; after it, the
+  // normal hero comes back on its own, with no edit and no deploy.
+  //
+  // The page is prerendered, so the first render must match the HTML the build
+  // produced: start from the BUILD time (the same value on the server and in the
+  // browser), then re-check against the visitor's clock once mounted. A promo
+  // that ended after the last deploy therefore swaps back a moment after load.
+  const [promo, setPromo] = useState(() => promoIsLive(c.home_promo_ends, new Date(__BUILT_AT__)))
+  useEffect(() => { setPromo(promoIsLive(c.home_promo_ends, new Date())) }, [])
 
   return (
     <>
       <Seo title={c.home_seo_title} description={c.home_seo_description} />
       <span hidden data-cms="Home - SEO - Page Title">{c.home_seo_title}</span>
       <span hidden data-cms="Home - SEO - Meta Description">{c.home_seo_description}</span>
-      {/* ─── Hero ─── */}
-      <section className="relative isolate flex min-h-[80vh] items-center bg-navy text-white">
-        <div
-          className="absolute inset-0 -z-10 bg-cover bg-center opacity-40"
-          style={{ backgroundImage: `url(${c.home_hero_image})` }}
-        />
-        <img src={c.home_hero_image} data-cms="Home - Hero - Image" alt="" className="hidden" />
-        <div className="mx-auto max-w-6xl px-5 py-24">
-          <h1 className="max-w-3xl text-4xl font-semibold leading-tight md:text-6xl" data-cms="Home - Hero - Heading">
-            {c.home_hero_heading}
-          </h1>
-          <p className="mt-5 max-w-2xl text-lg text-white/80 whitespace-pre-line" data-cms="Home - Hero - Sub">
-            {c.home_hero_sub}
-          </p>
-          <div className="mt-8 flex flex-wrap gap-4">
-            <SmartLink to={c.home_hero_cta1_link} className="btn-primary" data-cms="Home - Hero - CTA 1">
-              {c.home_hero_cta1}
-            </SmartLink>
-            <span hidden data-cms="Home - Hero - CTA 1 Link">{c.home_hero_cta1_link}</span>
-            <SmartLink to={c.home_hero_cta2_link} className="btn-secondary" data-cms="Home - Hero - CTA 2">
-              {c.home_hero_cta2}
-            </SmartLink>
-            <span hidden data-cms="Home - Hero - CTA 2 Link">{c.home_hero_cta2_link}</span>
+      {/* ─── Hero ───
+          While a promotion is running (Home - Promo - Ends, NZ time) it takes the
+          hero; clear the end time, or let it pass, and the normal hero returns. */}
+      <span hidden data-cms="Home - Promo - Ends">{c.home_promo_ends}</span>
+      {promo ? (
+        <section className="relative isolate flex min-h-[80vh] items-end overflow-hidden bg-navy-dark text-white md:items-center">
+          <img
+            src={c.home_promo_image}
+            data-cms="Home - Promo - Image"
+            alt=""
+            className="absolute inset-0 -z-20 h-full w-full object-cover object-[25%_center]"
+          />
+          {/* Scrim: from the bottom on a phone (text sits low), from the right on
+              wider screens, where the copy sits over open sea and sky. */}
+          <div className="absolute inset-0 -z-10 bg-gradient-to-t from-navy-dark via-navy-dark/60 to-transparent md:bg-gradient-to-l md:from-navy-dark/90 md:via-navy-dark/55 md:to-transparent" />
+          {/* Fades the photo into the navy wave below on every width. */}
+          <div className="absolute inset-x-0 bottom-0 -z-10 h-32 bg-gradient-to-t from-navy-dark to-transparent" />
+          <div className="mx-auto flex w-full max-w-6xl justify-end px-5 pb-20 pt-40 md:py-24">
+            <div className="w-full max-w-xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gold" data-cms="Home - Promo - Label">
+                {c.home_promo_label}
+              </p>
+              <h1 className="mt-4">
+                {/* Fixed 15:4 box (the logo's own shape), contained: a replacement logo of any shape stays inside it. */}
+                <span className="block aspect-[15/4] w-full max-w-md">
+                  <img src={c.home_promo_logo} data-cms="Home - Promo - Logo" alt="" className="h-full w-full object-contain object-left drop-shadow-[0_4px_24px_rgba(0,0,0,0.45)]" />
+                </span>
+                <span className="sr-only" data-cms="Home - Promo - Title">{c.home_promo_title}</span>
+              </h1>
+              <p className="mt-4 text-sm font-semibold uppercase tracking-[0.3em] text-white md:text-base" data-cms="Home - Promo - Date">
+                {c.home_promo_date}
+              </p>
+              <p className="mt-5 max-w-lg text-lg text-white/80 whitespace-pre-line" data-cms="Home - Promo - Sub">
+                {c.home_promo_sub}
+              </p>
+              <div className="mt-8 flex flex-wrap gap-4">
+                <SmartLink to={c.home_promo_cta1_link} className="btn-primary" data-cms="Home - Promo - CTA 1">
+                  {c.home_promo_cta1}
+                </SmartLink>
+                <span hidden data-cms="Home - Promo - CTA 1 Link">{c.home_promo_cta1_link}</span>
+                <SmartLink to={c.home_promo_cta2_link} className="btn-secondary" data-cms="Home - Promo - CTA 2">
+                  {c.home_promo_cta2}
+                </SmartLink>
+                <span hidden data-cms="Home - Promo - CTA 2 Link">{c.home_promo_cta2_link}</span>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : (
+        <section className="relative isolate flex min-h-[80vh] items-center bg-navy text-white">
+          <div
+            className="absolute inset-0 -z-10 bg-cover bg-center opacity-40"
+            style={{ backgroundImage: `url(${c.home_hero_image})` }}
+          />
+          <img src={c.home_hero_image} data-cms="Home - Hero - Image" alt="" className="hidden" />
+          <div className="mx-auto max-w-6xl px-5 py-24">
+            <h1 className="max-w-3xl text-4xl font-semibold leading-tight md:text-6xl" data-cms="Home - Hero - Heading">
+              {c.home_hero_heading}
+            </h1>
+            <p className="mt-5 max-w-2xl text-lg text-white/80 whitespace-pre-line" data-cms="Home - Hero - Sub">
+              {c.home_hero_sub}
+            </p>
+            <div className="mt-8 flex flex-wrap gap-4">
+              <SmartLink to={c.home_hero_cta1_link} className="btn-primary" data-cms="Home - Hero - CTA 1">
+                {c.home_hero_cta1}
+              </SmartLink>
+              <span hidden data-cms="Home - Hero - CTA 1 Link">{c.home_hero_cta1_link}</span>
+              <SmartLink to={c.home_hero_cta2_link} className="btn-secondary" data-cms="Home - Hero - CTA 2">
+                {c.home_hero_cta2}
+              </SmartLink>
+              <span hidden data-cms="Home - Hero - CTA 2 Link">{c.home_hero_cta2_link}</span>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* maritime transition from the hero into the content */}
-      <WaveDivider bottom="#f2eada" />
+      <WaveDivider top={promo ? '#071a33' : undefined} bottom="#f2eada" />
 
       {/* ─── Stats (repeater — static container anchors section order) ─── */}
       <section className="bg-sand">
@@ -228,55 +244,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── Announcement ───────────────────────────────────────────────────
-          Set an image and an end time in the CMS and it pops up once per
-          visitor until that time passes. CLEAR THE IMAGE to take it down — that
-          also stops it being downloaded, which is why the <img> below is inside
-          this guard rather than always rendered. */}
-      {menu && (
-        <>
-          {/* Declares the fields for the scanner. Hidden: the pop-up is the
-              only place these are actually shown. */}
-          {/* src MUST be `c.<key>` literally, not the `menu` alias above. The
-              scanner resolves an image field by matching `src={c.something}` in
-              the source; anything else scans as EMPTY and, worse, gets no content
-              path — so the club could change the image in the CMS and publishing
-              would never write it back to content.js. The alias is fine for the
-              logic above, which the scanner never reads. */}
-          <img src={c.home_announcement_image} data-cms="Home - Announcement - Image" alt="" className="hidden" />
-          <span hidden data-cms="Home - Announcement - Ends">{c.home_announcement_ends}</span>
-          <span hidden data-cms="Home - Announcement - Alt">{c.home_announcement_alt}</span>
-          {/* Optional enquiry under the image: a button ("Buy your tickets here")
-              that opens a short form (name, email, how many) in place of the
-              poster. Shown only when the button label is set, so an announcement
-              without one stays a plain image. Submissions go to the Netlify form
-              "announcement" (declared in index.html), so they reach the club's
-              inbox and email like the contact form. */}
-          <span hidden data-cms="Home - Announcement - Button">{c.home_announcement_button}</span>
-          <span hidden data-cms="Home - Announcement - Form Heading">{c.home_announcement_form_heading}</span>
-          <span hidden data-cms="Home - Announcement - Form Quantity Label">{c.home_announcement_form_quantity_label}</span>
-          <span hidden data-cms="Home - Announcement - Form Success">{c.home_announcement_form_success}</span>
-          <Lightbox
-            items={[menu]}
-            index={announcement}
-            setIndex={onAnnouncementChange}
-            label={c.home_announcement_alt}
-            footer={c.home_announcement_button ? (
-              <button type="button" onClick={() => setEnquiring(true)} className="btn-primary">{c.home_announcement_button}</button>
-            ) : null}
-            panel={enquiring ? (
-              <EnquiryForm
-                about={c.home_announcement_alt || 'Announcement'}
-                heading={c.home_announcement_form_heading}
-                quantityLabel={c.home_announcement_form_quantity_label}
-                success={c.home_announcement_form_success}
-                onBack={() => setEnquiring(false)}
-                backLabel="Back to the poster"
-              />
-            ) : null}
-          />
-        </>
-      )}
     </>
   )
 }
