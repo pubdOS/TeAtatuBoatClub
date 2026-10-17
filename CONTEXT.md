@@ -9,6 +9,20 @@ of the CMS. Contacts: **Dan** (manager, the one who emails changes) and **Barry 
 
 ## Current state
 
+### ▶ 2026-10-17: Snapper Classic promo, AGREED with Sara, waiting on Dan (read this first)
+- Sara Reid (GFM, the club's marketing contact, also Runpoint's) asked for a rotating hero; we agreed instead on a
+  **temporary hero swap** (no carousel): hero heading/sub/buttons switch to the Snapper Classic ("Get tickets" +
+  "Find out more" both to the comp page), background = Sara's TEXT-FREE landscape image (>= 2400x1350, subject
+  centred; she accepted no text in it), or a photo + the comp logo as a transparent PNG. Revert after 1 Nov 5pm.
+- **Dedicated page** `/events/snapper-classic`: everything from the rules PDF (dates/entry, fishing area + chart,
+  daily/overall prizes, sponsors: Marine Deals + 16 logos on PDF p1, ticket button). The shareable link for socials.
+- Retire the home pop-up once both are live. The announcement bar idea is DROPPED (hero swap covers it).
+- **Gate: Dan's approval.** Sara sends the image after he approves. Aim: live before the early-bird cut-off 25 Oct.
+- Also pending Dan: a CMS login for Sara (multi-user). Starter = basic visitor numbers only; the Analytics tab
+  wrongly says GA "isn't connected" for Starter (backlog), fix before she logs in or she'll think tracking is broken.
+- Rules PDF typo to mention to Dan: "Registration opens ... Thursday 5th February 2026" (surely November).
+- Traffic baseline given to Sara (GA4 from 10 Sep): Sep 551 users/739 sessions, Oct 1-16 529/642; organic social 31.
+
 ### ▶ 2026-10-16: Snapper Classic tickets (read this first)
 - **Home announcement pop-up** = the Commodore's Snapper Classic poster, ends `2026-11-01 17:00` (entries
   close). Under it, **"Buy your tickets here"** opens a short enquiry form (name, email, how many) in place
