@@ -1066,7 +1066,7 @@ export default {
       "time": "12 midday – 8pm"
     }
   ],
-  "restaurant_menu_heading": "Menus - Check back soon to see our new menu!",
+  "restaurant_menu_heading": "Check back soon to see our new menu!",
   "restaurant_menu_dine_image": "",
   "restaurant_menu_catering_image": "",
   "restaurant_cta_heading": "Come down for a meal",
