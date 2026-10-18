@@ -985,7 +985,7 @@ export default {
   "membership_hero_heading": "Membership",
   "membership_hero_sub": "Join nearly 750 families who call Te Atatu Boating Club home.",
   "membership_intro_heading": "Why join?",
-  "membership_intro_body": "Membership gives you access to all of our facilities — the Members Bar, High Tide Kitchen, the Commodore’s Lounge, dinghy and trailer boat storage, discounted yard and haulout rates, and online work-bay booking.",
+  "membership_intro_body": "Membership gives you access to all of our facilities — the Members Bar, King Tide Kitchen, the Commodore’s Lounge, dinghy and trailer boat storage, discounted yard and haulout rates, and online work-bay booking.",
   "membership_family_fee": "$230",
   "membership_family_unit": "per year",
   "membership_family_note": "Family membership — includes children under 18.",
