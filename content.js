@@ -1013,7 +1013,7 @@ export default {
   "membership_benefits": [
     {
       "title": "Members Bar & Kitchen",
-      "desc": "Licensed Members Bar, High Tide Kitchen and the Commodore’s Lounge."
+      "desc": "Licensed Members Bar, King Tide Kitchen and the Commodore’s Lounge."
     },
     {
       "title": "Discounted Rates",
@@ -1066,7 +1066,7 @@ export default {
       "time": "12 midday – 8pm"
     }
   ],
-  "restaurant_menu_heading": "Check back soon to see our new menu!",
+  "restaurant_menu_heading": "Check back in soon to see our new menu!",
   "restaurant_menu_dine_image": "",
   "restaurant_menu_catering_image": "",
   "restaurant_cta_heading": "Come down for a meal",
