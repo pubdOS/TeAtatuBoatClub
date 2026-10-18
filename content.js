@@ -144,7 +144,7 @@ export default {
     },
     {
       "title": "Members Bar & Kitchen",
-      "desc": "A licensed bar and the High Tide Kitchen open through the week."
+      "desc": "A licensed bar and the King Tide Kitchen open through the week."
     },
     {
       "title": "Venue Hire",
@@ -1034,7 +1034,7 @@ export default {
   "membership_cta_button_link": "/contact",
   "restaurant_hero_heading": "Restaurant & Bar",
   "restaurant_hero_sub": "The Members Bar and High Tide Kitchen — open to members and their guests.",
-  "restaurant_intro_body": "Our licensed club rooms and the High Tide Kitchen are at the heart of the club. Drop in for a drink at the bar or a meal with the family, with views out over the harbour.",
+  "restaurant_intro_body": "Our licensed club rooms and the King Tide Kitchen are at the heart of the club. Drop in for a drink at the bar or a meal with the family, with views out over the harbour.",
   "restaurant_clubrooms_heading": "Club Rooms — Bar Hours",
   "clubrooms_hours": [
     {
@@ -1046,7 +1046,7 @@ export default {
       "time": "From 12 midday"
     }
   ],
-  "restaurant_kitchen_heading": "High Tide Kitchen",
+  "restaurant_kitchen_heading": "King Tide Kitchen",
   "restaurant_kitchen_sub": "Bistro meals through the week.",
   "kitchen_hours": [
     {
@@ -1066,9 +1066,9 @@ export default {
       "time": "12 midday – 8pm"
     }
   ],
-  "restaurant_menu_heading": "Menus",
-  "restaurant_menu_dine_image": "/images/menu-dine.jpg",
-  "restaurant_menu_catering_image": "/images/menu-catering.jpg",
+  "restaurant_menu_heading": "Menus - Check back soon to see our new menu!",
+  "restaurant_menu_dine_image": "",
+  "restaurant_menu_catering_image": "",
   "restaurant_cta_heading": "Come down for a meal",
   "restaurant_cta_body": "Members and guests welcome. Check the hours above and we’ll see you at the bar.",
   "restaurant_cta_button": "Find Us",
