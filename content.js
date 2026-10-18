@@ -1033,7 +1033,7 @@ export default {
   "membership_cta_button": "Contact the Office",
   "membership_cta_button_link": "/contact",
   "restaurant_hero_heading": "Restaurant & Bar",
-  "restaurant_hero_sub": "The Members Bar and High Tide Kitchen — open to members and their guests.",
+  "restaurant_hero_sub": "The Members Bar and King Tide Kitchen — open to members and their guests.",
   "restaurant_intro_body": "Our licensed club rooms and the King Tide Kitchen are at the heart of the club. Drop in for a drink at the bar or a meal with the family, with views out over the harbour.",
   "restaurant_clubrooms_heading": "Club Rooms — Bar Hours",
   "clubrooms_hours": [
