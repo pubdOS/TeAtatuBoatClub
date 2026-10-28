@@ -32,6 +32,7 @@ export default function Contact() {
           'form-name': 'contact',
           name: data.get('name'),
           email: data.get('email'),
+          phone: data.get('phone'),
           message: data.get('message'),
         }),
       })
@@ -125,6 +126,7 @@ export default function Contact() {
                 </p>
                 <input name="name" required placeholder="Your name" className="w-full rounded-xl border border-navy/15 px-4 py-3 focus:border-accent focus:outline-none" />
                 <input name="email" type="email" required placeholder="Your email" className="w-full rounded-xl border border-navy/15 px-4 py-3 focus:border-accent focus:outline-none" />
+                <input name="phone" type="tel" required autoComplete="tel" inputMode="tel" pattern="[0-9+()\s-]{7,}" title="A phone number we can call you back on" placeholder="Your phone" className="w-full rounded-xl border border-navy/15 px-4 py-3 focus:border-accent focus:outline-none" />
                 <textarea name="message" required rows={5} placeholder="How can we help?" className="w-full rounded-xl border border-navy/15 px-4 py-3 focus:border-accent focus:outline-none" />
                 {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
                 <button type="submit" disabled={sending} className="btn-primary w-full disabled:opacity-60">

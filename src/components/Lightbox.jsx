@@ -179,6 +179,7 @@ export function EnquiryForm({ about, heading, quantityLabel, success, onBack, ba
           'form-name': 'announcement',
           name: data.get('name'),
           email: data.get('email'),
+          phone: data.get('phone'),
           quantity: data.get('quantity'),
           about,
           message: `${about}\n${quantityLabel || 'How many'}: ${data.get('quantity')}`,
@@ -205,6 +206,7 @@ export function EnquiryForm({ about, heading, quantityLabel, success, onBack, ba
           <p className="hidden"><label data-cms-static="Netlify honeypot, hidden from visitors">Leave this empty: <input name="bot-field" /></label></p>
           <input name="name" required autoComplete="name" placeholder="Your name" className={field} />
           <input name="email" type="email" required autoComplete="email" placeholder="Your email" className={field} />
+          <input name="phone" type="tel" required autoComplete="tel" inputMode="tel" pattern="[0-9+()\s-]{7,}" title="A phone number we can call you back on" placeholder="Your phone" className={field} />
           <label className="block text-sm text-navy/70">
             {quantityLabel}
             <input name="quantity" type="number" required min="1" max="50" defaultValue="1" inputMode="numeric" className={`${field} mt-1`} />
