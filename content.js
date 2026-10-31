@@ -102,13 +102,13 @@ export default {
   "home_hero_cta1_link": "/booking",
   "home_hero_cta2": "Become a Member",
   "home_hero_cta2_link": "/membership",
-  "home_promo_ends": "2026-11-01 17:00",
+  "home_promo_ends": "2026-11-05 17:00",
   "home_promo_image": "/images/snapper/banner.jpg",
   "home_promo_logo": "/images/snapper/logo.png",
   "home_promo_label": "Te Atatu Boating Club presents",
   "home_promo_title": "Commodore's Snapper Classic",
   "home_promo_date": "6 to 8 November 2026",
-  "home_promo_sub": "Three days chasing snapper and kingfish across the Hauraki Gulf, open to everyone and every experience level. Enter by 25 October for the early-bird prize draw.",
+  "home_promo_sub": "Three days chasing snapper and kingfish across the Hauraki Gulf, open to everyone and every experience level. Entries close 5pm Thursday 5th November.",
   "home_promo_cta1": "Get tickets",
   "home_promo_cta1_link": "/events/snapper-classic#tickets",
   "home_promo_cta2": "Find out more",
@@ -1248,7 +1248,7 @@ export default {
       "label": "Early-bird draw closes"
     },
     {
-      "value": "1 Nov",
+      "value": "5 Nov",
       "label": "Entries close, 5pm"
     }
   ],
@@ -1441,7 +1441,7 @@ export default {
   "snapper_fine": [
     {
       "title": "Late entries and refunds",
-      "body": "Registrations close at 5pm on Sunday 1 November. There are no refunds after 2 November without the committee’s approval: send requests in writing to clubcaptain@teatatuboatclub.co.nz."
+      "body": "Registrations close at 5pm on Thursday 5th November. There are no refunds after 2 November without the committee’s approval: send requests in writing to clubcaptain@teatatuboatclub.co.nz."
     },
     {
       "title": "Weather",
