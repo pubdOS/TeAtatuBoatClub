@@ -1,0 +1,80 @@
+/* The kit's own layout (shared: synced to every site from sitemog-starter,
+   never edited per site). Plain CSS, no site colours or fonts: how a site's
+   kit LOOKS lives in its theme, the kit-* roles in index.css (THEME.md). */
+
+/* A heading block: eyebrow, heading, intro, then any buttons. One default gap
+   (--kit-head-gap); a theme sets any pair exactly with a two-class rule, e.g.
+   .kit-eyebrow + .kit-h2 { margin-top: ... }, which outranks this one. */
+.kit-head > * + * { margin-top: var(--kit-head-gap, 0.75rem); }
+
+/* BALANCE: a row of cards whose short last row sits centred (3, then 2
+   centred) at any count. Columns from --rb-cols, set per breakpoint. */
+.kit-balance { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--rb-gap, 1.5rem); }
+.kit-balance > * { flex: 0 1 calc((100% - (var(--rb-cols, 1) - 1) * var(--rb-gap, 1.5rem)) / var(--rb-cols, 1)); max-width: 100%; }
+
+/* FIT: two to four figures sharing one row, shrinking before they wrap. */
+.kit-fit { display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; gap: 1rem clamp(1.5rem, 4vw, 3rem); }
+.kit-fit > * { flex: 1 1 0; min-width: 7rem; text-align: center; container-type: inline-size; }
+.kit-fit-value { font-size: clamp(1.5rem, 24cqi, 2.5rem); line-height: 1.05; }
+/* DIVIDED: the same figures in equal cells with a rule between. */
+.kit-divided { display: flex; justify-content: center; }
+.kit-divided > * { flex: 1 1 0; min-width: 0; text-align: center; }
+.kit-divided > * + * { border-left: 1px solid var(--kit-rule, rgb(0 0 0 / 0.1)); }
+
+/* Buttons look deliberate whatever the client types: never smaller than a
+   real button, never wider than one; a long label ends in "…". */
+.kit-btn { display: inline-flex; justify-content: center; min-width: 9.5rem; max-width: min(20rem, 100%); }
+.kit-btn-label { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+/* The strip: begins in line with the content, runs to the screen's right edge
+   (any width), no scrollbar; round arrows float at each end. */
+.kit-strip { margin-right: calc(50% - 50vw); }
+.kit-strip-track { scrollbar-width: none; }
+.kit-strip-track::-webkit-scrollbar { display: none; }
+.kit-strip-arrow {
+  position: absolute; top: 38%; z-index: 2; display: flex; height: 2.75rem; width: 2.75rem;
+  align-items: center; justify-content: center; border-radius: 9999px;
+  background: var(--kit-arrow-bg, rgb(255 255 255 / 0.92)); color: var(--kit-arrow-fg, #111);
+  box-shadow: 0 6px 20px -6px rgb(0 0 0 / 0.35); backdrop-filter: blur(6px);
+  transition: opacity 0.2s ease, transform 0.15s ease;
+}
+.kit-strip-arrow:hover { transform: scale(1.06); }
+
+/* The slow scrolling logo strip (two copies loop seamlessly). */
+.kit-marquee { overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.kit-marquee-track { animation: kit-marquee 40s linear infinite; }
+.kit-marquee:hover .kit-marquee-track { animation-play-state: paused; }
+@keyframes kit-marquee { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .kit-marquee-track { animation: none; } }
+
+/* The timeline's line and dots. */
+.kit-timeline { border-left: 2px solid var(--kit-rule, rgb(0 0 0 / 0.1)); }
+.kit-faq { border-top: 1px solid var(--kit-rule, rgb(0 0 0 / 0.1)); border-bottom: 1px solid var(--kit-rule, rgb(0 0 0 / 0.1)); }
+.kit-faq > * + * { border-top: 1px solid var(--kit-rule, rgb(0 0 0 / 0.1)); }
+
+/* Downloads and the price list: rows with a rule between, like the FAQ. */
+.kit-files, .kit-prices { border-top: 1px solid var(--kit-rule, rgb(0 0 0 / 0.1)); border-bottom: 1px solid var(--kit-rule, rgb(0 0 0 / 0.1)); }
+.kit-files > * + *, .kit-prices > * + * { border-top: 1px solid var(--kit-rule, rgb(0 0 0 / 0.1)); }
+.kit-price-row, .kit-price { font-variant-numeric: tabular-nums; }
+
+/* The announcement strip (Announcement.jsx): hidden while its line is empty;
+   one centred line; scrolls only when the line is wider than the screen. */
+.kit-announce { overflow: hidden; text-align: center; }
+.kit-announce:has(.kit-announce-text:empty) { display: none; }
+.kit-announce-line { display: block; white-space: nowrap; }
+.kit-announce-text { display: inline-block; white-space: nowrap; }
+.kit-announce-moving .kit-announce-line { text-align: left; }
+.kit-announce-moving .kit-announce-text {
+  animation: kit-announce var(--kit-announce-time, 20s) linear var(--kit-announce-delay, 0s) infinite;
+}
+.kit-announce-moving:hover .kit-announce-text { animation-play-state: paused; }
+@keyframes kit-announce { from { transform: translateX(var(--kit-announce-from, 100vw)); } to { transform: translateX(-100%); } }
+@media (prefers-reduced-motion: reduce) {
+  .kit-announce-line, .kit-announce-text { white-space: normal; }
+  .kit-announce-moving .kit-announce-line { text-align: center; }
+  .kit-announce-moving .kit-announce-text { animation: none; }
+}
+
+/* Hero photos (HeroPhotos.jsx): stacked, each fading in over the last. */
+.kit-hero-photos > * { transition: opacity 1.6s ease; }
+@media (prefers-reduced-motion: reduce) { .kit-hero-photos > * { transition: none; } }

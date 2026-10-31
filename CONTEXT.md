@@ -9,6 +9,23 @@ of the CMS. Contacts: **Dan** (manager, the one who emails changes) and **Barry 
 
 ## Current state
 
+### ▶ 2026-10-31: KIT conversion BUILT on branch `kit` (pushed, not merged, NOT deployed)
+- Every page except Snapper Classic, Admin and NotFound is now `Sections` (move/hide/add from the kit),
+  tones by position (base=cream, alt=sand), navy bands pinned (`pin="navy"` / `"navy-dark"`).
+  Theme = KIT THEME block in `src/index.css` + `src/kit/theme.js` (centred, tick marks, fit numbers).
+- Announcement strip in Layout (`nav_announcement*`, empty = hidden). Home's normal hero = HeroPhotos
+  (`home_hero_more`). The canonical edit bridge came with it (the old one had no kit/tone support).
+- The wave under each hero is `.wave-to-next`: it takes the colour of the FIRST VISIBLE section (CSS
+  `:has`), so moving/hiding sections never leaves a wrong-coloured wave. The two mid-page waves above
+  navy bands (About CTA, Facilities gallery) were REMOVED: a movable band can't know its neighbour.
+- Verified: pixel-identical to main on every page/width except those two waves; every kit type +
+  variant rendered on About (desktop + phone) in the club's style; cms-check strict 0 fails.
+- **Snapper Classic not converted** (event page with non-alternating colours); decide later.
+- **Scanner cap:** `Layout.jsx` (announcement fields) is scanner file 29 of 30. Nothing is
+  dropped; one more page/component file is fine, a second pushes Layout out. Fix the cap (BACKLOG GraphQL item) first.
+- To ship: Lazar reviews on localhost → merge after the Snapper close (5 Nov) → one deploy → Merge
+  rescan in the CMS. Gate from the plan: Fernbrook's real Publish test of the new kit pieces first.
+
 ### ▶ 2026-10-18: Snapper Classic BUILT on branch `snapper-page` (not merged), Wix redirects LIVE
 - Sara sent the text-free banner (2400x1350), the comp logo PNG and an updated rules PDF (early bird
   now 25 Oct; the "Thursday 5th February 2026" registration typo is STILL in it). Barry approved her

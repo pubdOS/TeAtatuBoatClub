@@ -4,6 +4,7 @@ import SmartLink from '../components/SmartLink.jsx'
 import Seo from '../components/Seo.jsx'
 import AnimatedSection from '../components/AnimatedSection.jsx'
 import WaveDivider from '../components/WaveDivider.jsx'
+import Sections, { Section } from '../components/Sections.jsx'
 
 export default function Venue() {
   return (
@@ -11,6 +12,8 @@ export default function Venue() {
       <Seo title={c.venue_seo_title} description={c.venue_seo_description} />
       <span hidden data-cms="Venue - SEO - Page Title">{c.venue_seo_title}</span>
       <span hidden data-cms="Venue - SEO - Meta Description">{c.venue_seo_description}</span>
+      <span hidden data-cms="Venue - Page - Layout">{c.venue_page_layout}</span>
+      <span hidden data-cms="Venue - Page - Kit">{c.venue_page_kit}</span>
       <section className="bg-navy py-20 text-center text-white">
         <div className="mx-auto max-w-4xl px-5">
           <h1 className="text-4xl font-semibold md:text-5xl" data-cms="Venue - Hero - Heading">
@@ -21,14 +24,16 @@ export default function Venue() {
       </section>
       <WaveDivider />
 
-      <section className="section mx-auto max-w-3xl text-center">
+      <Sections layout={c.venue_page_layout} tones={["base", "alt"]} page="Venue" kit={c.venue_page_kit}>
+      <Section id="Venue - Spaces">
+      <div className="section mx-auto max-w-3xl text-center">
         <AnimatedSection>
           <p className="text-lg text-navy/70 whitespace-pre-line" data-cms="Venue - Intro - Body">{c.venue_intro_body}</p>
         </AnimatedSection>
-      </section>
+      </div>
 
       {/* Spaces (repeater) */}
-      <section className="section pt-0">
+      <div className="section pt-0">
         <div data-cms-repeater="Venue - Spaces" data-cms-shape="list" data-cms-min="1" data-cms-max="4" data-cms-overflow="wrap" className="repeat-balance [--rb-cols:1] md:[--rb-cols:2] gap-6">
           {c.venues.map((v, i) => (
             <div key={i} className="card p-7">
@@ -38,10 +43,11 @@ export default function Venue() {
             </div>
           ))}
         </div>
-      </section>
+      </div>
+      </Section>
 
       {/* Terms (repeater) */}
-      <section className="bg-sand">
+      <Section id="Venue - Terms">
         <div className="section mx-auto max-w-3xl">
           <AnimatedSection className="mb-6">
             <h2 className="text-2xl font-semibold" data-cms="Venue - Terms - Heading">{c.venue_terms_heading}</h2>
@@ -55,10 +61,10 @@ export default function Venue() {
             ))}
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* CTA */}
-      <section className="bg-navy text-white">
+      <Section id="Venue - CTA" pin="navy" className="bg-navy text-white">
         <div className="section text-center">
           <AnimatedSection>
             <h2 className="text-3xl font-semibold md:text-4xl" data-cms="Venue - CTA - Heading">
@@ -70,7 +76,8 @@ export default function Venue() {
             <span hidden data-cms="Venue - CTA - Button Link">{c.venue_cta_button_link}</span>
           </AnimatedSection>
         </div>
-      </section>
+      </Section>
+      </Sections>
     </>
   )
 }

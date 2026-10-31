@@ -6,6 +6,7 @@ import Seo from '../components/Seo.jsx'
 import AnimatedSection from '../components/AnimatedSection.jsx'
 import WaveDivider from '../components/WaveDivider.jsx'
 import Lightbox from '../components/Lightbox.jsx'
+import Sections, { Section } from '../components/Sections.jsx'
 
 export default function Restaurant() {
   const [menu, setMenu] = useState(null)
@@ -15,6 +16,8 @@ export default function Restaurant() {
       <Seo title={c.restaurant_seo_title} description={c.restaurant_seo_description} />
       <span hidden data-cms="Restaurant - SEO - Page Title">{c.restaurant_seo_title}</span>
       <span hidden data-cms="Restaurant - SEO - Meta Description">{c.restaurant_seo_description}</span>
+      <span hidden data-cms="Restaurant - Page - Layout">{c.restaurant_page_layout}</span>
+      <span hidden data-cms="Restaurant - Page - Kit">{c.restaurant_page_kit}</span>
       <section className="bg-navy py-20 text-center text-white">
         <div className="mx-auto max-w-4xl px-5">
           <h1 className="text-4xl font-semibold md:text-5xl" data-cms="Restaurant - Hero - Heading">
@@ -25,14 +28,17 @@ export default function Restaurant() {
       </section>
       <WaveDivider />
 
-      <section className="section mx-auto max-w-3xl text-center">
+      <Sections layout={c.restaurant_page_layout} tones={["base", "alt"]} page="Restaurant" kit={c.restaurant_page_kit}>
+      <Section id="Restaurant - Intro">
+      <div className="section mx-auto max-w-3xl text-center">
         <AnimatedSection>
           <p className="text-lg text-navy/70 whitespace-pre-line" data-cms="Restaurant - Intro - Body">{c.restaurant_intro_body}</p>
         </AnimatedSection>
-      </section>
+      </div>
+      </Section>
 
       {/* Hours */}
-      <section className="bg-sand">
+      <Section id="Restaurant - Hours">
         <div className="section grid gap-8 md:grid-cols-2">
           <AnimatedSection className="h-full">
             <div className="card h-full p-7">
@@ -67,10 +73,11 @@ export default function Restaurant() {
             </div>
           </AnimatedSection>
         </div>
-      </section>
+      </Section>
 
       {/* Menus */}
-      <section className="section">
+      <Section id="Restaurant - Menus">
+      <div className="section">
         <AnimatedSection className="mb-8 text-center">
           <h2 className="text-3xl font-semibold md:text-4xl" data-cms="Restaurant - Menus - Heading">
             {c.restaurant_menu_heading}
@@ -95,10 +102,11 @@ export default function Restaurant() {
           </button>
         </div>
         <p className="mt-4 text-center text-sm text-navy/50" data-cms="Restaurant - Menus - Hint">{c.restaurant_menus_hint}</p>
-      </section>
+      </div>
+      </Section>
 
       {/* CTA */}
-      <section className="bg-navy text-white">
+      <Section id="Restaurant - CTA" pin="navy" className="bg-navy text-white">
         <div className="section text-center">
           <AnimatedSection>
             <h2 className="text-3xl font-semibold md:text-4xl" data-cms="Restaurant - CTA - Heading">
@@ -113,7 +121,8 @@ export default function Restaurant() {
             <span hidden data-cms="Restaurant - CTA - Button Link">{c.restaurant_cta_button_link}</span>
           </AnimatedSection>
         </div>
-      </section>
+      </Section>
+      </Sections>
 
       <Lightbox items={menus} index={menu} setIndex={setMenu} />
     </>

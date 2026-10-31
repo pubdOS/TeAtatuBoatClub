@@ -3,6 +3,7 @@ import c from '../../content.js'
 import Seo from '../components/Seo.jsx'
 import AnimatedSection from '../components/AnimatedSection.jsx'
 import WaveDivider from '../components/WaveDivider.jsx'
+import Sections, { Section } from '../components/Sections.jsx'
 
 const encode = (data) =>
   Object.keys(data)
@@ -50,6 +51,8 @@ export default function Contact() {
       <Seo title={c.contact_seo_title} description={c.contact_seo_description} />
       <span hidden data-cms="Contact - SEO - Page Title">{c.contact_seo_title}</span>
       <span hidden data-cms="Contact - SEO - Meta Description">{c.contact_seo_description}</span>
+      <span hidden data-cms="Contact - Page - Layout">{c.contact_page_layout}</span>
+      <span hidden data-cms="Contact - Page - Kit">{c.contact_page_kit}</span>
       <section className="bg-navy py-20 text-center text-white">
         <div className="mx-auto max-w-4xl px-5">
           <h1 className="text-4xl font-semibold md:text-5xl" data-cms="Contact - Hero - Heading">
@@ -60,7 +63,9 @@ export default function Contact() {
       </section>
       <WaveDivider />
 
-      <section className="section grid gap-12 md:grid-cols-2">
+      <Sections layout={c.contact_page_layout} tones={["base", "alt"]} page="Contact" kit={c.contact_page_kit}>
+      <Section id="Contact - Details">
+      <div className="section grid gap-12 md:grid-cols-2">
         {/* Office details */}
         <AnimatedSection>
           <h2 className="text-2xl font-semibold" data-cms="Contact - Office - Heading">
@@ -137,7 +142,9 @@ export default function Contact() {
             )}
           </div>
         </AnimatedSection>
-      </section>
+      </div>
+      </Section>
+      </Sections>
     </>
   )
 }
