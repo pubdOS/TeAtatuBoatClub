@@ -4,6 +4,7 @@ import SmartLink from '../components/SmartLink.jsx'
 import Seo from '../components/Seo.jsx'
 import AnimatedSection from '../components/AnimatedSection.jsx'
 import WaveDivider from '../components/WaveDivider.jsx'
+import Sections, { Section } from '../components/Sections.jsx'
 
 export default function Membership() {
   return (
@@ -11,6 +12,8 @@ export default function Membership() {
       <Seo title={c.membership_seo_title} description={c.membership_seo_description} />
       <span hidden data-cms="Membership - SEO - Page Title">{c.membership_seo_title}</span>
       <span hidden data-cms="Membership - SEO - Meta Description">{c.membership_seo_description}</span>
+      <span hidden data-cms="Membership - Page - Layout">{c.membership_page_layout}</span>
+      <span hidden data-cms="Membership - Page - Kit">{c.membership_page_kit}</span>
       <section className="bg-navy py-20 text-center text-white">
         <div className="mx-auto max-w-4xl px-5">
           <h1 className="text-4xl font-semibold md:text-5xl" data-cms="Membership - Hero - Heading">
@@ -21,7 +24,9 @@ export default function Membership() {
       </section>
       <WaveDivider />
 
-      <section className="section mx-auto max-w-3xl text-center">
+      <Sections layout={c.membership_page_layout} tones={["base", "alt"]} page="Membership" kit={c.membership_page_kit}>
+      <Section id="Membership - Join">
+      <div className="section mx-auto max-w-3xl text-center">
         <AnimatedSection>
           <h2 className="text-3xl font-semibold md:text-4xl" data-cms="Membership - Intro - Heading">
             {c.membership_intro_heading}
@@ -45,10 +50,10 @@ export default function Membership() {
             <p className="mt-2 text-sm text-navy/60" data-cms="Membership - Nomination - Note">{c.membership_nomination_note}</p>
           </div>
         </div>
-      </section>
+      </div>
 
       {/* How to join (repeater) */}
-      <section className="section pt-0 mx-auto max-w-4xl">
+      <div className="section pt-0 mx-auto max-w-4xl">
         <AnimatedSection className="mb-8 text-center">
           <h2 className="text-2xl font-semibold md:text-3xl" data-cms="Membership - How - Heading">
             {c.membership_how_heading}
@@ -63,9 +68,10 @@ export default function Membership() {
             </div>
           ))}
         </div>
-      </section>
+      </div>
+      </Section>
 
-      <section className="bg-sand">
+      <Section id="Membership - Benefits">
         <div className="section">
           <div data-cms-repeater="Membership - Benefits" data-cms-shape="card" data-cms-min="2" data-cms-recommend="4" data-cms-max="8" data-cms-overflow="wrap" className="repeat-balance [--rb-cols:1] sm:[--rb-cols:2] md:[--rb-cols:4] gap-6">
             {c.membership_benefits.map((b, i) => (
@@ -76,9 +82,9 @@ export default function Membership() {
             ))}
           </div>
         </div>
-      </section>
+      </Section>
 
-      <section className="bg-navy text-white">
+      <Section id="Membership - CTA" pin="navy" className="bg-navy text-white">
         <div className="section text-center">
           <AnimatedSection>
             <h2 className="text-3xl font-semibold md:text-4xl" data-cms="Membership - CTA - Heading">
@@ -93,7 +99,8 @@ export default function Membership() {
             <span hidden data-cms="Membership - CTA - Button Link">{c.membership_cta_button_link}</span>
           </AnimatedSection>
         </div>
-      </section>
+      </Section>
+      </Sections>
     </>
   )
 }

@@ -2,6 +2,7 @@ import c from '../../content.js'
 import BookingWidget from '../booking/BookingWidget.jsx'
 import WaveDivider from '../components/WaveDivider.jsx'
 import Seo from '../components/Seo.jsx'
+import Sections, { Section } from '../components/Sections.jsx'
 
 // The ONLY CMS-editable content on this page is the static framing text below
 // (heading, "how it works", and the two notices). Everything inside
@@ -15,6 +16,8 @@ export default function Booking() {
       <Seo title={c.booking_seo_title} description={c.booking_seo_description} />
       <span hidden data-cms="Booking - SEO - Page Title">{c.booking_seo_title}</span>
       <span hidden data-cms="Booking - SEO - Meta Description">{c.booking_seo_description}</span>
+      <span hidden data-cms="Booking - Page - Layout">{c.booking_page_layout}</span>
+      <span hidden data-cms="Booking - Page - Kit">{c.booking_page_kit}</span>
       <section className="bg-navy py-16 text-center text-white">
         <div className="mx-auto max-w-4xl px-5">
           <h1 className="text-4xl font-semibold md:text-5xl" data-cms="Booking - Hero - Heading">
@@ -25,7 +28,9 @@ export default function Booking() {
       </section>
       <WaveDivider />
 
-      <section className="section mx-auto max-w-5xl">
+      <Sections layout={c.booking_page_layout} tones={["base", "alt"]} page="Booking" kit={c.booking_page_kit}>
+      <Section id="Booking - Book">
+      <div className="section mx-auto max-w-5xl">
         <div className="mb-10 rounded-2xl border border-navy/10 bg-sand p-6">
           <h2 className="text-xl font-bold" data-cms="Booking - How - Heading">{c.booking_how_heading}</h2>
           <p className="mt-2 text-sm text-navy/70" data-cms="Booking - How - Body">{c.booking_how_body}</p>
@@ -65,7 +70,9 @@ export default function Booking() {
             </div>
           </div>
         )}
-      </section>
+      </div>
+      </Section>
+      </Sections>
     </>
   )
 }

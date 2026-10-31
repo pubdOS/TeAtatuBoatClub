@@ -4,6 +4,7 @@ import SmartLink from '../components/SmartLink.jsx'
 import Seo from '../components/Seo.jsx'
 import AnimatedSection from '../components/AnimatedSection.jsx'
 import WaveDivider from '../components/WaveDivider.jsx'
+import Sections, { Section } from '../components/Sections.jsx'
 
 // IMPORTANT: work-bay rates are STATIC data-cms fields (not a repeater) so the
 // keys stay stable and the booking flow can fetch a specific rate at runtime.
@@ -13,6 +14,8 @@ export default function Pricing() {
       <Seo title={c.pricing_seo_title} description={c.pricing_seo_description} />
       <span hidden data-cms="Pricing - SEO - Page Title">{c.pricing_seo_title}</span>
       <span hidden data-cms="Pricing - SEO - Meta Description">{c.pricing_seo_description}</span>
+      <span hidden data-cms="Pricing - Page - Layout">{c.pricing_page_layout}</span>
+      <span hidden data-cms="Pricing - Page - Kit">{c.pricing_page_kit}</span>
       <section className="bg-navy py-20 text-center text-white">
         <div className="mx-auto max-w-4xl px-5">
           <h1 className="text-4xl font-semibold md:text-5xl" data-cms="Pricing - Hero - Heading">
@@ -23,8 +26,10 @@ export default function Pricing() {
       </section>
       <WaveDivider />
 
+      <Sections layout={c.pricing_page_layout} tones={["base", "alt"]} page="Pricing" kit={c.pricing_page_kit}>
       {/* Work-bay pricing — canonical, fetchable keys */}
-      <section className="section">
+      <Section id="Pricing - Work Bay">
+      <div className="section">
         <AnimatedSection className="mx-auto max-w-3xl">
           <h2 className="mb-6 text-center text-2xl font-semibold md:text-3xl" data-cms="Pricing - Work Bay - Heading">
             {c.pricing_workbay_heading}
@@ -64,10 +69,11 @@ export default function Pricing() {
             <span hidden data-cms="Pricing - CTA - Button Link">{c.pricing_cta_button_link}</span>
           </div>
         </AnimatedSection>
-      </section>
+      </div>
+      </Section>
 
       {/* Other fees (repeater) */}
-      <section className="bg-sand">
+      <Section id="Pricing - Other">
         <div className="section mx-auto max-w-3xl">
           <h2 className="mb-6 text-2xl font-semibold" data-cms="Pricing - Other - Heading">
             {c.pricing_other_heading}
@@ -100,7 +106,8 @@ export default function Pricing() {
           </div>
           <p className="mt-5 text-sm text-navy/60" data-cms="Pricing - Notice - Body">{c.pricing_notice}</p>
         </div>
-      </section>
+      </Section>
+      </Sections>
     </>
   )
 }

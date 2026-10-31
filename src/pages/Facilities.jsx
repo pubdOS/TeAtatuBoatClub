@@ -4,6 +4,7 @@ import SmartLink from '../components/SmartLink.jsx'
 import Seo from '../components/Seo.jsx'
 import AnimatedSection from '../components/AnimatedSection.jsx'
 import WaveDivider from '../components/WaveDivider.jsx'
+import Sections, { Section } from '../components/Sections.jsx'
 
 // ── Simple nautical line icons (stroke = currentColor) ──
 function WheelIcon() {
@@ -27,6 +28,8 @@ export default function Facilities() {
       <Seo title={c.facilities_seo_title} description={c.facilities_seo_description} />
       <span hidden data-cms="Facilities - SEO - Page Title">{c.facilities_seo_title}</span>
       <span hidden data-cms="Facilities - SEO - Meta Description">{c.facilities_seo_description}</span>
+      <span hidden data-cms="Facilities - Page - Layout">{c.facilities_page_layout}</span>
+      <span hidden data-cms="Facilities - Page - Kit">{c.facilities_page_kit}</span>
       {/* Hero */}
       <section className="bg-navy py-20 text-center text-white">
         <div className="mx-auto max-w-4xl px-5">
@@ -38,8 +41,10 @@ export default function Facilities() {
       </section>
       <WaveDivider />
 
+      <Sections layout={c.facilities_page_layout} tones={["base", "alt"]} page="Facilities" kit={c.facilities_page_kit}>
       {/* Work bays — the headline facility for members */}
-      <section className="section">
+      <Section id="Facilities - Bays">
+      <div className="section">
         <AnimatedSection className="mx-auto mb-12 max-w-2xl text-center">
           <span className="eyebrow" data-cms="Facilities - Bays - Label">{c.facilities_bays_label}</span>
           <h2 className="text-3xl font-semibold md:text-4xl" data-cms="Facilities - Bays - Heading">
@@ -70,10 +75,11 @@ export default function Facilities() {
           <SmartLink to={c.facilities_book_button_link} className="btn-primary shrink-0" data-cms="Facilities - Bays - Book Button">{c.facilities_book_button}</SmartLink>
           <span hidden data-cms="Facilities - Bays - Book Button Link">{c.facilities_book_button_link}</span>
         </div>
-      </section>
+      </div>
+      </Section>
 
       {/* Other facilities */}
-      <section className="bg-sand">
+      <Section id="Facilities - Other">
         <div className="section">
           <AnimatedSection className="mb-12 text-center">
             <span className="eyebrow justify-center" data-cms="Facilities - Other - Label">{c.facilities_other_label}</span>
@@ -95,11 +101,10 @@ export default function Facilities() {
             ))}
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* Gallery teaser */}
-      <WaveDivider top="#f2eada" bottom="#0b2545" />
-      <section className="bg-navy">
+      <Section id="Facilities - Gallery" pin="navy" className="bg-navy">
         <div className="section text-center text-white">
           <AnimatedSection>
             <h2 className="text-3xl font-semibold md:text-4xl" data-cms="Facilities - Gallery - Heading">
@@ -112,7 +117,8 @@ export default function Facilities() {
             <span hidden data-cms="Facilities - Gallery - Button Link">{c.facilities_gallery_button_link}</span>
           </AnimatedSection>
         </div>
-      </section>
+      </Section>
+      </Sections>
     </>
   )
 }

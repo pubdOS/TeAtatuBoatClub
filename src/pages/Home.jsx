@@ -5,6 +5,8 @@ import SmartLink from '../components/SmartLink.jsx'
 import Seo from '../components/Seo.jsx'
 import AnimatedSection from '../components/AnimatedSection.jsx'
 import WaveDivider from '../components/WaveDivider.jsx'
+import Sections, { Section } from '../components/Sections.jsx'
+import HeroPhotos from '../kit/HeroPhotos.jsx'
 
 /**
  * Is a time-boxed promotion still running?
@@ -51,6 +53,11 @@ export default function Home() {
       <Seo title={c.home_seo_title} description={c.home_seo_description} />
       <span hidden data-cms="Home - SEO - Page Title">{c.home_seo_title}</span>
       <span hidden data-cms="Home - SEO - Meta Description">{c.home_seo_description}</span>
+      {/* Section order: which sections show, in what order (Sections.jsx). The
+          hero stays put; everything below it can be hidden and moved. */}
+      <span hidden data-cms="Home - Page - Layout">{c.home_page_layout}</span>
+      {/* Sections added from the kit: one JSON field for the page. */}
+      <span hidden data-cms="Home - Page - Kit">{c.home_page_kit}</span>
       {/* ─── Hero ───
           While a promotion is running (Home - Promo - Ends, NZ time) it takes the
           hero; clear the end time, or let it pass, and the normal hero returns. */}
@@ -101,11 +108,16 @@ export default function Home() {
         </section>
       ) : (
         <section className="relative isolate flex min-h-[80vh] items-center bg-navy text-white">
-          <div
-            className="absolute inset-0 -z-10 bg-cover bg-center opacity-40"
-            style={{ backgroundImage: `url(${c.home_hero_image})` }}
-          />
+          {/* The hero photo, then any added under "More Photos", taking turns
+              (HeroPhotos, shared kit). Each has a hidden companion the CMS edits. */}
+          <HeroPhotos image={c.home_hero_image} more={c.home_hero_more} className="absolute inset-0 -z-10 opacity-40" />
           <img src={c.home_hero_image} data-cms="Home - Hero - Image" alt="" className="hidden" />
+          <div hidden data-cms-repeater="Home - Hero - More Photos" data-cms-shape="media" data-cms-max="5"
+            data-cms-note="These take turns with the hero photo, a few seconds each.">
+            {(c.home_hero_more || []).map((x, i) => (
+              <div key={i}><img data-cms-field="image" src={x.image} alt="" loading="lazy" /></div>
+            ))}
+          </div>
           <div className="mx-auto max-w-6xl px-5 py-24">
             <h1 className="max-w-3xl text-4xl font-semibold leading-tight md:text-6xl" data-cms="Home - Hero - Heading">
               {c.home_hero_heading}
@@ -128,10 +140,11 @@ export default function Home() {
       )}
 
       {/* maritime transition from the hero into the content */}
-      <WaveDivider top={promo ? '#071a33' : undefined} bottom="#f2eada" />
+      <WaveDivider top={promo ? '#071a33' : undefined} />
 
+      <Sections layout={c.home_page_layout} tones={['alt', 'base']} page="Home" kit={c.home_page_kit}>
       {/* ─── Stats (repeater — static container anchors section order) ─── */}
-      <section className="bg-sand">
+      <Section id="Home - Stats">
         <div data-cms-repeater="Home - Stats" data-cms-shape="stat" data-cms-min="2" data-cms-recommend="3" data-cms-max="6" data-cms-overflow="wrap" className="repeat-balance [--rb-cols:1] sm:[--rb-cols:3] [--rb-gap:2rem] mx-auto max-w-6xl gap-8 px-5 py-14">
           {c.home_stats.map((stat, i) => (
             <div key={i} className="text-center">
@@ -144,10 +157,11 @@ export default function Home() {
             </div>
           ))}
         </div>
-      </section>
+      </Section>
 
       {/* ─── About strip ─── */}
-      <section className="section grid items-center gap-12 md:grid-cols-2">
+      <Section id="Home - About">
+      <div className="section grid items-center gap-12 md:grid-cols-2">
         <AnimatedSection>
           <span className="eyebrow" data-cms="Home - About - Label">{c.home_about_label}</span>
           <h2 className="text-3xl font-semibold md:text-4xl" data-cms="Home - About - Heading">
@@ -167,10 +181,11 @@ export default function Home() {
             className="aspect-[4/3] w-full rounded-2xl bg-navy/5 object-cover"
           />
         </AnimatedSection>
-      </section>
+      </div>
+      </Section>
 
       {/* ─── Video (promo clip, not the hero) ─── */}
-      <section className="bg-navy-dark">
+      <Section id="Home - Video" pin="navy-dark" className="bg-navy-dark">
         <div className="section">
           <AnimatedSection className="mb-8 text-center text-white">
             <span className="eyebrow text-gold" data-cms="Home - Video - Label">{c.home_video_label}</span>
@@ -197,10 +212,10 @@ export default function Home() {
             </div>
           </AnimatedSection>
         </div>
-      </section>
+      </Section>
 
       {/* ─── Facilities (repeater) ─── */}
-      <section className="bg-sand">
+      <Section id="Home - Facilities">
         <div className="section">
           <AnimatedSection className="mb-10 text-center">
             <span className="eyebrow" data-cms="Home - Facilities - Label">{c.home_facilities_label}</span>
@@ -224,10 +239,10 @@ export default function Home() {
             <span hidden data-cms="Home - Facilities - CTA Link">{c.home_facilities_cta_link}</span>
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* ─── CTA banner ─── */}
-      <section className="bg-navy text-white">
+      <Section id="Home - CTA" pin="navy" className="bg-navy text-white">
         <div className="section text-center">
           <AnimatedSection>
             <h2 className="text-3xl font-semibold md:text-4xl" data-cms="Home - CTA - Heading">
@@ -242,8 +257,8 @@ export default function Home() {
             <span hidden data-cms="Home - CTA - Button Link">{c.home_cta_button_link}</span>
           </AnimatedSection>
         </div>
-      </section>
-
+      </Section>
+      </Sections>
     </>
   )
 }

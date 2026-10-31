@@ -6,6 +6,7 @@ import AnimatedSection from '../components/AnimatedSection.jsx'
 import WaveDivider from '../components/WaveDivider.jsx'
 import NewsletterSignup from '../components/NewsletterSignup.jsx'
 import { EnquiryForm } from '../components/Lightbox.jsx'
+import Sections, { Section } from '../components/Sections.jsx'
 
 export default function Events() {
   // Which competition's details modal is open (index into c.competitions), or null.
@@ -20,6 +21,8 @@ export default function Events() {
       <Seo title={c.events_seo_title} description={c.events_seo_description} />
       <span hidden data-cms="Events - SEO - Page Title">{c.events_seo_title}</span>
       <span hidden data-cms="Events - SEO - Meta Description">{c.events_seo_description}</span>
+      <span hidden data-cms="Events - Page - Layout">{c.events_page_layout}</span>
+      <span hidden data-cms="Events - Page - Kit">{c.events_page_kit}</span>
       <section className="bg-navy py-20 text-center text-white">
         <div className="mx-auto max-w-4xl px-5">
           <h1 className="text-4xl font-semibold md:text-5xl" data-cms="Events - Hero - Heading">
@@ -30,16 +33,18 @@ export default function Events() {
       </section>
       <WaveDivider />
 
-      <section className="section mx-auto max-w-3xl text-center">
+      <Sections layout={c.events_page_layout} tones={["base", "alt"]} page="Events" kit={c.events_page_kit}>
+      <Section id="Events - Whats On">
+      <div className="section mx-auto max-w-3xl text-center">
         <AnimatedSection>
           <p className="text-lg text-navy/70" data-cms="Events - Whats On - Intro">{c.events_intro_body}</p>
         </AnimatedSection>
-      </section>
+      </div>
 
       {/* Club newsletter — admin uploads the PDF in the CMS (Events ▸ Newsletter Document).
           The field is declared once on the hidden anchor below; the visible block just
           reads the value, so there's no duplicate data-cms key. */}
-      <section className="section pt-0">
+      <div className="section pt-0">
         <AnimatedSection>
           <div className="mx-auto max-w-xl rounded-3xl border border-navy/10 bg-sand px-6 py-8 text-center">
             <h2 className="font-display text-2xl font-semibold text-navy" data-cms="Events - Whats On - Newsletter Heading">
@@ -65,10 +70,10 @@ export default function Events() {
             )}
           </div>
         </AnimatedSection>
-      </section>
+      </div>
 
       {/* Events (repeater) */}
-      <section className="section pt-0">
+      <div className="section pt-0">
         <div data-cms-repeater="Events - Whats On - List" data-cms-shape="list" data-cms-min="1" data-cms-recommend="3" data-cms-max="9" data-cms-overflow="wrap" className="repeat-balance [--rb-cols:1] md:[--rb-cols:3] gap-6">
           {c.events.map((e, i) => (
             <div key={i} className="card flex flex-col p-6">
@@ -78,10 +83,11 @@ export default function Events() {
             </div>
           ))}
         </div>
-      </section>
+      </div>
+      </Section>
 
       {/* Competitions (repeater) — clickable cards open a details modal with rules. */}
-      <section className="bg-sand">
+      <Section id="Events - Competitions">
         <div className="section">
           <AnimatedSection>
             <div className="mx-auto mb-10 max-w-2xl text-center">
@@ -136,13 +142,15 @@ export default function Events() {
             </div>
           )}
         </div>
-      </section>
+      </Section>
 
       {/* Newsletter signup — posts subscribers to the Pubd CMS */}
-      <NewsletterSignup />
+      <Section id="Events - Signup" pin="navy" as="div">
+        <NewsletterSignup />
+      </Section>
 
       {/* Facebook note */}
-      <section>
+      <Section id="Events - Facebook">
         <div className="section text-center">
           <AnimatedSection>
             <p className="text-lg font-semibold text-navy" data-cms="Events - Facebook - Note">{c.events_facebook_note}</p>
@@ -151,7 +159,8 @@ export default function Events() {
             </a>
           </AnimatedSection>
         </div>
-      </section>
+      </Section>
+      </Sections>
 
       {/* Ticket enquiry copy, shown in the modal's form (Lightbox EnquiryForm). */}
       <span hidden data-cms="Events - Tickets - Form Heading">{c.events_tickets_heading}</span>

@@ -3,6 +3,7 @@ import c from '../../content.js'
 import Seo from '../components/Seo.jsx'
 import WaveDivider from '../components/WaveDivider.jsx'
 import Lightbox from '../components/Lightbox.jsx'
+import Sections, { Section } from '../components/Sections.jsx'
 
 // Resolve a gallery item to an image src — tolerates the content.js seed shape
 // ({ image }), the CMS gallery shape ({ url, album }), or a plain string.
@@ -35,6 +36,8 @@ export default function Gallery() {
       <Seo title={c.gallery_seo_title} description={c.gallery_seo_description} />
       <span hidden data-cms="Gallery - SEO - Page Title">{c.gallery_seo_title}</span>
       <span hidden data-cms="Gallery - SEO - Meta Description">{c.gallery_seo_description}</span>
+      <span hidden data-cms="Gallery - Page - Layout">{c.gallery_page_layout}</span>
+      <span hidden data-cms="Gallery - Page - Kit">{c.gallery_page_kit}</span>
       <section className="bg-navy py-20 text-center text-white">
         <div className="mx-auto max-w-4xl px-5">
           <h1 className="text-4xl font-semibold md:text-5xl" data-cms="Gallery - Hero - Heading">
@@ -45,7 +48,9 @@ export default function Gallery() {
       </section>
       <WaveDivider />
 
-      <section className="section">
+      <Sections layout={c.gallery_page_layout} tones={["base", "alt"]} page="Gallery" kit={c.gallery_page_kit}>
+      <Section id="Gallery - Photos">
+      <div className="section">
         {/* Album filter tabs — only shown when the office has created albums. */}
         {albums.length > 1 && (
           <div className="mb-8 flex flex-wrap justify-center gap-2">
@@ -98,7 +103,9 @@ export default function Gallery() {
             )
           })}
         </div>
-      </section>
+      </div>
+      </Section>
+      </Sections>
 
       <Lightbox items={srcs} index={active} setIndex={setActive} />
     </>

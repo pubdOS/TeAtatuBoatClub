@@ -2,6 +2,7 @@ import c from '../../content.js'
 import Seo from '../components/Seo.jsx'
 import AnimatedSection from '../components/AnimatedSection.jsx'
 import WaveDivider from '../components/WaveDivider.jsx'
+import Sections, { Section } from '../components/Sections.jsx'
 
 export default function Rules() {
   return (
@@ -9,6 +10,8 @@ export default function Rules() {
       <Seo title={c.rules_seo_title} description={c.rules_seo_description} />
       <span hidden data-cms="Rules - SEO - Page Title">{c.rules_seo_title}</span>
       <span hidden data-cms="Rules - SEO - Meta Description">{c.rules_seo_description}</span>
+      <span hidden data-cms="Rules - Page - Layout">{c.rules_page_layout}</span>
+      <span hidden data-cms="Rules - Page - Kit">{c.rules_page_kit}</span>
       <section className="bg-navy py-20 text-center text-white">
         <div className="mx-auto max-w-4xl px-5">
           <h1 className="text-4xl font-semibold md:text-5xl" data-cms="Rules - Hero - Heading">
@@ -19,7 +22,9 @@ export default function Rules() {
       </section>
       <WaveDivider />
 
-      <section className="section mx-auto max-w-3xl">
+      <Sections layout={c.rules_page_layout} tones={["base", "alt"]} page="Rules" kit={c.rules_page_kit}>
+      <Section id="Rules - Content">
+      <div className="section mx-auto max-w-3xl">
         <AnimatedSection className="mb-8">
           <p className="text-lg text-navy/70" data-cms="Rules - Content - Body">{c.rules_intro_body}</p>
         </AnimatedSection>
@@ -36,7 +41,9 @@ export default function Rules() {
         <p className="mt-8 rounded-xl bg-amber-50 px-5 py-4 text-sm text-amber-900" data-cms="Rules - Content - Notice">
           {c.rules_notice}
         </p>
-      </section>
+      </div>
+      </Section>
+      </Sections>
     </>
   )
 }

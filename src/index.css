@@ -31,6 +31,20 @@ body {
 .cms-count-pad::before { content: counter(cms-item, decimal-leading-zero); }
 
 @layer components {
+  /* Section backgrounds by POSITION (src/components/Sections.jsx): a movable
+     section never sets its own background, so moving or hiding one cannot leave
+     two same-coloured neighbours. The navy bands are pinned (pin="navy"). */
+  [data-tone="base"] { @apply bg-cream; }
+  [data-tone="alt"] { @apply bg-sand; }
+
+  /* The wave under a page's hero dissolves into whichever section is FIRST on
+     screen (a visible one with no visible section before it), so it stays right
+     when the client moves or hides sections. Cream when nothing matches. */
+  .wave-to-next { background-color: theme(colors.cream); }
+  .wave-to-next:has(~ [data-tone="alt"]:not([hidden]):not([data-cms-section]:not([hidden]) ~ *)) { background-color: theme(colors.sand); }
+  .wave-to-next:has(~ [data-tone="navy"]:not([hidden]):not([data-cms-section]:not([hidden]) ~ *)) { background-color: theme(colors.navy.DEFAULT); }
+  .wave-to-next:has(~ [data-tone="navy-dark"]:not([hidden]):not([data-cms-section]:not([hidden]) ~ *)) { background-color: theme(colors.navy.dark); }
+
   .btn-primary {
     @apply inline-flex items-center justify-center rounded-full bg-gold px-6 py-3 font-bold text-navy shadow-sm transition-all hover:bg-gold-dark hover:shadow-md;
   }
@@ -66,6 +80,66 @@ body {
   .card {
     @apply rounded-2xl border border-navy/10 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-navy/15;
   }
+
+  /* ── KIT THEME ──────────────────────────────────────────────────────────────
+     How the shared kit (src/kit/, synced from sitemog-starter) looks on the
+     club's site: Fraunces headings under the gold-rule eyebrow, white cards on
+     cream and sand, gold and outline buttons, accent-blue small text. The one
+     part of the kit a site owns, with src/kit/theme.js. Every role is listed in
+     src/kit/THEME.md; leave none out. */
+  .kit-section { @apply section; }
+  .kit-numbers { @apply py-14 md:py-14; }
+  .kit-head { --kit-head-gap: 0.75rem; }
+  /* The eyebrow carries its own space below (as on the site's own headings). */
+  .kit-eyebrow + .kit-h2 { @apply mt-0; }
+  .kit-h2 + .kit-intro, .kit-h2 + .kit-text { @apply mt-4; }
+  .kit-h2 + .kit-role { @apply mt-1; }
+  .kit-role + .kit-text { @apply mt-4; }
+  .kit-text + .kit-actions { @apply mt-6; }
+  .kit-cta-text + .kit-actions, .kit-h2 + .kit-actions { @apply mt-8; }
+  .kit-eyebrow { @apply eyebrow; }
+  .kit-h2 { @apply font-display text-3xl font-semibold md:text-4xl; }
+  .kit-h3 { @apply font-display text-lg font-semibold; }
+  .kit-card-title { @apply text-xl; }
+  .kit-h2.kit-person { @apply md:text-3xl; }
+  .kit-intro { @apply text-navy/70; }
+  .kit-text { @apply leading-relaxed text-navy/70; }
+  .kit-small { @apply text-sm text-navy/70; }
+  .kit-meta { @apply text-sm text-navy/55; }
+  .kit-accent { @apply text-xs font-semibold uppercase tracking-wide text-accent; }
+  .kit-name { @apply text-sm font-semibold text-navy; }
+  .kit-role { @apply text-sm font-semibold text-accent; }
+  .kit-head > .kit-role { @apply text-base; }
+  .kit-step-text { @apply text-sm text-navy/70; }
+  .kit-quote { @apply leading-relaxed text-navy/85; }
+  .kit-quote-lg { @apply font-display text-2xl font-medium leading-relaxed text-navy/85 md:text-3xl; }
+  .kit-cta-text { @apply text-navy/70; }
+  .kit-card { @apply card p-6; }
+  .kit-card-photo { @apply p-0; }
+  .kit-card-body { @apply p-6; }
+  .kit-photo { @apply rounded-2xl shadow-md; }
+  .kit-tile { @apply rounded-2xl; }
+  .kit-mark { @apply h-11 w-11 bg-accent/10 text-accent; }
+  .kit-step { @apply h-8 w-8 bg-accent text-sm font-bold text-white; }
+  .kit-face { @apply bg-navy font-display font-semibold text-gold; }
+  .kit-dot { @apply border-2 border-gold bg-cream; }
+  .kit-timeline { @apply border-gold/40; }
+  .kit-file:hover .kit-h3 { @apply text-accent; }
+  .kit-price { @apply font-display text-4xl font-semibold text-navy; }
+  .kit-price-row { @apply font-semibold text-navy; }
+  .kit-price-unit { @apply text-sm text-navy/60; }
+  .kit-package { @apply text-center; }
+  .kit-package-highlight { @apply border-2 border-gold bg-gold/10; }
+  .kit-announce { @apply bg-navy-dark px-5 py-2 text-sm font-medium text-white; }
+  .kit-announce a:hover .kit-announce-text { @apply text-gold; }
+  .kit-figure { @apply font-display font-semibold text-accent; }
+  .kit-figure-label { @apply mt-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-navy/55; }
+  .kit-numbers-heading { @apply mb-8 font-display text-2xl font-semibold md:text-3xl; }
+  .kit-question { @apply font-display text-lg font-semibold; }
+  .kit-btn-primary { @apply btn-primary; }
+  .kit-btn-secondary { @apply btn-outline; }
+  .kit-section, .kit-timeline, .kit-faq, .kit-divided { --kit-rule: rgb(11 37 69 / 0.1); }
+  .kit-strip-arrow { --kit-arrow-bg: rgb(255 255 255 / 0.94); --kit-arrow-fg: theme(colors.navy.DEFAULT); }
 
   /* BALANCE — a card row whose incomplete last row CENTRES instead of
      left-anchoring. The item count is the client's to change, so the layout has

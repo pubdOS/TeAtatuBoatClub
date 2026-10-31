@@ -37,6 +37,11 @@ const CAN = [
   'fit', // after an edit, report whether the text still fits the slot it was designed for
   'click-section', // a click on the page names the section it landed in
   'labels', // `structure` carries the plain names the site gives a field and a state
+  'sections', // hide, show and reorder a page's movable sections live (a "... - Page - Layout" field)
+  'kit', // add and edit sections from the kit live (a "... - Page - Kit" field; the page re-renders itself)
+  'arrange', // arrange mode: outline and name each movable section on the page, show hidden ones as strips, offer "add here"
+  'top-colour', // report the colour at the very top of the page, so the phone editor can paint the status bar to match
+  'framing', // a photo's focus point and zoom ride on its address (#f=x,y,zoom); applied live, and each slot's ability reported
 ]
 let cmsOrigin = null
 
@@ -263,7 +268,9 @@ function finishSuppress() {
   }
 }
 
+let topQueued = false
 function onScroll() {
+  if (!topQueued) { topQueued = true; requestAnimationFrame(() => { topQueued = false; reportTop() }) }
   if (suppress) {
     clearTimeout(settleT)
     settleT = setTimeout(finishSuppress, 170) // no scroll events for 170ms = settled
@@ -277,16 +284,49 @@ function onScroll() {
 // Apply a value to an element. Images: swap the src AND any CSS-background twin
 // that painted the same source (the hidden-companion convention). Scope the
 // twin search to the whole doc for flat fields, or the item for repeater fields.
+// Photo framing (capability `framing`, contract in EDITOR_CONTRACT.md): the
+// focus point and zoom ride on the photo's address as `#f=x,y,zoom`. The site
+// renders them (src/lib/img.js); here they are applied live as they change.
+const bareSrc = (v) => (typeof v === 'string' ? v.replace(/#f=[\d.,]+$/, '') : '')
+function framingStyle(v) {
+  const m = typeof v === 'string' && v.match(/#f=([\d.]+),([\d.]+)(?:,([\d.]+))?$/)
+  if (!m) return null
+  const c = (x, lo, hi) => Math.min(hi, Math.max(lo, +x))
+  const at = `${+(c(m[1], 0, 1) * 100).toFixed(2)}% ${+(c(m[2], 0, 1) * 100).toFixed(2)}%`
+  return { at, zoom: c(m[3] ?? 1, 1, 4) }
+}
+function applyFraming(n, value) {
+  const f = framingStyle(value)
+  const bg = n.tagName !== 'IMG'
+  if (bg) n.style.backgroundPosition = f ? f.at : ''
+  else n.style.objectPosition = f ? f.at : ''
+  n.style.transformOrigin = f && f.zoom > 1 ? f.at : ''
+  n.style.transform = f && f.zoom > 1 ? `scale(${f.zoom})` : ''
+}
+// Does a background layer paint this photo? It may carry the raw address or a
+// CDN one with the address encoded inside it.
+const paints = (bgImage, src) => !!src && (bgImage.includes(src) || bgImage.includes(encodeURIComponent(src)))
+
+// Apply a value to an element. Images: swap the src AND any CSS-background twin
+// that painted the same source (the hidden-companion convention). Scope the
+// twin search to the whole doc for flat fields, or the item for repeater fields.
 function applyValue(el, value, scope) {
   if (el.tagName === 'IMG') {
     const old = el.getAttribute('src')
+    const oldFile = bareSrc(old), newFile = bareSrc(value)
     el.src = value || ''
+    // Every element that shows this photo, so the framing reaches it too.
+    const painters = [el]
     // Clearing an image sets the twin to 'none', never url('') — a removed
     // photo must actually disappear, not linger as a broken background.
-    const paint = (n) => { n.style.backgroundImage = value ? `url(${value})` : 'none' }
-    if (old) {
+    const paint = (n) => {
+      // Only the framing changed: the same file stays, as the site drew it.
+      if (newFile !== oldFile) n.style.backgroundImage = newFile ? `url(${newFile})` : 'none'
+      painters.push(n)
+    }
+    if (oldFile) {
       ;(scope || document).querySelectorAll('[style]').forEach((n) => {
-        if (n.style.backgroundImage && n.style.backgroundImage.includes(old)) paint(n)
+        if (n.style.backgroundImage && paints(n.style.backgroundImage, oldFile)) paint(n)
       })
       // The visible painter is not always a CSS background. Where the mapping
       // lives on a hidden companion and a COMPONENT renders the real <img>
@@ -294,7 +334,7 @@ function applyValue(el, value, scope) {
       // the cloned item's picture while the companion updated — a newly added
       // item showed the previous one's screenshot. Twin plain <img>s too.
       ;(scope || document).querySelectorAll('img').forEach((n) => {
-        if (n !== el && n.getAttribute('src') === old) n.src = value || ''
+        if (n !== el && bareSrc(n.getAttribute('src')) === oldFile) { n.src = value || ''; painters.push(n) }
       })
     } else if (value) {
       // Previously-empty slot: no old src to match on. This is the case for a
@@ -314,9 +354,12 @@ function applyValue(el, value, scope) {
       // (a device frame, a card thumbnail). Search the whole item scope, since
       // it usually sits in a sibling subtree rather than the same parent.
       ;(scope || el.parentElement || document).querySelectorAll('img').forEach((n) => {
-        if (n !== el && !n.getAttribute('src')) n.src = value
+        if (n !== el && !n.getAttribute('src')) { n.src = value; painters.push(n) }
       })
     }
+    // Only where the site draws framing itself (`data-cms-framed`): a preview
+    // must never show what the published page will not.
+    painters.forEach((n) => { if (n.hasAttribute('data-cms-framed')) applyFraming(n, value) })
   } else {
     el.textContent = value
   }
@@ -366,7 +409,70 @@ function setRepeater(key, json) {
 }
 
 // Route a hydrated value to the right applier — repeater JSON vs flat field.
+// ── Section order (EDITOR_CONTRACT.md "Section order") ────────────────────────
+// A "... - Page - Layout" value is JSON {order, hidden}. Applying it moves the
+// movable section wrappers into order, sets `hidden`, and re-deals the
+// position tones, so the preview matches what the built page will be. The
+// order a section was WRITTEN in is remembered the first time it is seen: a
+// section the layout does not name goes back to its written place after the
+// named ones, exactly as Sections.jsx renders it.
+const writtenIndex = new WeakMap()
+const isLayoutKey = (key) => / - Page - Layout$/.test(key)
+const isKitKey = (key) => / - Page - Kit$/.test(key)
+// The kit: the page renders its added sections itself (src/kit/useKit.js), so
+// the bridge only hands it the new list, waits for React to draw it, then puts
+// the order back (a new section arrives at the end) and reports the page.
+function applyKit(key, value) {
+  window.dispatchEvent(new CustomEvent('pubd:kit', { detail: { key, value } }))
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    const layoutKey = Object.keys(applied).find(isLayoutKey)
+    if (layoutKey) applyLayout(applied[layoutKey])
+    drawArrange()
+    postStructure()
+  }))
+}
+function parseLayout(raw) {
+  try {
+    const v = typeof raw === 'string' && raw.trim() ? JSON.parse(raw) : raw
+    return { order: Array.isArray(v?.order) ? v.order : [], hidden: Array.isArray(v?.hidden) ? v.hidden : [] }
+  } catch { return { order: [], hidden: [] } }
+}
+function applyLayout(raw) {
+  const { order, hidden } = parseLayout(raw)
+  const all = Array.from(document.querySelectorAll('[data-cms-movable]'))
+  if (!all.length) return
+  // One group per parent: the movable sections of a page are siblings.
+  const groups = new Map()
+  all.forEach((el, i) => {
+    if (!writtenIndex.has(el)) writtenIndex.set(el, i)
+    const g = groups.get(el.parentNode) || []
+    g.push(el)
+    groups.set(el.parentNode, g)
+  })
+  for (const [parent, els] of groups) {
+    const written = [...els].sort((a, b) => writtenIndex.get(a) - writtenIndex.get(b))
+    const idOf = (el) => el.getAttribute('data-cms-section')
+    const named = order.map((id) => written.find((el) => idOf(el) === id)).filter(Boolean)
+    const next = [...named, ...written.filter((el) => !named.includes(el))]
+    // Re-insert where the group sits now, keeping anything around it in place.
+    const anchor = els[0].previousSibling
+    let at = anchor ? anchor.nextSibling : parent.firstChild
+    for (const el of next) { if (el !== at) parent.insertBefore(el, at); at = el.nextSibling }
+    const tones = (next[0].getAttribute('data-cms-tones') || 'base,alt').split(',')
+    let i = 0
+    for (const el of next) {
+      const isHidden = hidden.includes(idOf(el))
+      el.hidden = isHidden
+      const pin = el.getAttribute('data-cms-tone-pin')
+      if (pin) el.setAttribute('data-tone', pin)
+      else if (!isHidden) el.setAttribute('data-tone', tones[i++ % tones.length])
+    }
+  }
+}
+
 function apply(key, value) {
+  if (isKitKey(key)) applyKit(key, value)
+  if (isLayoutKey(key)) applyLayout(value)
   if (repeaterMap.has(key) && typeof value === 'string' && value.trim().startsWith('[')) setRepeater(key, value)
   else setField(key, value)
 }
@@ -494,6 +600,116 @@ function beginSuppress(target) {
   settleT = setTimeout(finishSuppress, 300) // already-in-view = no scroll events
 }
 
+// ── Arrange mode (EDITING_ASSISTANT_PLAN.md, phase 2) ─────────────────────────
+// The page itself becomes the arranging surface: each movable section gets a
+// thin outline and its name, a hidden section shows as a slim greyed strip with
+// "Show", and between sections there is "＋ Add a section here". Everything is
+// drawn INSIDE each section (absolutely placed), never as new siblings, so the
+// page's own rendering is never disturbed. Names come from the CMS, which knows
+// the plain names; the bridge only draws.
+let arranging = false
+let arrangeOpts = { names: {}, canAdd: false }
+function arrangeStyles() {
+  if (document.getElementById('pubd-arrange-css')) return
+  const st = document.createElement('style')
+  st.id = 'pubd-arrange-css'
+  st.textContent = `
+html.pubd-arrange [data-cms-movable] { position: relative; outline: 1.5px dashed rgba(20,184,166,.55); outline-offset: -6px; }
+html.pubd-arrange [data-cms-movable][hidden] { display: block !important; max-height: 64px; overflow: hidden; }
+html.pubd-arrange [data-cms-movable][hidden] > :not(.pubd-arr) { opacity: .15; pointer-events: none; }
+.pubd-arr { position: absolute; z-index: 2147483000; font: 600 12px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: .01em; }
+.pubd-arr-label { top: 28px; left: 12px; display: flex; align-items: center; gap: 8px; padding: 7px 11px; border-radius: 999px; background: #14b8a6; color: #04201c; box-shadow: 0 2px 10px rgba(0,0,0,.18); }
+.pubd-arr-label button { all: unset; cursor: pointer; padding: 3px 9px; border-radius: 999px; background: #04201c; color: #fff; }
+.pubd-arr-hidden .pubd-arr-label { background: #e5e7eb; color: #374151; }
+.pubd-arr-add { left: 50%; bottom: -17px; transform: translateX(-50%); }
+.pubd-arr-add button { all: unset; cursor: pointer; padding: 9px 15px; border-radius: 999px; background: #fff; color: #0f766e; border: 1.5px solid #14b8a6; box-shadow: 0 2px 10px rgba(0,0,0,.15); white-space: nowrap; }`
+  document.head.appendChild(st)
+}
+function clearArrange() {
+  document.querySelectorAll('.pubd-arr').forEach((el) => el.remove())
+  document.querySelectorAll('.pubd-arr-hidden').forEach((el) => el.classList.remove('pubd-arr-hidden'))
+}
+function drawArrange() {
+  clearArrange()
+  if (!arranging) return
+  const all = Array.from(document.querySelectorAll('[data-cms-movable]'))
+  all.forEach((el) => {
+    const prefix = el.getAttribute('data-cms-section')
+    const name = arrangeOpts.names[prefix] || prefix.split(' - ').slice(1).join(' ')
+    const label = document.createElement('div')
+    label.className = 'pubd-arr pubd-arr-label'
+    label.textContent = name
+    if (el.hidden) {
+      el.classList.add('pubd-arr-hidden')
+      label.textContent = `${name} · hidden`
+      const show = document.createElement('button')
+      show.textContent = 'Show'
+      show.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); post({ type: 'arrange-action', action: 'show', prefix }) })
+      label.appendChild(show)
+    }
+    el.appendChild(label)
+    if (arrangeOpts.canAdd && !el.hidden) {
+      const add = document.createElement('div')
+      add.className = 'pubd-arr pubd-arr-add'
+      const b = document.createElement('button')
+      b.textContent = '＋ Add a section here'
+      b.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); post({ type: 'arrange-action', action: 'add', after: prefix }) })
+      add.appendChild(b)
+      el.appendChild(add)
+    }
+  })
+}
+function setArrange(msg) {
+  arranging = !!msg.on
+  arrangeOpts = { names: msg.names || {}, canAdd: !!msg.canAdd }
+  arrangeStyles()
+  document.documentElement.classList.toggle('pubd-arrange', arranging)
+  drawArrange()
+}
+
+// The colour at the very top of what is on screen, so the phone editor can paint
+// the strip under the status bar to match (as Safari does for the site itself)
+// instead of a dark band. Sent when it changes.
+let lastTop = ''
+// Any CSS colour (rgb, oklch, ...) as [r, g, b, a], read back off a 1px canvas.
+let swatch = null
+function rgba(css) {
+  if (!css || css === 'transparent') return null
+  const m = css.match(/^rgba?\(([^)]+)\)$/)
+  if (m) { const [r, g, b, a = 1] = m[1].split(/[\s,/]+/).filter(Boolean).map(Number); return [r, g, b, a] }
+  swatch = swatch || document.createElement('canvas').getContext('2d', { willReadFrequently: true })
+  if (!swatch) return null
+  swatch.clearRect(0, 0, 1, 1); swatch.fillStyle = css; swatch.fillRect(0, 0, 1, 1)
+  const d = swatch.getImageData(0, 0, 1, 1).data
+  return [d[0], d[1], d[2], d[3] / 255]
+}
+function topColour() {
+  // What the eye sees at the top edge: a see-through header blended over
+  // whatever is scrolled under it, down to the first solid colour. Every
+  // box stacked at that point, topmost first.
+  const layers = []
+  for (const n of document.elementsFromPoint(Math.round(window.innerWidth / 2), 1)) {
+    if (n === document.documentElement) break
+    const c = rgba(getComputedStyle(n).backgroundColor)
+    if (!c || !(c[3] > 0)) continue
+    layers.push(c)
+    if (c[3] >= 1) break
+  }
+  let [r, g, b] = [255, 255, 255]
+  if (!layers.length || layers[layers.length - 1][3] < 1) {
+    const c = rgba(getComputedStyle(document.body).backgroundColor) || rgba(getComputedStyle(document.documentElement).backgroundColor)
+    if (c && c[3] > 0) [r, g, b] = c
+  }
+  for (const [lr, lg, lb, a] of layers.reverse()) {
+    r = lr * a + r * (1 - a); g = lg * a + g * (1 - a); b = lb * a + b * (1 - a)
+  }
+  return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`
+}
+function reportTop() {
+  const c = topColour()
+  if (c !== lastTop) { lastTop = c; post({ type: 'top-colour', colour: c }) }
+}
+
 function goTo(prefix) {
   const page = prefix.split(' - ')[0]
   // Page chrome doesn't live in the normal scroll flow: the Nav is sticky (so
@@ -516,6 +732,12 @@ function goTo(prefix) {
     el.style.scrollMarginTop = '96px' // clear the sticky navbar
     el.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
+
+  // A movable section is its own box: aim at it. An added (kit) section has no
+  // data-cms fields at all (its content is edited in a form), so the field
+  // search below found nothing and a new section never scrolled into view.
+  const box = document.querySelector(`[data-cms-movable][data-cms-section="${CSS.escape(prefix)}"]`)
+  if (box && (onScreen(box) || arranging)) { scrollTo(box); return }
 
   // Find something you can actually SEE.
   //
@@ -679,7 +901,16 @@ function structure() {
   // by side share a top, and which is "first" then flips with a font load or a
   // few pixels of padding. Source order is the reading order, and it is the
   // order they stack in on a phone.
-  const sections = Array.from(boxes, ([prefix, b]) => ({ prefix, top: Math.round(b.top), height: Math.round(b.bottom - b.top), pinned: b.pinned, first: b.first }))
+  // Movable sections (Section order): flagged, and listed even while hidden
+  // (no box), so the panel can offer "show" in the right place.
+  const movable = new Map()
+  document.querySelectorAll('[data-cms-movable]').forEach((el) => {
+    const prefix = el.getAttribute('data-cms-section')
+    if (!prefix) return
+    movable.set(prefix, el.hidden)
+    if (el.hidden && !boxes.has(prefix)) boxes.set(prefix, { top: 0, bottom: 0, pinned: false, first: el })
+  })
+  const sections = Array.from(boxes, ([prefix, b]) => ({ prefix, top: Math.round(b.top), height: Math.round(b.bottom - b.top), pinned: b.pinned, first: b.first, movable: movable.has(prefix), hidden: movable.get(prefix) === true }))
     .sort((a, b) => (a.first.compareDocumentPosition(b.first) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1))
     .map(({ first, ...rest }) => rest)
   return { path: window.location.pathname, sections, fields }
@@ -761,6 +992,8 @@ function routeWork() {
   post({ type: 'page', path: window.location.pathname })
   report()
   measureAspects()
+  drawArrange()
+  reportTop()
   postStructure()
   if (editMode) { markPhotos(true); postFields() }
 }
@@ -792,6 +1025,54 @@ function measureAspects() {
     })
   })
   if (Object.keys(map).length) post({ type: 'aspects', map })
+  measureFrames()
+}
+
+// Which photo slots can be framed. Only those the site marks
+// `data-cms-framed` (its frame helpers add it), since only those draw the
+// framing when published. Then 'focus' where the photo fills its box and
+// so is cropped (a focus point chooses what stays), 'zoom' where that box also
+// clips, so a zoomed photo stays inside it. A slot that shows the whole photo
+// (a logo) is left out: there is nothing to frame.
+function frameAbility(el) {
+  let n = el
+  if (!el.getClientRects().length) {
+    // A hidden companion: the visible painter is a background layer or an
+    // <img> beside it.
+    const file = bareSrc(el.getAttribute('src'))
+    const sib = el.parentElement && Array.from(el.parentElement.querySelectorAll('[style], img')).find((x) => x !== el && x.getClientRects().length &&
+      (x.tagName === 'IMG' ? bareSrc(x.getAttribute('src')) === file : paints(x.style.backgroundImage || '', file)))
+    if (!sib) return null
+    n = sib
+  }
+  if (!n.hasAttribute('data-cms-framed')) return null
+  const cs = getComputedStyle(n)
+  const crops = n.tagName === 'IMG' ? cs.objectFit === 'cover' : cs.backgroundSize === 'cover'
+  if (!crops) return null
+  const p = n.parentElement
+  if (!p) return 'focus'
+  const pc = getComputedStyle(p)
+  const a = n.getBoundingClientRect(), b = p.getBoundingClientRect()
+  const clips = pc.overflow !== 'visible' || pc.overflowX !== 'visible' || pc.clipPath !== 'none'
+  const same = Math.abs(a.left - b.left) < 2 && Math.abs(a.top - b.top) < 2 && Math.abs(a.width - b.width) < 2 && Math.abs(a.height - b.height) < 2
+  return clips && same ? 'zoom' : 'focus'
+}
+function measureFrames() {
+  const map = {}
+  fieldMap.forEach((els, key) => {
+    const img = els.find((e) => e.tagName === 'IMG')
+    const f = img && frameAbility(img)
+    if (f) map[key] = f
+  })
+  repeaterMap.forEach((container, key) => {
+    const first = itemsOf(container)[0]
+    if (!first) return
+    first.querySelectorAll('img[data-cms-field]').forEach((el) => {
+      const f = frameAbility(el)
+      if (f) map[key + '::' + el.getAttribute('data-cms-field')] = f
+    })
+  })
+  post({ type: 'frames', map })
 }
 function onRouteChange() {
   clearTimeout(routeT)
@@ -815,6 +1096,9 @@ window.addEventListener('message', (event) => {
   if (msg.type === 'hydrate') Object.entries(msg.diff || {}).forEach(([k, v]) => { applied[k] = v; apply(k, v) })
   // Only a live edit reveals; hydration replays every field and must not flip
   // interactive pieces through their states on load.
+  if (msg.type === 'set' && isLayoutKey(msg.key)) { applyLayout(msg.value); drawArrange(); postStructure() }
+  if (msg.type === 'arrange') setArrange(msg)
+  if (msg.type === 'set' && isKitKey(msg.key)) { applied[msg.key] = msg.value; applyKit(msg.key, msg.value) }
   if (msg.type === 'set') { noteBefore(fieldMap.get(msg.key)); applied[msg.key] = msg.value; setField(msg.key, msg.value); reveal(msg.key); reportFit({ kind: 'field', key: msg.key }, fieldMap.get(msg.key)) }
   if (msg.type === 'cache') applied[msg.key] = msg.value // replay state only — no DOM work
   if (msg.type === 'set-item') {
@@ -913,5 +1197,6 @@ scan()
 window.addEventListener('scroll', onScroll, { passive: true })
 window.addEventListener('resize', onScroll, { passive: true })
 post({ type: 'hello', version: 6, can: CAN, path: window.location.pathname })
+setTimeout(reportTop, 300)
 setTimeout(() => { report(); postStructure() }, 300)
 setTimeout(measureAspects, 600) // after first paint settles
