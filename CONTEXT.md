@@ -9,7 +9,7 @@ of the CMS. Contacts: **Dan** (manager, the one who emails changes) and **Barry 
 
 ## Current state
 
-### ▶ 2026-10-31: KIT conversion BUILT on branch `kit` (pushed, not merged, NOT deployed)
+### ▶ 2026-10-31: KIT conversion SHIPPED (merged + deployed + Merge-rescanned: 258 -> 286 fields, none dropped)
 - Every page except Snapper Classic, Admin and NotFound is now `Sections` (move/hide/add from the kit),
   tones by position (base=cream, alt=sand), navy bands pinned (`pin="navy"` / `"navy-dark"`).
   Theme = KIT THEME block in `src/index.css` + `src/kit/theme.js` (centred, tick marks, fit numbers).
@@ -23,8 +23,7 @@ of the CMS. Contacts: **Dan** (manager, the one who emails changes) and **Barry 
 - **Snapper Classic not converted** (event page with non-alternating colours); decide later.
 - **Scanner cap:** `Layout.jsx` (announcement fields) is scanner file 29 of 30. Nothing is
   dropped; one more page/component file is fine, a second pushes Layout out. Fix the cap (BACKLOG GraphQL item) first.
-- To ship: Lazar reviews on localhost → merge after the Snapper close (5 Nov) → one deploy → Merge
-  rescan in the CMS. Gate from the plan: Fernbrook's real Publish test of the new kit pieces first.
+- Shipped 31 Oct (Lazar chose not to wait for the Snapper close; the conversion was pixel-identical).
 
 ### ▶ 2026-10-18: Snapper Classic BUILT on branch `snapper-page` (not merged), Wix redirects LIVE
 - Sara sent the text-free banner (2400x1350), the comp logo PNG and an updated rules PDF (early bird
