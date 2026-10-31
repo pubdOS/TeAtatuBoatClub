@@ -21,8 +21,8 @@ of the CMS. Contacts: **Dan** (manager, the one who emails changes) and **Barry 
 - Verified: pixel-identical to main on every page/width except those two waves; every kit type +
   variant rendered on About (desktop + phone) in the club's style; cms-check strict 0 fails.
 - **Snapper Classic not converted** (event page with non-alternating colours); decide later.
-- **Scanner cap:** `Layout.jsx` (announcement fields) is now file 30 of the scanner's 30. Nothing is
-  dropped, but ANY new page/component file pushes Layout out. Fix the cap (BACKLOG GraphQL item) first.
+- **Scanner cap:** `Layout.jsx` (announcement fields) is scanner file 29 of 30. Nothing is
+  dropped; one more page/component file is fine, a second pushes Layout out. Fix the cap (BACKLOG GraphQL item) first.
 - To ship: Lazar reviews on localhost → merge after the Snapper close (5 Nov) → one deploy → Merge
   rescan in the CMS. Gate from the plan: Fernbrook's real Publish test of the new kit pieces first.
 
