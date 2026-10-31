@@ -136,6 +136,8 @@ body {
   .kit-figure-label { @apply mt-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-navy/55; }
   .kit-numbers-heading { @apply mb-8 font-display text-2xl font-semibold md:text-3xl; }
   .kit-question { @apply font-display text-lg font-semibold; }
+  /* The FAQ's + is the accent role too, but needs to read as a control. */
+  .kit-type-faq .kit-accent { @apply text-2xl font-normal leading-none; }
   .kit-btn-primary { @apply btn-primary; }
   .kit-btn-secondary { @apply btn-outline; }
   .kit-section, .kit-timeline, .kit-faq, .kit-divided { --kit-rule: rgb(11 37 69 / 0.1); }
