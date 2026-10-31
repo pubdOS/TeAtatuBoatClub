@@ -1,5 +1,5 @@
 # TeAtatuBoatClub — working context
-_Last wrapped: 2026-10-16 · LIVE on teatatuboatclub.co.nz · CMS-wired · Pro · **BOOKING NOW SERVED BY THE PUBD CMS**_
+_Last wrapped: 2026-10-31 · LIVE on teatatuboatclub.co.nz · CMS-wired · Pro · **BOOKING NOW SERVED BY THE PUBD CMS**_
 
 ## What this is
 Te Atatū Boating Club: a ~750-family social + boating club. 12 pages, plus a **bespoke
@@ -207,10 +207,17 @@ of the CMS. Contacts: **Dan** (manager, the one who emails changes) and **Barry 
       redeploy to take effect, so batch it. (owner: you)
 - [ ] Committee **profile photos** when the club sends them — they upload these themselves,
       no dev work needed. (owner: Dan)
-- [ ] Bridge `goTo` fix: copy `sitemog-starter/src/pubd-edit-bridge.js` in as a rider on the
-      next real deploy. (owner: you)
+- [x] 2026-10-31: canonical bridge shipped with the kit (covers the old `goTo` rider).
+- [ ] **Snapper Classic page: convert to the kit or not.** Its bands don't alternate (cream next to
+      cream around the sea/navy bands), so position tones would recolour it. Decide after the event
+      (owner: Lazar). Converting adds no file, so it doesn't touch the scanner slots.
+- [ ] Show Sara/Dan the new pieces when relevant: announcement strip (with an end time), Downloads
+      (the rules PDF), extra hero photos. Nothing shows until they're filled in. (owner: Lazar)
+- [ ] **No new page/component files until the CMS scanner cap is fixed** (Layout.jsx is file 29/30;
+      fix queued after the kit rollout). (owner: you)
 
 ## Session log (brief, newest first)
+- 2026-10-31: kit conversion shipped (12 pages movable/addable, announcement strip, hero photos, canonical bridge, auto-colour hero wave); merged without waiting for the Snapper close; Merge rescan 258→286 fields, none dropped.
 - 2026-10-16: Snapper Classic poster pop-up + ticket enquiry form (home + competition card), rules PDF, manager@ hook; old booking DB branch shipped.
 - 2026-09-30: booking cut over to the CMS shared database; old functions retired (410) after a security sweep; email-on-file can no longer be replaced from the booking form.
 - 2026-08-25: Dan's post-AGM committee (10 people) + loading-area fine shipped; committee photo
