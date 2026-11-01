@@ -1,5 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, version } from 'react'
 import { framed } from './framing.js'
+
+// The first photo's fetch priority. React 19 knows the attribute as fetchPriority
+// and warns on the lowercase; React 18 doesn't know it and warns on the camelCase
+// (but passes the lowercase through). The kit runs on both, so ask React which.
+const priority = parseInt(version, 10) >= 19 ? 'fetchPriority' : 'fetchpriority'
 
 // The hero's photos: the hero's own photo, then any more the client added
 // (`more`, a list of { image }). One photo is drawn exactly as a single hero
@@ -29,7 +34,7 @@ export default function HeroPhotos({ image, more, className = '', imgClassName =
   return (
     <div className={`kit-hero-photos ${className}`} aria-hidden="true">
       {photos.map((src, i) => (i === 0 || ready) && (
-        <img key={src + i} src={srcFor(src)} alt="" loading={i === 0 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined}
+        <img key={src + i} src={srcFor(src)} alt="" loading={i === 0 ? 'eager' : 'lazy'} {...(i === 0 && { [priority]: 'high' })}
           className={`absolute inset-0 h-full w-full object-cover ${imgClassName}`}
           {...framed(src, { opacity: i === at ? 1 : 0 })} />
       ))}
