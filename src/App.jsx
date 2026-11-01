@@ -39,6 +39,9 @@ export const routes = [
       { path: 'contact', element: <Contact /> },
       { path: 'booking', element: <Booking /> },
       { path: 'admin', element: <Admin /> },
+      // Prerendered to 404.html, which Netlify serves WITH a 404 status for any
+      // address that is not a real page (no SPA fallback: every real page is a file).
+      { path: '404', element: <NotFound /> },
       { path: '*', element: <NotFound /> },
     ],
   },

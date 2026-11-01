@@ -1,7 +1,15 @@
 import { Link } from 'react-router-dom'
+import { Head } from 'vite-react-ssg'
 
 export default function NotFound() {
+  // Prerendered as 404.html and served with a real 404 status, so Google drops a
+  // stray address instead of reading it as a copy of the home page.
   return (
+    <>
+    <Head>
+      <title>Page not found</title>
+      <meta name="robots" content="noindex" />
+    </Head>
     <section className="flex min-h-[70vh] items-center justify-center bg-navy px-5 text-center text-white">
       <div>
         <p className="text-6xl font-semibold text-accent">404</p>
@@ -15,5 +23,6 @@ export default function NotFound() {
         </div>
       </div>
     </section>
+    </>
   )
 }
