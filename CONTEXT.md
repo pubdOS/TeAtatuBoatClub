@@ -9,6 +9,12 @@ of the CMS. Contacts: **Dan** (manager, the one who emails changes) and **Barry 
 
 ## Current state
 
+### ▶ 2026-11-01: real 404 SHIPPED
+- Unknown addresses serve a prerendered, noindex `404.html` with status 404 (`/* /404.html 404` in
+  netlify.toml; the old Wix 301s still sit above it). Verified live: pages, files and 301s unchanged.
+- Kit synced (HeroPhotos picks `fetchpriority`'s spelling by React version). No new files: the
+  scanner count is unchanged (Layout.jsx still file 29 of 30).
+
 ### ▶ 2026-10-31: KIT conversion SHIPPED (merged + deployed + Merge-rescanned: 258 -> 286 fields, none dropped)
 - Every page except Snapper Classic, Admin and NotFound is now `Sections` (move/hide/add from the kit),
   tones by position (base=cream, alt=sand), navy bands pinned (`pin="navy"` / `"navy-dark"`).
