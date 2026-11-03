@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import SmartLink from '../components/SmartLink.jsx'
 import ScrollStrip from './ScrollStrip.jsx'
 import Photo from './Photo.jsx'
@@ -392,7 +393,95 @@ function Pricing({ variant, f }) {
   )
 }
 
-const TYPES = { 'logo-strip': LogoStrip, testimonials: Testimonials, 'text-photo': TextPhoto, 'cta-band': CtaBand, cards: Cards, numbers: Numbers, people: People, photos: Photos, steps: Steps, faq: Faq, downloads: Downloads, pricing: Pricing }
+// 13. Google reviews: the client's real reviews, read live from Pubd's daily
+// copy (4 and 5 stars with words, at most the 5 Google gives). The CMS stamps
+// the client's id on the section when it is added (f.client). Nothing to show
+// (not linked yet, or no review fit to show) and the section is not there at
+// all; inside the editor it holds its place with one quiet line instead, and
+// the section's form says what it needs.
+const CMS = 'https://cms.pubd.io'
+const inEditor = () => typeof window !== 'undefined' && window.self !== window.top && new URLSearchParams(window.location.search).has('pubd-edit')
+function Stars({ n }) {
+  const full = Math.max(0, Math.min(5, Math.round(Number(n) || 0)))
+  return (
+    <span className="kit-accent kit-stars" role="img" aria-label={`${full} out of 5 stars`}>
+      <span aria-hidden="true">{'★'.repeat(full)}</span><span aria-hidden="true" className="kit-stars-off">{'★'.repeat(5 - full)}</span>
+    </span>
+  )
+}
+function GoogleReviews({ variant, f }) {
+  const client = s(f.client)
+  const [data, setData] = useState(undefined) // undefined: loading; null: nothing to show
+  useEffect(() => {
+    if (!client) { setData(null); return }
+    let alive = true
+    fetch(`${CMS}/api/public/reviews?client=${encodeURIComponent(client)}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (alive) setData(d && Array.isArray(d.reviews) && d.reviews.length ? d : null) })
+      .catch(() => { if (alive) setData(null) })
+    return () => { alive = false }
+  }, [client])
+  if (data === undefined) return null
+  if (data === null) {
+    if (!inEditor()) return null
+    return (
+      <div className="kit-section">
+        <Heading eyebrow={s(f.eyebrow)} heading={s(f.heading)} />
+        <p data-cms-static="shown only inside the editor, never on the live site" className={`kit-meta max-w-xl ${narrow()} ${theme.headingAlign === 'left' ? '' : 'text-center'}`}>Your Google reviews will appear here. Select this section to see what it needs.</p>
+      </div>
+    )
+  }
+  const reviews = data.reviews.slice(0, 5)
+  const person = (x) => (
+    <figcaption className="mt-5 flex items-center gap-3">
+      {x.profile_photo && <img src={x.profile_photo} alt="" loading="lazy" referrerPolicy="no-referrer" className="h-11 w-11 rounded-full object-cover" />}
+      <span className="text-left"><span className="kit-name block">{s(x.author)}</span>{x.time && <span className="kit-meta">{x.time}</span>}</span>
+    </figcaption>
+  )
+  // One star beside the exact rating: five rounded stars would show a 4.5 as a 5.
+  // Google asks for its reviews to be shown as Google's, with a way to read
+  // them all there: the rating line says so and links to the listing.
+  const summary = (
+    <p className={`kit-meta mt-8 ${theme.headingAlign === 'left' ? '' : 'text-center'}`}>
+      {typeof data.rating === 'number' && <><span className="kit-accent" aria-hidden="true">★</span> {data.rating.toFixed(1)} on Google{typeof data.total === 'number' ? ` from ${data.total} ${data.total === 1 ? 'review' : 'reviews'}` : ''}</>}
+      {typeof data.rating !== 'number' && 'Reviews from Google'}
+      {data.url && <> · <a href={data.url} target="_blank" rel="noopener noreferrer" data-cms-static="Google's attribution link, fixed wording" className="underline underline-offset-2">See all on Google</a></>}
+    </p>
+  )
+  if (variant === 'featured') {
+    const x = reviews[0]
+    return (
+      <div className="kit-section">
+        <Heading eyebrow={s(f.eyebrow)} heading={s(f.heading)} />
+        <figure className="mx-auto max-w-3xl text-center">
+          <Stars n={x.rating} />
+          <blockquote className="kit-quote-lg kit-review mt-4">“{s(x.text)}”</blockquote>
+          <div className="flex justify-center">{person(x)}</div>
+        </figure>
+        {summary}
+      </div>
+    )
+  }
+  return (
+    <div className="kit-section">
+      <Heading eyebrow={s(f.eyebrow)} heading={s(f.heading)} />
+      <div className="kit-balance [--rb-cols:1] md:[--rb-cols:2] lg:[--rb-cols:3]">
+        {reviews.map((x, i) => (
+          <figure key={i} className="kit-card flex flex-col justify-between">
+            <div>
+              <Stars n={x.rating} />
+              <blockquote className="kit-quote kit-review mt-3">“{s(x.text)}”</blockquote>
+            </div>
+            {person(x)}
+          </figure>
+        ))}
+      </div>
+      {summary}
+    </div>
+  )
+}
+
+const TYPES = { 'logo-strip': LogoStrip, testimonials: Testimonials, 'text-photo': TextPhoto, 'cta-band': CtaBand, cards: Cards, numbers: Numbers, people: People, photos: Photos, steps: Steps, faq: Faq, downloads: Downloads, pricing: Pricing, 'google-reviews': GoogleReviews }
 export const KIT_TYPES = Object.keys(TYPES)
 
 export default function KitSection({ type, variant, fields }) {

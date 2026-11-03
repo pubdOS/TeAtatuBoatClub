@@ -57,6 +57,7 @@ then compare a page of every type against the site's own sections.
 | `kit-question` | An FAQ question |
 | `kit-btn-primary` / `kit-btn-secondary` | The site's two buttons (`@apply btn-primary` …) |
 | `kit-file` | A download row (its hover; the rules between rows are `--kit-rule`) |
+| `kit-stars` | Extra on a Google review's stars (they also take `kit-accent`); missing stars are faint by default |
 | `kit-price` | A package's price, large |
 | `kit-price-row` | A price in the price list |
 | `kit-price-unit` | The unit after a price ("per tonne", "/month") |
