@@ -78,3 +78,9 @@
 /* Hero photos (HeroPhotos.jsx): stacked, each fading in over the last. */
 .kit-hero-photos > * { transition: opacity 1.6s ease; }
 @media (prefers-reduced-motion: reduce) { .kit-hero-photos > * { transition: none; } }
+
+/* GOOGLE REVIEWS: a long review stops at six lines (the full one is a click
+   away on Google), and the missing stars sit faint beside the given ones. */
+.kit-review { display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
+.kit-stars { letter-spacing: 0.08em; }
+.kit-stars-off { opacity: 0.25; }
