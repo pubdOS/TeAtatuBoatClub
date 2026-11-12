@@ -77,6 +77,7 @@ function Testimonials({ variant, f }) {
     const x = items[0]
     return (
       <div className="kit-section">
+        <Heading eyebrow={s(f.eyebrow)} heading={s(f.heading)} />
         <figure className="mx-auto max-w-3xl text-center">
           <blockquote className="kit-quote-lg">“{x.quote}”</blockquote>
           <div className="flex justify-center">{person(x)}</div>
@@ -124,6 +125,7 @@ function TextPhoto({ variant, f }) {
 function CtaBand({ variant, f }) {
   return (
     <div className="kit-section kit-head text-center">
+      {f.eyebrow && <p className="kit-eyebrow">{f.eyebrow}</p>}
       {f.heading && <h2 className="kit-h2">{f.heading}</h2>}
       {f.body && <p className="kit-cta-text mx-auto max-w-xl">{f.body}</p>}
       <div className="kit-actions flex flex-wrap justify-center gap-3">
@@ -177,6 +179,7 @@ function Numbers({ f }) {
   const divided = theme.numbers === 'divided'
   return (
     <div className="kit-section kit-numbers">
+      {f.eyebrow && <p className={`kit-eyebrow text-center ${f.heading ? 'mb-2' : 'mb-8'}`}>{f.eyebrow}</p>}
       {f.heading && <h2 className="kit-numbers-heading text-center">{f.heading}</h2>}
       <div className={divided ? 'kit-divided' : 'kit-fit'}>
         {items.map((x, i) => (
@@ -203,11 +206,12 @@ function People({ variant, f }) {
     const x = items[0]
     return (
       <div className="kit-section">
+        <Heading eyebrow={s(f.eyebrow)} heading={s(f.heading)} />
         <div className="mx-auto flex max-w-3xl flex-col items-center gap-8 text-center md:flex-row md:text-left">
           {face(x, true)}
           <div className="kit-head min-w-0">
-            {f.heading && <p className="kit-eyebrow">{f.heading}</p>}
-            <h2 className="kit-h2 kit-person">{x.name}</h2>
+            {/* Under a section heading the name is the next level down; styled the same. */}
+            {f.heading ? <h3 className="kit-h2 kit-person">{x.name}</h3> : <h2 className="kit-h2 kit-person">{x.name}</h2>}
             {x.role && <p className="kit-role">{x.role}</p>}
             {x.bio && <p className="kit-text whitespace-pre-line">{x.bio}</p>}
           </div>
