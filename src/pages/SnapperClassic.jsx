@@ -1,9 +1,11 @@
+import { useEffect, useState } from 'react'
 import { Head } from 'vite-react-ssg'
 import c from '../../content.js'
 import Seo from '../components/Seo.jsx'
 import AnimatedSection from '../components/AnimatedSection.jsx'
 import WaveDivider from '../components/WaveDivider.jsx'
 import { EnquiryForm } from '../components/Lightbox.jsx'
+import { builtAt, showingUntil } from '../kit/until.js'
 
 // The Commodore's Snapper Classic (6 to 8 November 2026): everything from the
 // club's rules PDF as a page people can share, reached from the home hero promo
@@ -16,7 +18,7 @@ const abs = (u) => (!u ? undefined : /^https?:\/\//.test(u) ? u : `${base}${u}`)
 // Event structured data, so Google can show the dates, place and price. The
 // start, end and price are plain content.js keys (not CMS fields) because the
 // schema needs exact ISO times, which no one should have to type in an editor.
-function eventSchema() {
+function eventSchema(open) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Event',
@@ -34,22 +36,33 @@ function eventSchema() {
       address: c.address || undefined,
     },
     organizer: { '@type': 'Organization', name: c.schema_name || c.company_name, url: base },
-    offers: {
-      '@type': 'Offer',
-      price: c.snapper_ticket_price,
-      priceCurrency: 'NZD',
-      availability: 'https://schema.org/InStock',
-      url: `${base}/events/snapper-classic#tickets`,
-    },
+    // Only while entries are open: a closed event offering "in stock" tickets
+    // would tell Google something untrue.
+    ...(open ? {
+      offers: {
+        '@type': 'Offer',
+        price: c.snapper_ticket_price,
+        priceCurrency: 'NZD',
+        availability: 'https://schema.org/InStock',
+        url: `${base}/events/snapper-classic#tickets`,
+      },
+    } : {}),
   }
 }
 
 export default function SnapperClassic() {
+  // Entries close by themselves (2026-11-12). "Tickets - Open Until" is an NZ
+  // date in the CMS ("2026-11-05", or "2026-11-05 17:00"); once it passes, the
+  // ticket form and the hero's ticket button go and the closed message shows,
+  // with no edit and no deploy (kit/until.js). Next year: change the date.
+  // The first render uses the build time so it matches the prerendered HTML.
+  const [open, setOpen] = useState(() => showingUntil(c.snapper_tickets_open_until, builtAt()))
+  useEffect(() => { setOpen(showingUntil(c.snapper_tickets_open_until, new Date())) }, [])
   return (
     <>
       <Seo title={c.snapper_seo_title} description={c.snapper_seo_description} image={c.snapper_hero_image} />
       <Head>
-        <script type="application/ld+json">{JSON.stringify(eventSchema())}</script>
+        <script type="application/ld+json">{JSON.stringify(eventSchema(open))}</script>
       </Head>
       <span hidden data-cms="Snapper Classic - SEO - Page Title">{c.snapper_seo_title}</span>
       <span hidden data-cms="Snapper Classic - SEO - Meta Description">{c.snapper_seo_description}</span>
@@ -83,7 +96,8 @@ export default function SnapperClassic() {
               {c.snapper_hero_sub}
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
-              <a href="#tickets" className="btn-primary" data-cms="Snapper Classic - Hero - Button">{c.snapper_hero_cta}</a>
+              {/* Each field is written once; only whether it shows changes. */}
+              <a href="#tickets" className={`btn-primary ${open ? '' : 'hidden'}`} data-cms="Snapper Classic - Hero - Button">{c.snapper_hero_cta}</a>
               <a hidden href={c.snapper_rules_document} data-cms="Snapper Classic - Rules - Document">rules</a>
               <a href={c.snapper_rules_document} target="_blank" rel="noopener noreferrer" className="btn-secondary">
                 <span data-cms="Snapper Classic - Rules - Download Label">{c.snapper_rules_label}</span>
@@ -213,21 +227,27 @@ export default function SnapperClassic() {
 
       {/* ─── Tickets ─── */}
       <section id="tickets" className="scroll-mt-24 bg-sand">
-        <div className="section grid items-center gap-12 md:grid-cols-2">
+        {/* Closed: no form beside it, so one column rather than half a row. */}
+        <div className={`section grid items-center gap-12 ${open ? 'md:grid-cols-2' : 'max-w-3xl'}`}>
           <AnimatedSection>
             <span className="eyebrow" data-cms="Snapper Classic - Tickets - Label">{c.snapper_tickets_label}</span>
-            <h2 className="text-3xl font-semibold md:text-4xl" data-cms="Snapper Classic - Tickets - Heading">{c.snapper_tickets_heading}</h2>
-            <p className="mt-4 text-lg text-navy/75" data-cms="Snapper Classic - Tickets - Body">{c.snapper_tickets_body}</p>
+            <h2 className={`text-3xl font-semibold md:text-4xl ${open ? '' : 'hidden'}`} data-cms="Snapper Classic - Tickets - Heading">{c.snapper_tickets_heading}</h2>
+            <p className={`mt-4 text-lg text-navy/75 ${open ? '' : 'hidden'}`} data-cms="Snapper Classic - Tickets - Body">{c.snapper_tickets_body}</p>
+            <h2 className={`text-3xl font-semibold md:text-4xl ${open ? 'hidden' : ''}`} data-cms="Snapper Classic - Tickets - Closed Heading">{c.snapper_tickets_closed_heading}</h2>
+            <p className={`mt-4 whitespace-pre-line text-lg text-navy/75 ${open ? 'hidden' : ''}`} data-cms="Snapper Classic - Tickets - Closed Body">{c.snapper_tickets_closed_body}</p>
             <p className="mt-4 text-navy/60" data-cms="Snapper Classic - Tickets - Contact">{c.snapper_tickets_contact}</p>
           </AnimatedSection>
-          <div className="rounded-3xl bg-white p-6 shadow-lg ring-1 ring-navy/10 sm:p-8">
-            <EnquiryForm
-              about={c.snapper_hero_title}
-              heading={c.snapper_tickets_form_heading}
-              quantityLabel={c.snapper_tickets_quantity_label}
-              success={c.snapper_tickets_success}
-            />
-          </div>
+          {open && (
+            <div className="rounded-3xl bg-white p-6 shadow-lg ring-1 ring-navy/10 sm:p-8">
+              <EnquiryForm
+                about={c.snapper_hero_title}
+                heading={c.snapper_tickets_form_heading}
+                quantityLabel={c.snapper_tickets_quantity_label}
+                success={c.snapper_tickets_success}
+              />
+            </div>
+          )}
+          <span hidden data-cms="Snapper Classic - Tickets - Open Until">{c.snapper_tickets_open_until}</span>
           <span hidden data-cms="Snapper Classic - Tickets - Form Heading">{c.snapper_tickets_form_heading}</span>
           <span hidden data-cms="Snapper Classic - Tickets - Quantity Label">{c.snapper_tickets_quantity_label}</span>
           <span hidden data-cms="Snapper Classic - Tickets - Success">{c.snapper_tickets_success}</span>
