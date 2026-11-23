@@ -1,5 +1,6 @@
 import { useEffect, useState, version } from 'react'
 import { framed } from './framing.js'
+import { cdn, cdnSet } from './cdn.js'
 
 // The first photo's fetch priority. React 19 knows the attribute as fetchPriority
 // and warns on the lowercase; React 18 doesn't know it and warns on the camelCase
@@ -13,14 +14,18 @@ const priority = parseInt(version, 10) >= 19 ? 'fetchPriority' : 'fetchpriority'
 // motion (they see the first), and never while the tab is out of sight.
 //
 // The first photo is the page's largest paint, so it is the only one drawn by
-// the server; the rest mount after load and cost nothing up front. `srcFor`
-// lets a site pass each address through its image CDN.
+// the server, fetched first, and offered at several widths through the image
+// CDN (./cdn.js) so a phone downloads a phone-sized AVIF/WebP, not the full
+// JPEG. The rest mount after load and cost nothing up front. `sizes` is how
+// wide the photo shows (full width by default: pass e.g. "(min-width: 1024px)
+// 50vw, 100vw" for a half-width hero). `srcFor` replaces the CDN with a site's
+// own single address, when a site has a reason to.
 //
 // The box (position, size, dimming) is the site's: pass it as className. Dim
 // the BOX (opacity, a filter), never a photo: each photo's own opacity runs the
 // fade. Each photo's other classes (object-cover is set) go in imgClassName.
 // Part of the shared kit: synced to every site from sitemog-starter.
-export default function HeroPhotos({ image, more, className = '', imgClassName = '', srcFor = (s) => s, hold = 6000 }) {
+export default function HeroPhotos({ image, more, className = '', imgClassName = '', srcFor, sizes = '100vw', hold = 6000 }) {
   const photos = [image, ...(Array.isArray(more) ? more.map((x) => x?.image) : [])].filter((s) => typeof s === 'string' && s)
   const [shown, setShown] = useState(0)
   const [ready, setReady] = useState(false)
@@ -34,7 +39,8 @@ export default function HeroPhotos({ image, more, className = '', imgClassName =
   return (
     <div className={`kit-hero-photos ${className}`} aria-hidden="true">
       {photos.map((src, i) => (i === 0 || ready) && (
-        <img key={src + i} src={srcFor(src)} alt="" loading={i === 0 ? 'eager' : 'lazy'} {...(i === 0 && { [priority]: 'high' })}
+        <img key={src + i} alt="" loading={i === 0 ? 'eager' : 'lazy'} {...(i === 0 && { [priority]: 'high' })}
+          {...(srcFor ? { src: srcFor(src) } : { srcSet: cdnSet(src), sizes, src: cdn(src, { w: 1920 }) })}
           className={`absolute inset-0 h-full w-full object-cover ${imgClassName}`}
           {...framed(src, { opacity: i === at ? 1 : 0 })} />
       ))}

@@ -7,6 +7,7 @@ import AnimatedSection from '../components/AnimatedSection.jsx'
 import WaveDivider from '../components/WaveDivider.jsx'
 import Sections, { Section } from '../components/Sections.jsx'
 import HeroPhotos from '../kit/HeroPhotos.jsx'
+import { useInView } from '../hooks/useInView.js'
 
 /**
  * Is a time-boxed promotion still running?
@@ -68,6 +69,7 @@ export default function Home() {
             src={c.home_promo_image}
             data-cms="Home - Promo - Image"
             alt=""
+            fetchpriority="high"
             className="absolute inset-0 -z-20 h-full w-full object-cover object-[25%_center]"
           />
           {/* Scrim: from the bottom on a phone (text sits low), from the right on
@@ -111,7 +113,8 @@ export default function Home() {
           {/* The hero photo, then any added under "More Photos", taking turns
               (HeroPhotos, shared kit). Each has a hidden companion the CMS edits. */}
           <HeroPhotos image={c.home_hero_image} more={c.home_hero_more} className="absolute inset-0 -z-10 opacity-40" />
-          <img src={c.home_hero_image} data-cms="Home - Hero - Image" alt="" className="hidden" />
+          {/* Lazy so, hidden, it never downloads (it would compete with the hero). */}
+          <img src={c.home_hero_image} data-cms="Home - Hero - Image" alt="" className="hidden" loading="lazy" />
           <div hidden data-cms-repeater="Home - Hero - More Photos" data-cms-shape="media" data-cms-max="5"
             data-cms-note="These take turns with the hero photo, a few seconds each.">
             {(c.home_hero_more || []).map((x, i) => (
@@ -178,6 +181,7 @@ export default function Home() {
             src={c.home_about_image}
             data-cms="Home - About - Image"
             alt="The club"
+            loading="lazy"
             className="aspect-[4/3] w-full rounded-2xl bg-navy/5 object-cover"
           />
         </AnimatedSection>
@@ -198,17 +202,7 @@ export default function Home() {
           </AnimatedSection>
           <AnimatedSection delay={120}>
             <div className="mx-auto max-w-4xl overflow-hidden rounded-2xl shadow-2xl ring-1 ring-white/10">
-              <video
-                className="aspect-video w-full bg-black"
-                src={c.home_video}
-                poster={c.home_video_poster}
-                autoPlay
-                muted
-                loop
-                playsInline
-                controls
-                preload="auto"
-              />
+              <ClubVideo src={c.home_video} poster={c.home_video_poster} />
             </div>
           </AnimatedSection>
         </div>
@@ -260,5 +254,21 @@ export default function Home() {
       </Section>
       </Sections>
     </>
+  )
+}
+
+// The club clip plays by itself, muted, on a loop, so nothing about it shows
+// before it scrolls near the screen. Until then it is an empty black frame of
+// the same size: loading it up front (4 MB, plus a 350 KB poster) took the
+// connection from the hero photo on a phone.
+function ClubVideo({ src, poster }) {
+  const [ref, near] = useInView({ rootMargin: '400px 0px', threshold: 0 })
+  return (
+    <div ref={ref} className="aspect-video w-full bg-black">
+      {near && (
+        <video className="aspect-video w-full bg-black" src={src} poster={poster}
+          autoPlay muted loop playsInline controls preload="auto" />
+      )}
+    </div>
   )
 }

@@ -3,7 +3,7 @@
 The kit (this folder) is **shared**: the same on every site, synced from
 sitemog-starter with `sitemog-toolkit/scripts/sync-kit.sh <repo>`. Never edit
 `KitSection.jsx`, `ScrollStrip.jsx`, `Photo.jsx`, `framing.js`, `useKit.js`,
-`Announcement.jsx`, `HeroPhotos.jsx`, `until.js`, `kit.css` or this file in a client site; change them in the starter and sync.
+`Announcement.jsx`, `HeroPhotos.jsx`, `cdn.js`, `until.js`, `kit.css` or this file in a client site; change them in the starter and sync.
 
 A site makes the kit its own with two things it **does** own:
 
@@ -88,4 +88,8 @@ Variables: `--kit-rule` (lines: timeline, FAQ, numbers dividers),
   photo and a `<page>_hero_more` list, plus a hidden `data-cms-repeater="<Page> - Hero -
   More Photos"` (`data-cms-shape="media"`, `data-cms-max="5"`) of `<img data-cms-field="image">`
   so the CMS can edit the list. One photo looks exactly as before. See the starter's Home.
+  The first photo is the page's largest paint: HeroPhotos serves it through the image CDN
+  (`cdn.js`) at several widths, so pass no `srcFor` and give `sizes` when the hero is not
+  full width. Give the hidden companion `<img>` `loading="lazy"`: hidden and eager, it
+  still downloads the full file and competes with the hero on a phone.
 

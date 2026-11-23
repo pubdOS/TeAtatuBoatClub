@@ -1,5 +1,6 @@
 import { ViteReactSSG } from 'vite-react-ssg'
 import { routes } from './App.jsx'
+import './fonts/fonts.css' // self-hosted, see the file
 import './index.css'
 
 // Prerendered (SSG) entry. `vite-react-ssg build` renders every static route in

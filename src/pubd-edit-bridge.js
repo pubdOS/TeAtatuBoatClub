@@ -306,6 +306,26 @@ function applyFraming(n, value) {
 // Does a background layer paint this photo? It may carry the raw address or a
 // CDN one with the address encoded inside it.
 const paints = (bgImage, src) => !!src && (bgImage.includes(src) || bgImage.includes(encodeURIComponent(src)))
+// The photo a plain <img> shows: its own address, or, when the site serves it
+// through the image CDN (`/.netlify/images?url=<photo>&w=…`, src/kit/cdn.js),
+// the photo the CDN address carries. Without this a hero drawn through the CDN
+// kept the old picture while its hidden companion took the new one.
+function shownFile(src) {
+  if (!src) return ''
+  if (src.startsWith('/.netlify/images?')) {
+    try { return bareSrc(new URLSearchParams(src.slice(src.indexOf('?') + 1)).get('url') || '') } catch { return '' }
+  }
+  return bareSrc(src)
+}
+// Show a new photo in a twin <img>. A responsive one also carries a srcset (and
+// sizes) of CDN addresses for the OLD photo, which the browser prefers over
+// src: drop them, or the swap would not show. The published build draws the
+// new photo's own srcset.
+function swapImg(n, value) {
+  n.removeAttribute('srcset')
+  n.removeAttribute('sizes')
+  n.src = value || ''
+}
 
 // Apply a value to an element. Images: swap the src AND any CSS-background twin
 // that painted the same source (the hidden-companion convention). Scope the
@@ -334,7 +354,7 @@ function applyValue(el, value, scope) {
       // the cloned item's picture while the companion updated — a newly added
       // item showed the previous one's screenshot. Twin plain <img>s too.
       ;(scope || document).querySelectorAll('img').forEach((n) => {
-        if (n !== el && bareSrc(n.getAttribute('src')) === oldFile) { n.src = value || ''; painters.push(n) }
+        if (n !== el && shownFile(n.getAttribute('src')) === oldFile) { swapImg(n, value); painters.push(n) }
       })
     } else if (value) {
       // Previously-empty slot: no old src to match on. This is the case for a
@@ -354,7 +374,7 @@ function applyValue(el, value, scope) {
       // (a device frame, a card thumbnail). Search the whole item scope, since
       // it usually sits in a sibling subtree rather than the same parent.
       ;(scope || el.parentElement || document).querySelectorAll('img').forEach((n) => {
-        if (n !== el && !n.getAttribute('src')) { n.src = value; painters.push(n) }
+        if (n !== el && !n.getAttribute('src')) { swapImg(n, value); painters.push(n) }
       })
     }
     // Only where the site draws framing itself (`data-cms-framed`): a preview
