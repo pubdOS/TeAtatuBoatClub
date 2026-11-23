@@ -23,8 +23,8 @@ export default {
   "facilities_page_kit": "",
   "membership_seo_title": "Membership | Te Atatu Boating Club",
   "membership_seo_description": "Join the Te Atatu Boating Club. Membership options, benefits and how to sign up.",
-  "membership_page_layout": "",
-  "membership_page_kit": "",
+  "membership_page_layout": "{\"order\":[\"Membership - Join\",\"Membership - Kit ko5f7\",\"Membership - Benefits\",\"Membership - CTA\"],\"hidden\":[]}",
+  "membership_page_kit": "[{\"id\":\"ko5f7\",\"type\":\"downloads\",\"variant\":\"list\",\"fields\":{\"heading\":\"Downloads\",\"items\":[{\"title\":\"Membership application form 2026-27\",\"file\":\"https://ckzojvudzugbdmdwlukw.supabase.co/storage/v1/object/public/cms-assets/514ae72b-9328-4189-9617-ab0f62ddefbc/assets/1795477049865-membership-form-2026-27.pdf\",\"note\":\"PDF, print and fill in\"}]}}]",
   "pricing_seo_title": "Pricing | Te Atatu Boating Club",
   "pricing_seo_description": "Membership, venue hire and facility pricing at the Te Atatu Boating Club.",
   "pricing_page_layout": "",
@@ -1021,7 +1021,7 @@ export default {
   "membership_steps": [
     {
       "step": "Apply",
-      "desc": "Download and complete the membership application form. New members are usually nominated by an existing member, though this isn’t required."
+      "desc": "Download and complete the membership application form below. New members are usually nominated by an existing member, though this isn’t required."
     },
     {
       "step": "New Members’ Night",
