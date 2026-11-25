@@ -1,5 +1,5 @@
 # TeAtatuBoatClub — working context
-_Last wrapped: 2026-10-31 · LIVE on teatatuboatclub.co.nz · CMS-wired · Pro · **BOOKING NOW SERVED BY THE PUBD CMS**_
+_Last wrapped: 2026-11-25 · LIVE on teatatuboatclub.co.nz · CMS-wired · Pro · **BOOKING NOW SERVED BY THE PUBD CMS**_
 
 ## What this is
 Te Atatū Boating Club: a ~750-family social + boating club. 12 pages, plus a **bespoke
@@ -8,6 +8,25 @@ of the CMS. Contacts: **Dan** (manager, the one who emails changes) and **Barry 
 (Commodore since the 2026 AGM). Committee-run, so the people change annually.
 
 ## Current state
+
+### ▶ 2026-11-24/25 (latest)
+- **Membership forms back (Dan, 24 Nov):** they were never migrated from Wix. The 2026-27 form PDF is in a
+  Downloads kit section on the Membership page (after Join; the Join steps say "...form below"), added
+  through the CMS draft and published by Lazar. Optional: redirects from the old Wix PDF links.
+- **Waiting on Dan:** whether to add the new-members information pack, and whether nomination by a member is
+  required (the form asks for a proposer/seconder; the site says it isn't).
+- **Plan:** the club is on legacy Pro (Pro at the Starter price, 24 Nov).
+- **Newsletter (Sara wants it):** CMS newsletter v2 is built, ships with the next CMS release. On ship day
+  set the club's newsletter from-address to one on the verified `send.teatatuboatclub.co.nz`, replies to
+  office@. The first send waits for Lazar's approval.
+- **Meta:** the Facebook/Instagram connection is under Sara's login (Sara, GFM). Pubd reads nothing of hers;
+  she'll remove herself later, and a club Page admin (Dan or Barry) reconnects when the club wants it.
+  Sara's notes: show who posted each post; allow more than one ad account (both in the CMS plans).
+- **Tickets:** online tickets for the 27 Feb event wait on the club's answers (plan sent 20 Nov; decision
+  gate ~12 Dec, else Humanitix).
+- **Kit fix:** "add a section" only worked on the first page in the editor. Fixed on sitemog-starter branch
+  `kit-editor-any-page`; this site gets it via sync-kit.sh on its NEXT batched deploy.
+
 
 ### ▶ 2026-11-01: real 404 SHIPPED
 - Unknown addresses serve a prerendered, noindex `404.html` with status 404 (`/* /404.html 404` in
@@ -223,6 +242,7 @@ of the CMS. Contacts: **Dan** (manager, the one who emails changes) and **Barry 
       fix queued after the kit rollout). (owner: you)
 
 ## Session log (brief, newest first)
+- 2026-11-24/25: membership form PDF back on the Membership page (CMS draft, published); Sara's Meta + newsletter questions answered; kit add-section fix found (starter branch).
 - 2026-10-31: kit conversion shipped (12 pages movable/addable, announcement strip, hero photos, canonical bridge, auto-colour hero wave); merged without waiting for the Snapper close; Merge rescan 258→286 fields, none dropped.
 - 2026-10-16: Snapper Classic poster pop-up + ticket enquiry form (home + competition card), rules PDF, manager@ hook; old booking DB branch shipped.
 - 2026-09-30: booking cut over to the CMS shared database; old functions retired (410) after a security sweep; email-on-file can no longer be replaced from the booking form.
